@@ -1,0 +1,23 @@
+{
+    "name": "softweird",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/Advanced-Computer-Lab-2022/Softweird.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/Advanced-Computer-Lab-2022/Softweird/issues"
+    },
+    "homepage": "https://github.com/Advanced-Computer-Lab-2022/Softweird#readme",
+    "dependencies": {
+      "create-react-app": "^5.0.1"
+    }
+   
+  }
