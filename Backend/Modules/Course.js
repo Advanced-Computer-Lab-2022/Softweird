@@ -18,7 +18,11 @@ const subtitleSchema = new Schema (
 const courseSchema = new Schema (
     {
         instructor : { 
-            type :mongoose.Types.ObjectId , ref : 'Instructor'
+            name :String ,
+            
+        },
+        instructor_id :{
+            type :mongoose.Types.ObjectId , ref : 'Users' , required:true
         },
         title : {
             type : String,
@@ -26,10 +30,11 @@ const courseSchema = new Schema (
         },
         rating : {
             type : Number , 
-            default : 0 ,
+            default : 5 ,
         },
         numberRating : {
-            type : Number 
+            type : Number ,
+            default : 0
         },
         totalHours :{
             type :  mongoose.Types.Decimal128,
@@ -37,13 +42,11 @@ const courseSchema = new Schema (
         },
         subject :{
             type  :String ,
-            required : true
+             required : true
         },
         price : {
-            type : mongoose.Types.Decimal128 ,
-        },
-        free :{
-            type : Boolean
+            type : String ,
+            required:true
         },
         summary : {
             type : String,
@@ -51,6 +54,7 @@ const courseSchema = new Schema (
         },
         enrolledStudents :{
             type:Number,
+            default:0
         },
         preview : {
             type : String , 

@@ -14,6 +14,7 @@ const instructorSchema = new Schema ({
     amountOwed:{
         type:mongoose.Types.Decimal128
     }
+    
 
 })
 

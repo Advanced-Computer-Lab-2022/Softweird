@@ -5,16 +5,16 @@ const userSchema = new Schema (
     {
         fName : {
             type : String ,
-            required : true,
+           
             minLength:2
         },
         lName : {
             type : String ,
-            required : true
+            
         },
         gender : {
             type : String,
-            required : true
+           
 
          },
          username : {
@@ -23,7 +23,7 @@ const userSchema = new Schema (
         },
         email : {
             type : String ,
-            required : true,
+           
             minLength:10,
             lowerCase:true
         },

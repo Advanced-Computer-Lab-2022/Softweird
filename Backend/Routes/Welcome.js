@@ -1,7 +1,14 @@
 const express = require ('express')
 const router = express.Router()
-router.get('/',(req,res ) =>{
-    
-});
+const Course =  require ('../Modules/Course')
+const {search} = require('../Controller/Search')
 
-router.post('/',Search)
+
+
+// search for courses 
+router.get('/search',search)
+
+
+
+module.exports = router 
+
