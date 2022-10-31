@@ -7,6 +7,7 @@ const Search = require('./Routes/Search')
 const currency = require('./Routes/countryCurrency');
 const bodyParser = require('body-parser');
 const Instructor = require('./Routes/Instructor')
+const AdminAdd = require ('./Routes/AdminAdd')
 
 
 //App variables
@@ -39,6 +40,8 @@ app.use('/Search',Search)
 
 app.use('/CurrencyChange',currency)
 app.use('/Instructor',Instructor)
+
+app.use('/adminAdd',AdminAdd)
 
 
 

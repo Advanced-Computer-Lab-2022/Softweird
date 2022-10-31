@@ -13,17 +13,24 @@ const getCourses =  async (req,res) => {
     
     
 }
+const getInstructor =  async(id) => {
+    if(id!==undefined){
+        const instructor = await Instructor.find({user:mongoose.Types.ObjectId(id)}).populate('user')
+        return instructor
+    }
+}
+
 const getOneCourse = async (req,res) =>{
-    const {id} = req.query
+    const {id} = req.params
     if(!mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).json({error:'no such course'})
     }
-    const course = await (await Course.findById(id))
+    const course = await Course.findById(id)
     if(!course){
         return res.status(404).json({error:'no such course'})
     }
-
-    return res.status(200).json(course)
+    const instructor = getInstructor(course.instructor_id)
+    return res.status(200).json({course, instructor})
 
 }
 
