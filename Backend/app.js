@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
+require('dotenv').config()
 const Courses = require('./Routes/Courses')
 const Welcome = require ('./Routes/Welcome')
 const Search = require('./Routes/Search')

@@ -7,7 +7,7 @@ import axios from 'axios'
 import {SearchInstructor} from '../../Context/SearchInstructor';
 
 function SearchBarCourses () {
-    const[searchInput,setSearchInput]=useState()
+    const[searchInput,setSearchInput]=useState('')
     const {courses,setCourses} = useContext(SearchInstructor)
     const [loading,setLoading] = useState(false)
     function handleSearch (e) {
@@ -19,7 +19,7 @@ function SearchBarCourses () {
          axios({
              method:"GET",
              url : "/Instructor/getInstructorCourses",
-             params : {value:searchInput , instructor: "635eca353b56902f4d87ebad"},
+             params : {value:searchInput , instructor: "635eca353b56902f4d87ebab"},
              cancelToken: new axios.CancelToken (c => cancel = c)
          }).then (res => {
              setLoading(false)
@@ -34,13 +34,14 @@ function SearchBarCourses () {
      }, [searchInput])
     return(
         <>
+        
         <form>
-        <input type="text" placeholder="Search.." name="search" onChange={handleSearch} value={searchInput}/>
+        <input type="text" placeholder="Search.." name="search" value={searchInput}  onChange={handleSearch}/>
         <Link to ={{
                pathname : `/MyCourses/${searchInput}` , // add link instructor id 
                state:{stateParam :true}
              }}>
-        <button type="submit"><i className="fa fa-search" ></i> </button>
+        <button type="submit"  ><i className="fa fa-search" onChange={handleSearch} ></i> </button>
         </Link>
     </form>
         </>

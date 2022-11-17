@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
 const Course =  require ('../Modules/Course')
+const Instructor = require('../Modules/Instructor')
+const Users = require('../Modules/Users')
 const countryToCurrency =require('country-to-currency')
 const request = require('request')
 const _External_URL = 'https://api.exchangerate.host/latest'
@@ -29,7 +31,9 @@ const getOneCourse = async (req,res) =>{
     if(!course){
         return res.status(404).json({error:'no such course'})
     }
-    const instructor = getInstructor(course.instructor_id)
+    const instructor =await getInstructor(course.instructor_id)
+    console.log(instructor);
+    console.log(course);
     return res.status(200).json({course, instructor})
 
 }

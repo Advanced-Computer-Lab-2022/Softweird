@@ -34,6 +34,7 @@ import {FilterSearch} from '../Context/FilterSearch'
 
       return (
           <>
+          {!loading &&
         <ul>
         {subject.length!==0  ?  (courses.filter((course => (subject.includes(course.subject)) &&
         (rate.includes(Math.ceil(course.rating))))))
@@ -48,7 +49,8 @@ import {FilterSearch} from '../Context/FilterSearch'
             <OneCourseResult Onecourse={course} />
        </div>
    })  }
-    </ul>  
+    </ul>  }
+    {loading && "loading"}
 </>
       )
   }

@@ -20,6 +20,9 @@
     "react-fontawesome": "^1.7.1",
     "react-router-dom": "^6.4.2",
     "react-scripts": "5.0.1",
+    "react-select": "^5.6.0",
+    "react-select-country-list": "^2.2.3",
+    "validator": "^13.7.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Course =  require ('../Modules/Course')
+const User = require('../Modules/Users')
 
 
 // get instructor course + search instructor

@@ -74,7 +74,7 @@ function AddCourse() {
             let cancel
             axios({
                 method:"POST",
-                url : `/Instructor/addOneCourse/${inst}`,
+                url : '/Instructor/addOneCourse/635eca353b56902f4d87ebab',
                 data : data,
                 headers : {'Content-Type' : 'application/json'},
                 cancelToken: new axios.CancelToken (c => cancel = c)

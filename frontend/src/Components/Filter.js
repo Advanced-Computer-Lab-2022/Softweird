@@ -67,15 +67,17 @@ function Filter (props) {
         </ul>
         </div>
         <div className="checkboxes">
+        
+        {props.show && <>
         <label>Ratings</label>
-        {props.show && <ul>
+        <ul>
             <li><input id="0" type="checkbox" onChange={handleRatings}/>0 - 1</li>
             <li><input id="1" type="checkbox" onChange={handleRatings}/>1 - 2</li>
             <li><input id="2" type="checkbox" onChange={handleRatings}/>2 - 3</li>
             <li ><input id="3" type="checkbox" onChange={handleRatings}/> 3 - 4</li>
             <li><input id="4" type="checkbox" onChange={handleRatings}/>4 - 5</li>
             <li><input id="5" type="checkbox" onChange={handleRatings}/>5</li>
-        </ul>}
+        </ul></>}
        </div>
 
         </>
