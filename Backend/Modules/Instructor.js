@@ -6,14 +6,21 @@ const instructorSchema = new Schema ({
         type :mongoose.Types.ObjectId , ref : 'Users'
     },
     rating:{
-        type:Number
+        rate:{type :mongoose.Types.Decimal128,default:5},
+        numberPeople:{type : Number, default:0}
     },
+    
     biography:{
         type:String,
     },
     amountOwed:{
         type:mongoose.Types.Decimal128
-    }
+    },
+    reviews :[{
+        trainee: String,
+        review : String
+
+    }]
     
 
 })

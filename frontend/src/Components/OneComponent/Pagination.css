@@ -1,0 +1,8 @@
+.page-link{
+    color:#EC6A37 !important;
+}
+.page-link:hover ,.page-link:focus{
+    color:white !important;
+    background-color: #EC6A37 !important;
+    box-shadow: none !important;
+}

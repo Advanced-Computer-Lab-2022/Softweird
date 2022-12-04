@@ -12,6 +12,12 @@ import AddUsers from './Pages/Admin/AddUsers'
 import AddCourse from './Pages/Instructor/AddCourse'
 import {Currency} from './Context/Currency'
 import { useEffect,useState } from "react";
+import OneCourseResult from './Components/OneComponent/OneCourseResult';
+import { Container } from '@mui/system';
+import OneOfMyCourses from './Pages/Instructor/OneOfMyCourses'
+import VerticalNav from './Components/VerticalNav';
+import TraineeCourses from './Pages/Trainee/OneOfMyCourses'
+
 
 function App() {
   const [curr , setCurr] = useState()
@@ -19,21 +25,25 @@ function App() {
   return (
     
     <Router>
+      
        <Currency.Provider value={{curr , setCurr ,rate,setRate}}>
       <Navbar />
+      <Container sx={{mt:"5%",mb:"5rem"}} >
       <Routes>
 
         <Route path="/" element = {<WelcomePage/>}  exact/>
-        <Route path="/Search/:course" element = {<Search/>} />
         <Route path="/Search" element = {<Search/>} />
         <Route path="/Courses/:course_id" element = {<Courses/>} />
         <Route path="/Courses/" element = {<Courses/>} exact/>
         <Route path="Instructor/MyCourses" element = {<MyCourses/>} />
-        <Route path="OneCourse/:Onecourse" element = {<OneCourse/>} />
+        <Route path="OneCourse" element = {<OneCourse/>} />
         <Route path="AddUsers/" element = {<AddUsers/>}/>
         <Route path="AddCourse/:inst" element = {<AddCourse/>}/>
+        <Route path="Instructor/MyCourse/:course" element = {<OneOfMyCourses/>}/>
+        <Route path="bb" element = {<TraineeCourses/>}/>
       
         </Routes>
+        </Container>
         </Currency.Provider>
         </Router>
     

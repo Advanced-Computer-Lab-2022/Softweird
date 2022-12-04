@@ -4,22 +4,35 @@ import {useParams} from "react-router-dom"
 import {useState , useContext,useEffect} from 'react'
 import Filter from "../Components/Filter"
 import {FilterSearch} from '../Context/FilterSearch'
+import { Stack } from "@mui/system"
+import { styled } from '@mui/material/styles'; 
+import {Box} from '@mui/system'
+import VerticalNav from "../Components/VerticalNav"
+import { Grid } from "@mui/material"
 
+
+const StyledBox = styled(Box)({
+    position:"sticky"
+
+})
  function Search () {
-     const{course} = useParams() 
+    const params = new URLSearchParams(window.location.search);
+    const course = params.get('search');
      const x = (course == undefined? "" : course)
      const [subject , setSubject] = useState([])
      const [price , setPrice] = useState([])
      const [rate , setRate] = useState([])
      const show = true
     return (
-        <>
+        <Box height="100%">
          <FilterSearch.Provider value={{subject , setSubject ,price , setPrice ,rate , setRate}}>
-         <h1> Search Results</h1>
+         <Stack  direction="row" position={"relative"} >
+         <Filter show={show} />
          <SearchReults courses={x} />
-         <Filter show={show}/>
+         </Stack>
         </FilterSearch.Provider> 
-        </>
+        
+        </Box>
     )
 
 }

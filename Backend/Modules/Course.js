@@ -11,12 +11,15 @@ const questionsSchema = new Schema ({
 const subtitleSchema = new Schema (
     {
         title : String,
-        video : [String],
-        totalHours : Number,
-        exercise : [questionsSchema]
+        video : [{link : String , text : String ,length:String,preview:{
+            type : Boolean,default:false}}],
+        totalHours : {type:Number,default:0},
+        exercise : [questionsSchema],
+    
     })
 const courseSchema = new Schema (
     {
+
         instructor : { 
             name :String ,
             
@@ -29,7 +32,7 @@ const courseSchema = new Schema (
             required: true
         },
         rating : {
-            type : Number , 
+            type : mongoose.Types.Decimal128 , 
             default : 5 ,
         },
         numberRating : {
@@ -37,7 +40,8 @@ const courseSchema = new Schema (
             default : 0
         },
         totalHours :{
-            type :  mongoose.Types.Decimal128,
+            type :  Number,
+            default:0
             
         },
         subject :{
@@ -56,21 +60,27 @@ const courseSchema = new Schema (
             type:Number,
             default:0
         },
-        preview : {
-            type : String , 
-            
-        } , 
+       
         subtitles :[subtitleSchema],
        
     promotionInst : {
         set :  {type:Boolean,default:false},
-        value: mongoose.Types.Decimal128, 
+        value:{type: mongoose.Types.Decimal128,default: 0}, 
         endDate: Date
 
     },
     promotionAdmin :{
         set: {type:Boolean,default:false},
-        value:mongoose.Types.Decimal128
+        value:{type: mongoose.Types.Decimal128,default: 0}
+    },
+   reviews :[{
+        trainee: String,
+        review : String
+
+    }],
+    Finished : {
+        type:Boolean,
+        default:false
     }
 },{timestamps : true}
 )

@@ -7,6 +7,7 @@ import {useParams , Link} from 'react-router-dom'
 import CourseList from '../../Components/Instructor/CourseList' 
 import Filter from "../../Components/Filter"
 import {FilterSearch} from '../../Context/FilterSearch'
+import { Stack } from '@mui/material'
 function MyCourses () {
    const [courses,setCourses] = useState([]) 
    const [subject , setSubject] = useState([])
@@ -16,11 +17,13 @@ function MyCourses () {
         <>
         <FilterSearch.Provider value={{subject , setSubject ,price , setPrice ,rate , setRate}}>
         <SearchInstructor.Provider value = {{courses,setCourses}}>
-        <SearchBarCourses />
-        <CourseList />
+        <Stack  direction="row" position={"relative"} >
         <Filter show={false}/>
+        <CourseList />
+        </Stack>
         </SearchInstructor.Provider> 
         </FilterSearch.Provider>
+       
         </>
     )
 }

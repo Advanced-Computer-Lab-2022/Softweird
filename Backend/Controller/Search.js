@@ -20,7 +20,7 @@ const search = async (req , res) => {
         else{
                 const course = await Course.find({$or:[{title :  { $regex: input,$options: 'i' }},
                 {subject :  { $regex: input ,$options: 'i'}},
-                {instructor: { $regex: input ,$options: 'i'} }]}).sort({rate :-1})
+                {instructor: { $regex: input ,$options: 'i'} }]}).sort({rating :'desc'})
                 const arr = course.slice(0,10)
                 return res.status(200).send(arr)
         }
@@ -39,9 +39,9 @@ const searchAll = async (req , res) => {
     const {input} = req.query
    
     try {
-        const course = await Course.find({$or:[{title :  { $regex: input,$options: 'i' }},
+        const course = await Course.find({$or:[{title : {$regex: input,$options: 'i' }},
         {subject :  { $regex: input ,$options: 'i'}},
-        {instructor: { $regex: input ,$options: 'i'} }]}).sort({rate :-1})
+        {instructor: { $regex: input ,$options: 'i'} }]}).sort({'rating' :"desc"})
         return res.status(200).send(course)
         }
         
@@ -65,6 +65,7 @@ const filterValues = async (req,res) =>{
     arr.push(subject)
     arr.push([priceMin,priceMax])
     res.status(200).json(arr)
+   
 }
  
 

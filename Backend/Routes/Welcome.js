@@ -9,6 +9,5 @@ const {search} = require('../Controller/Search')
 router.get('/search',search)
 
 
-
 module.exports = router 
 

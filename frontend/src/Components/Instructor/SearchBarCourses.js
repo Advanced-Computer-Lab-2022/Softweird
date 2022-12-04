@@ -18,8 +18,8 @@ function SearchBarCourses () {
          let cancel
          axios({
              method:"GET",
-             url : "/Instructor/getInstructorCourses",
-             params : {value:searchInput , instructor: "635eca353b56902f4d87ebab"},
+             url : "/Instructor/myCourses",
+             params : {value:searchInput , instructor: "6384c29e9bed14d581bf6292"},
              cancelToken: new axios.CancelToken (c => cancel = c)
          }).then (res => {
              setLoading(false)
@@ -35,7 +35,7 @@ function SearchBarCourses () {
     return(
         <>
         
-        <form>
+        {/* <form>
         <input type="text" placeholder="Search.." name="search" value={searchInput}  onChange={handleSearch}/>
         <Link to ={{
                pathname : `/MyCourses/${searchInput}` , // add link instructor id 
@@ -43,7 +43,9 @@ function SearchBarCourses () {
              }}>
         <button type="submit"  ><i className="fa fa-search" onChange={handleSearch} ></i> </button>
         </Link>
-    </form>
+    </form> */}
+
+
         </>
     )
 }

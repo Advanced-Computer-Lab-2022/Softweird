@@ -1,67 +1,47 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;1,600&display=swap');
 
-body{
-    margin-left: 20px;
+.card-course::before {
+    content: "";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:1rem;
+    left:2rem;
+    width:1rem;
+    height:1rem;
 }
-
-
-.upper{
-    font-family: 'Poppins', sans-serif;
-    display: flex;
+.card-course::after {
+    content: "";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:1rem;
+    right:2rem;
+    width:1rem;
+    height:1rem;
+}
+.wire::before {
+    content: "";
     
+    position:absolute;
+    background-color:grey;
+    top:-10rem;
+    left:2.45rem;
+    width:0.2rem;
+    height:11.65rem;
+    z-index: 1;
 }
-.price{
-    padding-top: 18px;
-    padding-right: 4em;
-}
-
-
-
-
-.title {
-    font-size: 50px;
-    padding-right: 4em;
-}
-
-
-.subject {
-    font-size: 30px;
-    display: flex;
-    margin-top: 0.2em;
-    margin-bottom: 1em;
-}
-
-
-.rate {
-    color: red;
-    padding-right: 3em;
-}
-
-.ratings{
-    display: flex;
-}
-
-.summ{
-    margin-top: 2em;
+.wire::after {
+    content: "";
    
+    position:absolute;
+    background-color:grey;
+    top:-10rem;
+    right:2.45rem;
+    width:0.2rem;
+    height:11.65rem;
+    z-index: 1;
 }
 
-.preview{
-    margin-top: 2em;
-}
 
-.instructor{
-    margin-top: 4em;
-    display: flex
-}
-
-.space {
   
-    padding-right: 3em;
-}
-
-.subtitle{
-    display: flex;
-    margin-top: 2em;
-}
-

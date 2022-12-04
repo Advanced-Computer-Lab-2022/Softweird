@@ -1,7 +1,7 @@
 const express = require ('express')
 const router = express.Router()
 const Course =  require ('../Modules/Course')
-const {getCourses , getOneCourse , addOneCourse,countryCurrency} = require('../Controller/Courses')
+const {getCourses , getOneCourse} = require('../Controller/Courses')
 
 
 
@@ -15,9 +15,7 @@ router.get('/',getCourses)
 
 router.get('/:id',getOneCourse)
 
-//add new course
 
-router.post('/',addOneCourse)
 
 
 

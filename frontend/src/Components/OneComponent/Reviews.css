@@ -1,0 +1,124 @@
+
+  :root {
+    --red: #ef233c;
+    --darkred: #c00424;
+    --platinum: #e5e5e5;
+    --black: #2b2d42;
+    --white: #fff;
+    --thumb: #edf2f4;
+  }
+.card-m::before {
+    content: "";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:1rem;
+    left:2rem;
+    width:1rem;
+    height:1rem;
+}
+.card-m::after {
+    content: "";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:1rem;
+    right:2rem;
+    width:1rem;
+    height:1rem;
+}
+  .cards-m {
+    display: flex;
+    list-style: none;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    z-index: 1;
+    position: relative;
+  }
+ 
+  .card-m {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 100%;
+    padding: 20px;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 15%);
+    scroll-snap-align: start;
+    transition: all 0.2s;
+    margin-bottom: 1rem;
+  }
+  
+  .card-m:not(:last-child) {
+    margin-right: 10px;
+  }
+  
+  .card-m .card-title-m {
+    font-size: 20px;
+  }
+  
+  .card-m .card-content-m {
+    margin: 20px 0;
+    max-width: 85%;
+  }
+  .card-m:hover .card-link-m {
+    background: var(--darkred);
+  }
+  
+  .cards-m::-webkit-scrollbar {
+    height: 7px;
+  }
+  
+  .cards-m::-webkit-scrollbar-thumb,
+  .cards-m::-webkit-scrollbar-track {
+    border-radius: 100px;
+  }
+  
+  .cards-m::-webkit-scrollbar-thumb {
+    background: #EC6A37;
+  }
+  
+  .cards-m::-webkit-scrollbar-track {
+    background: var(--thumb);
+  }
+  
+  @media (min-width: 500px) {
+    .card-m {
+      flex-basis: calc(50% - 10px);
+    }
+  
+    .card-m:not(:last-child) {
+      margin-right: 20px;
+    }
+  }
+  
+  @media (min-width: 700px) {
+    .card-m {
+      flex-basis: calc(calc(100% / 3) - 20px);
+    }
+  
+    .card-m:not(:last-child) {
+      margin-right: 30px;
+    }
+    
+  
+  
+  @media (min-width: 1100px) {
+    .card-m {
+      flex-basis: calc(25% - 30px);
+    }
+  
+    .card-m:not(:last-child) {
+      margin-right: 40px;
+    }
+  }
+  }
+  .rod{
+  z-index: -1;
+  position: absolute;
+  width: 100%;
+  height: 0.5rem;
+  background: gray;
+    top:5.5rem;
+   
+  }
