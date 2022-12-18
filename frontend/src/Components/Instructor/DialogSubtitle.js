@@ -10,7 +10,8 @@ import { InstructorOneCourse } from '../../Context/InstructorOneCourse';
 import {  useContext ,useState} from 'react';
 import { styled,IconButton } from '@mui/material';
 import axios from 'axios';
-
+import ToastMess from '../OneComponent/ToastMess';
+import { Toast } from '../../Context/Toast';
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -39,7 +40,7 @@ function BootstrapDialogTitle(props) {
             position: 'absolute',
             right: 8,
             top: 8,
-            color:"#EC6A37"
+            color:"#c50d0d"
           }}
         >
           <CloseIcon />
@@ -56,12 +57,13 @@ BootstrapDialogTitle.propTypes = {
 
 function DialogSubtitle (){
 
-
-const {openAdd,setOpenAdd,courses,setCourse,setReload} = useContext(InstructorOneCourse)
+const {setOpenToast} = useContext(Toast)
+const {openAdd,setOpenAdd,courses,setCourse,setReload,setMessage,message} = useContext(InstructorOneCourse)
 const [subtitle,setSubtitle]=useState("")
 const[success,setSucess]=useState(true)
 const [error,setError] =useState(false)
 const [sameSubtitle,setSameSubtitle] = useState(false)
+
 const titles =[]
 const subtitles = courses.subtitles
 if(subtitles!==undefined){subtitles.map(subtitle => {
@@ -88,7 +90,7 @@ const handleSubmit = () => {
       setSucess(false)
 
     }
-     else if (window.confirm("Are you sure you want to add video?")){
+     else if (window.confirm("Are you sure you want to add this subtitle?")){
         setOpenAdd(false);
         setError(false)
         setSucess(true)
@@ -103,6 +105,8 @@ const handleSubmit = () => {
           cancelToken: new axios.CancelToken (c => cancel = c)
         }).then (res => {
             setCourse(res.data)
+            setMessage("Subtitle added successfully")
+            setOpenToast(true)
         }).catch(e=>{
             if(axios.isCancel(e)) return 
         })
@@ -122,10 +126,12 @@ function handleOpen(){
    setSameSubtitle(false)
 }
 return (
+  <>
     <BootstrapDialog
     onClose={handleOpen}
     aria-labelledby="customized-dialog-title"
     open={openAdd}
+    sx={{maxHeight:"100%"}}
   >
     
     <BootstrapDialogTitle id="customized-dialog-title" onClose={handleOpen}>
@@ -147,14 +153,16 @@ return (
       onChange={(e)=>{setSubtitle(e.target.value)
                         setError(false)
                         setSucess(true)}}/>
-     {sameSubtitle && <p style={{color:"red" , marginLeft:"1rem"}}>*This is subtitle already exists</p>}
+     {sameSubtitle && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.8rem",marginBottom:0}}>*This is subtitle already exists</p>}
     </DialogContent>
     <DialogActions>
-      <Button autoFocus onClick={handleSubmit} sx={{color:"#EC6A37"}}>
+      <Button autoFocus onClick={handleSubmit} sx={{color:"#c50d0d"}}>
         Add
       </Button>
     </DialogActions>
   </BootstrapDialog>
+  <ToastMess message={message} />
+  </>
 )
 }
 export default DialogSubtitle

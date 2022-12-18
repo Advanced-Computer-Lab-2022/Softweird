@@ -11,7 +11,8 @@ import {  useContext ,useState} from 'react';
 import { styled,IconButton,Checkbox,Stack,Typography } from '@mui/material';
 import './Dialog.css'
 import axios from 'axios'
-
+import ToastMess from '../OneComponent/ToastMess';
+import { Toast } from '../../Context/Toast';
 
 
 
@@ -42,7 +43,7 @@ function BootstrapDialogTitle(props) {
             position: 'absolute',
             right: 8,
             top: 8,
-            color:"#EC6A37"
+            color:"#c50d0d"
           }}
         >
           <CloseIcon />
@@ -60,8 +61,8 @@ const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
 function DialogVideo(){
 
-
-    const {openVideo,setOpenVideo,courses,setCourse,subtitleSelected,setReload,setLoading} = useContext(InstructorOneCourse)
+const {setOpenToast}=useContext(Toast)
+    const {openVideo,setOpenVideo,courses,setCourse,subtitleSelected,setReload,setLoading,setMessage,message} = useContext(InstructorOneCourse)
     const [videoTitle,setVideoTitle] = useState('')
     const [videoLink,setVideoLink] = useState('')
     const[invalidLink , setInvalidLink] = useState(false)
@@ -126,6 +127,8 @@ function DialogVideo(){
             headers : {'Content-Type' : 'application/json'},
             cancelToken: new axios.CancelToken (c => cancel = c)
           }).then (res => {
+            setMessage("Video added successfully")
+            setOpenToast(true)
               setCourse(res.data)
           }).catch(e=>{
               if(axios.isCancel(e)) return 
@@ -188,7 +191,8 @@ return (
     <BootstrapDialog
     onClose={handleCloseVideo2}
     aria-labelledby="customized-dialog-title"
-    open={openVideo} >
+    open={openVideo} 
+    sx={{maxHeight:"100%"}}>
         
     <BootstrapDialogTitle id="customized-dialog-title"onClose={handleCloseVideo2}>
       Add a new Video
@@ -209,7 +213,7 @@ return (
       onChange={handleText}
     
     />
-     {usedText && <p style={{color:"red" , marginLeft:"1rem"}}>*There is already a video with same name</p>}
+     {usedText && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.8rem",marginBottom:0}}>*There is already a video with same name</p>}
       <TextField
       required = {successLink}
       error = {errorLink}
@@ -223,8 +227,8 @@ return (
       margin="dense"
       autoFocus
       onChange={handleLink}/>
-    {invalidLink && <p style={{color:"red" , marginLeft:"1rem"}}>*Invalid Youtube link</p>}
-    {usedLink && <p style={{color:"red" , marginLeft:"1rem"}}>*There is already a youtubeLink with same name</p>}
+    {invalidLink && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.8rem",marginBottom:0}}>*Invalid Youtube link</p>}
+    {usedLink && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.8rem",marginBottom:0}}>*There is already a youtubeLink with same name</p>}
     <Stack direction="row" alignItems="center" marginTop="1rem">
       <Typography variant="p">Is Preview:</Typography>
     <Checkbox
@@ -240,11 +244,12 @@ return (
       </Stack>
     </DialogContent>
     <DialogActions>
-      <Button autoFocus onClick={handleSubmit} sx={{color:"#EC6A37"}}>
+      <Button autoFocus onClick={handleSubmit} sx={{color:"#c50d0d"}}>
         Add 
       </Button>
     </DialogActions>
   </BootstrapDialog>
+  <ToastMess message={message} />
   </>
 )
 }

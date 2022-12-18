@@ -6,7 +6,7 @@ const instructorSchema = new Schema ({
         type :mongoose.Types.ObjectId , ref : 'Users'
     },
     rating:{
-        rate:{type :mongoose.Types.Decimal128,default:5},
+        rate:{type :mongoose.Types.Decimal128,default:0},
         numberPeople:{type : Number, default:0}
     },
     

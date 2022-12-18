@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;1,600&display=swap');
+
+.solve::before {
+    content: "";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:1rem;
+    left:2rem;
+    width:1rem;
+    height:1rem;
+}
+.solve::after {
+    content: "";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:1rem;
+    right:2rem;
+    width:1rem;
+    height:1rem;
+}
+.wire1::before {
+    content: "";
+    
+    position:absolute;
+    background-color:grey;
+    top:-10rem;
+    left:1.75rem;
+    width:0.2rem;
+    height:11.65rem;
+    z-index: 1;
+}
+.wire1::after {
+    content: "";
+   
+    position:absolute;
+    background-color:grey;
+    top:-10rem;
+    right:1.75rem;
+    width:0.2rem;
+    height:11.65rem;
+    z-index: 1;
+}
+.fold::before{
+    content:"";
+    width:100%;
+    position:absolute;
+      box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 0%), 0px 6px 5px 0px rgb(0 0 0 / 12%), 0px 1px 10px 0px rgb(0 0 0 / 112%);
+    left:0;
+    height:1.1px
+}
+
+  

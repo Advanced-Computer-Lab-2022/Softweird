@@ -84,29 +84,103 @@ const RateCourse = async(req,res)=>{
      }
  }
 
-  const MyCourse = async (req,res)=>{
-     const {id}=req.params
-     const {courseId} = req.query
-     if(!mongoose.Types.ObjectId.isValid(id)){
-             return res.status(404).json({error})
-    }
-    
-     var userid = mongoose.Types.ObjectId(id)
-      if(!mongoose.Types.ObjectId.isValid(courseId)){
-             return res.status(404).json({error})
-    }
+ const MyCourse = async (req,res)=>{
+    const {id}=req.params
+    const {courseTitle} = req.query
+    if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(404).json({error})
+   }
+   
+    var userid = mongoose.Types.ObjectId(id)
     try{
-     var courseID = mongoose.Types.ObjectId(courseId)
-    const MyCourse =await corporate.findOne({user:userid,course:courseID}).populate('course')
-    res.status(200).send({AllCourses,MyCourse})
+   const course =await Course.findOne({title:courseTitle})
+   console.log(course._id)
+   const MyCourse =await corporate.findOne({user:userid,courseInfo:{$elemMatch:{course:course._id}}}).populate('courseInfo.course');
+   res.status(200).send(MyCourse)
+    }
+    catch(e){res.status(404).json(e)}
+}
+const VideoWatched = async (req,res) =>{
+    const {subtitleTitle,videoText,courseTitle}=req.body
+    const {id} =req.params
+      if(!mongoose.Types.ObjectId.isValid(id)){
+             return res.status(404).json({error:"error"})
+    }
+     var userID = mongoose.Types.ObjectId(id)
+     var c = await individual.findOne({user:userID,videoWatched:{$elemMatch:{course:courseTitle}}})
+     let coursenew
+   
+     try{
+     if(c==null){
+         
+         const course = {course:courseTitle , subtitlesWatched:[{
+             title:subtitleTitle,
+             video : [videoText]
+         }]}
+         
+         coursenew= await individual.findOneAndUpdate({user : userID},{$push:{videoWatched:course}},{returnOriginal: false})
+      
+         }
+    else{
+        var s =await individual.findOne({user : userID , videoWatched:{$elemMatch:{course:courseTitle}} ,
+            videoWatched:{$elemMatch:{subtitlesWatched:{$elemMatch:{title:subtitleTitle}}}}},{returnOriginal: false})
+        
+
+        if(s===null){
+            const sub = {
+                title:subtitleTitle,
+                video : [videoText]
+            }
+            
+            coursenew=await individual.findOneAndUpdate({user:userID ,videoWatched:{$elemMatch:{course:courseTitle}}},{
+                $push:{"videoWatched.$.subtitlesWatched":sub}},{returnOriginal: false})
+        }
+        var subtitle 
+         s.videoWatched.forEach(v=>{
+            if(v.course==courseTitle){subtitle=v.subtitlesWatched}
+        })
+        
+        var neededSub = subtitle.map(s=>{
+            if (s.title==subtitleTitle){
+                s.video.push(videoText)
+            }
+        })
+      
+        console.log(subtitle)
+        coursenew= await individual.findOneAndUpdate({user:userID,videoWatched:{$elemMatch:{course:courseTitle}}},
+            {$set:{'videoWatched.$.subtitlesWatched':subtitle}},{returnOriginal: false})
+     }
+     
+     res.status(200).json(coursenew)
     }
     catch(error){
         res.status(404).json(error)
     }
  }
+
+ const RegisterCourse = async (req,res) =>{
+    const {courseTitle} = req.body;
+    const {id} = req.params;
+    if(!mongoose.Types.ObjectId.isValid(id)){
+       return res.status(404).json({error:"error"})
+}
+try{
+      var userID = mongoose.Types.ObjectId(id)
+
+    const c = await Course.findOne({title:courseTitle})
+    if(c==null){
+        res.status(404).json({error:"no such course"})
+    }
+    const courses = {course:c._id};
+    const ind = await individual.findOneAndUpdate({user:userID},{$push:{courseInfo:courses}});
+    res.status(200).json(ind);
+   }
+   catch(error){res.status(404).json(error)};
+}
+
     
     
     
 module.exports = {
-    RateCourse, MyCourse, AllCourses
+    RateCourse, MyCourse, AllCourses, RegisterCourse, VideoWatched
 }

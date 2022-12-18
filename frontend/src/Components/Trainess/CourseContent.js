@@ -7,13 +7,25 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import { styled ,Paper,Stack} from "@mui/material";
 import TabContext from '@mui/lab/TabContext';
 import TabPanel from '@mui/lab/TabPanel';
 import Notes from "./Notes";
 import SubtitleContent from '../Trainess/SubtitleContent'
 import Star from "@mui/icons-material/Star";
+import {TraineeCourse} from '../../Context/TraineeCourse'
+import {useContext} from 'react'
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import Rating from '@mui/material/Rating';
+import ToastMess from '../OneComponent/ToastMess'
+import {Toast} from '../../Context/Toast'
+import axios from 'axios'
+import Loading from '../OneComponent/Loading'
+import {useAuth} from '../auth'
+
 const AntTabs = styled(Tabs)({
     borderBottom: '1px solid #e8e8e8',
     paddiingBottom:"1rem",
@@ -39,33 +51,146 @@ const AntTabs = styled(Tabs)({
     },
   }));
 
-
+var time= 0;
 
 function CourseContent (){
-
-
+  const {openToast,setOpenToast} = useContext(Toast)
+  const{myCourse,course,setMyCourse,setReload,CourseInfo,setCourseInfo,exam,setexam} = useContext(TraineeCourse)
     const [value, setValue] = useState('1');
+    const [valuerate, setRateValue] = useState(0);
+   
+    const[loading,setLoading] = useState(true)
+    const [rated,setRated]=useState(false)
+    const auth = useAuth()
+
+    useEffect(()=>{
+      setTimeout(function () {
+       
+      setRated(false)
+      setLoading(true)
+      myCourse.courseInfo.map(c=>{
+        if(c.course==course._id)
+        setCourseInfo(c)
+
+        
+      })
+      if(myCourse.exercises.length!=0){
+        myCourse.exercises.map(e =>{
+          if(e.course==course._id){
+            setexam(s => [... new Set([...s,e.subtitle])])
+           
+          }
+        })
+      }
+      setLoading(false)
+      console.log(CourseInfo)
+    }, time);
+    time = 0
+    },[myCourse])
 
     const handleChange = (event, newValue) => {
       setValue(newValue);
     };
+    function handleRateClick(event){
+      setAnchorEl(event.currentTarget);
+
+    }
+
+    function handleRate(event){
+      setRateValue(event.target.value)
+    }
+    function handleSendRate(){
+      let cancel
+      axios({
+     method:"PATCH",
+     url : `/Individual/course/rate/${auth.user.id}`,
+     data : {courseTitle:course.title,rating : parseInt(valuerate) },
+     headers : {'Content-Type' : 'application/json'},
+      cancelToken: new axios.CancelToken (c => cancel = c)
+  }).then (res => {
+    setMyCourse(res.data)
+    setRated(true)
+    setOpenToast(true)
+    setAnchorEl(null);
+    setReload(true)
+    time = 3000
+  }).catch(e=>{
+     if(axios.isCancel(e)) return 
+  })
+  return () => cancel ()
+  
+
+    }
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+
+    console.log(rated)
+
+  
     return (
+      <>
+      {!loading && 
         <AppBar className="navbar navbar-expand-lg navbar-light bg-light" 
         sx={{width:"30%" , left:{sm:"-1.5rem",md:"-1.5rem",lg:"-3.5rem",xl:"-11.5rem"} , 
         top:{sm:"-3rem",md:"-3rem",lg:"-4rem",xl:"-5rem"},marginBottom:"-30rem",
          paddingBottom:"3rem",position:"relative",zIndex:"initial",boxShadow:"none",
          color:"#000",display:{xs:"none",sm:"block",md:"block",lg:"block",xl:"block"}}}>
-     <Box sx={{ width: '100%', typography: 'body1' ,position:"sticky",top:"6rem",alignItems:"flex-start"}}>
+     <Box sx={{ width: '100%', typography: 'body1' }}>
        
        <Card sx={{ minWidth: 275 ,position:"relative",top:"-6px"}}>
       <CardContent sx={{pt:"5%"}}>
-          <Stack direction="row" alignItems={"center"} justifyContent={"space-between"}>
+          <Stack direction="row" alignItems={"center"} justifyContent={"space-between"} sx={{mt:"2%"}}>
         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
         48% progress
         </Typography>
-        <Button variant="outlined"sx={{backgroundColor:"darkgrey",color:"black",borderColor:"black"}} startIcon={<Star sx={{color:"#faaf00"}} />}>
+                  
+           {CourseInfo.rating===false && 
+           <>
+           <Button variant="outlined" startIcon={<Star sx={{color:"#faaf00"}} />}
+                      onClick={handleRateClick}  aria-controls={open ? 'demo-customized-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={open ? 'true' : undefined}
+                      variant="contained"
+                      disableElevation
+                      sx={{color:"#000" , border:"1px solid rgba(197, 13, 13, 0.6)" ,ml:"0.8rem",
+                      backgroundColor:"white",
+                      '&:hover':{
+                       border:"1px solid rgba(197, 13, 13)" ,
+                       backgroundColor:"white"
+                      }}} >
         Rate
-        </Button>
+      </Button>
+            <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+        sx={{display:"flex",p:"1rem"}}
+      >
+        <Stack direction="column" sx={{padding: "0.5rem 1rem"}}>
+        
+        <Typography variant="p" sx={{pt:"2%"}}> <Rating name="no-value" value={valuerate} onChange={handleRate}/></Typography>
+        <Typography variant="p" >   <Button
+     sx={{ color:"rgba(197, 13, 13, 0.8)" , position: "relative",
+     right: "-54%",
+     '&:hover':{
+      color:"rgba(197, 13, 13)" ,
+      backgroundColor:"white"
+     }}} onClick={handleSendRate}>
+        Done
+      </Button></Typography>
+      </Stack>
+ 
+      </Menu></>}
+
+
+        
         </Stack>
         </CardContent>
         </Card>
@@ -90,7 +215,10 @@ function CourseContent (){
         </TabPanel >
       </TabContext>
     </Box>
-        </AppBar>
+        </AppBar>}
+        {rated && <ToastMess message="Course rated successfully" />}
+        {loading && <Loading />}
+        </>
     )
 }
 export default CourseContent

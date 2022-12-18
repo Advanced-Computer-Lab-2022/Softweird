@@ -14,7 +14,9 @@ const Schema = mongoose.Schema
          certificate:{
             type:String,
             default:""
-        }}], 
+        },
+        fistOpen:{type:Boolean,default:true}
+    }], 
      exercises: [{course :{ type :mongoose.Types.ObjectId , ref : 'Course'}, subtitle:{ type:String} ,
                   answers:[{type:String, required :true}]}],
 

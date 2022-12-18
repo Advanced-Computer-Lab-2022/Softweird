@@ -11,11 +11,15 @@ import {  useContext ,useState} from 'react';
 import { styled,IconButton,Stack} from '@mui/material';
 import PercentIcon from '@mui/icons-material/Percent';
 import InputAdornment from '@mui/material/InputAdornment';
+import axios from 'axios'
+import ToastMess from '../OneComponent/ToastMess'
+import { Toast } from '../../Context/Toast';
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
     padding: theme.spacing(2),
+  
   },
   '& .MuiDialogActions-root': {
     padding: theme.spacing(1),
@@ -39,7 +43,7 @@ function BootstrapDialogTitle(props) {
             position: 'absolute',
             right: 8,
             top: 8,
-            color:"#EC6A37"
+            color:"#c50d0d"
           }}
         >
           <CloseIcon />
@@ -57,16 +61,24 @@ BootstrapDialogTitle.propTypes = {
 function DialogDisc (){
 
 
-const {openDisc,setOpenDisc} = useContext(InstructorOneCourse)
+const {openDisc,setOpenDisc,setCourse,courses,message ,setMessage} = useContext(InstructorOneCourse)
 const [promotion,setPromotion]=useState("")
 const [date,setDate] =useState("")
 const[success,setSucess]=useState(true)
 const [error,setError] =useState(false)
+const[datesuccess,setDateSucess]=useState(true)
+const [dateerror,setDateError] =useState(false)
 const [numberError , setNumberError] = useState(false)
 const [numberMax , setNumberMax] = useState(false)
-const [dateError , setDateError] = useState(false)
+const {setOpenToast} = useContext(Toast)
+
 const handleClose = () => {
   const singleSpaces = promotion.replace(/  +/g, " ");
+  if(date==""){
+    setDateError(true)
+    setDateSucess(false)
+    
+  }
   if(singleSpaces==" " || singleSpaces==""){
     setSucess(false)
     setError(true)
@@ -84,12 +96,41 @@ const handleClose = () => {
 
   }
   else if (window.confirm("Are you sure you want to set promotion?")){
+    setDateError(false)
+    setDateSucess(true)
         setOpenDisc(false);
         setError(false)
         setSucess(true)
+        setSucess(true)
+    setError(false)
+    setNumberMax(false)
+    setNumberError(false)
+        let cancel
+        axios({
+          method:"PATCH",
+          url : '/Instructor/promoteCourse',
+          data : {courseTitle:courses.title,promotion:promotion,date:date},
+          headers : {'Content-Type' : 'application/json'},
+          cancelToken: new axios.CancelToken (c => cancel = c)
+        }).then (res => {
+            setCourse(res.data)
+            setMessage("Promotion is set Successfully")
+            setOpenToast(true)
+            
+        }).catch(e=>{
+            if(axios.isCancel(e)) return 
+        })
+        return () => cancel ()
+        
      }
   }
+ 
+
+
+     
 function handleCloseAll () {
+  setDateError(false)
+  setDateSucess(true)
     setError(false)
     setSucess(true)
     setPromotion("")
@@ -107,15 +148,19 @@ function changeProm (e){
 }
 function changeDate(e){
   setDate(e.target.value)
-  console.log(e.target.value)
+  setDateError(false)
+  setDateSucess(true)
+   
 }
 
 
 return (
+  <>
     <BootstrapDialog
     onClose={handleCloseAll}
     aria-labelledby="customized-dialog-title"
-    open={openDisc}>
+    open={openDisc}
+    sx={{maxHeight:"100%"}}>
     
     <BootstrapDialogTitle id="customized-dialog-title" onClose={handleCloseAll}>
       Apply a Promotion
@@ -136,9 +181,11 @@ return (
       margin="dense"
       autoFocus
       onChange={changeProm}/>
-       {numberError && <p style={{color:"red" , marginLeft:"1rem"}}>*Should be a number</p>}
-       {numberMax && <p style={{color:"red" , marginLeft:"1rem"}}>*Maximum promotion is 100%</p>}
+       {numberError && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.8rem",marginBottom:0}}>*Should be a number</p>}
+       {numberMax && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.8rem",marginBottom:0}}>*Maximum promotion is 100%</p>}
       <TextField
+      required = {datesuccess}
+      error = {dateerror}
         id="date"
         label="Expiry Date *"
         type="date"
@@ -152,18 +199,20 @@ return (
         }}
         inputProps={{min:new Date().toISOString().slice(0,10)}}
         onChange ={changeDate}
-        sx={{width:"70%",textAlign:"center",fontStyle:"italic",mt:"7%",mb:"4%"}}
+        sx={{width:"70%",textAlign:"center",fontStyle:"italic",mt:"5%",mb:"4%"}}
       />
      
 
       
     </DialogContent>
     <DialogActions>
-      <Button autoFocus onClick={handleClose} sx={{color:"#EC6A37"}}>
+      <Button autoFocus onClick={handleClose} sx={{color:"#c50d0d"}}>
         Add
       </Button>
     </DialogActions>
   </BootstrapDialog>
+  <ToastMess message={message}/>
+  </>
 )
 };
 export default DialogDisc

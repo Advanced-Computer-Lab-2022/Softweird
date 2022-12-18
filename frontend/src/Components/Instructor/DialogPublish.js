@@ -10,6 +10,8 @@ import { InstructorOneCourse } from '../../Context/InstructorOneCourse';
 import {  useContext ,useState} from 'react';
 import { styled,IconButton, DialogContentText } from '@mui/material';
 import axios from 'axios'
+import ToastMess from '../OneComponent/ToastMess'
+import {Toast} from '../../Context/Toast'
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -38,7 +40,7 @@ function BootstrapDialogTitle(props) {
             position: 'absolute',
             right: 8,
             top: 8,
-            color:"#EC6A37"
+            color:"#c50d0d"
           }}
         >
           <CloseIcon />
@@ -56,8 +58,8 @@ BootstrapDialogTitle.propTypes = {
 function DialogPublish ({course}){
 
 const title = course.title
-const {openPublish,setOpenPublish,setReload,setCourse} = useContext(InstructorOneCourse)
-
+const {openPublish,setOpenPublish,setReload,setCourse,setMessage,message} = useContext(InstructorOneCourse)
+const {openToast,setOpenToast}=useContext(Toast)
 const handleClose = () => {
   setOpenPublish(false)
 };
@@ -72,6 +74,8 @@ const handlePublish =() => {
     headers : {'Content-Type' : 'application/json'},
     cancelToken: new axios.CancelToken (c => cancel = c)
   }).then (res => {
+    setMessage("Course is published successfully")
+    setOpenToast(true)
       setCourse(res.data)
   }).catch(e=>{
       if(axios.isCancel(e)) return 
@@ -82,6 +86,7 @@ const handlePublish =() => {
 
 
 return (
+  <>
     <BootstrapDialog
     onClose={()=>{setOpenPublish(false)}}
     aria-labelledby="customized-dialog-title"
@@ -97,14 +102,16 @@ return (
    </DialogContentText>
     </DialogContent>
     <DialogActions>
-      <Button autoFocus onClick={handlePublish} sx={{color:"#EC6A37"}}>
+      <Button autoFocus onClick={handlePublish} sx={{color:"#c50d0d"}}>
         Agree & Publish
       </Button>
-      <Button autoFocus onClick={handleClose} sx={{color:"#EC6A37"}}>
+      <Button autoFocus onClick={handleClose} sx={{color:"#c50d0d"}}>
         Close
       </Button>
     </DialogActions>
   </BootstrapDialog>
+  <ToastMess message={message} />
+  </>
 )
 }
 export default DialogPublish

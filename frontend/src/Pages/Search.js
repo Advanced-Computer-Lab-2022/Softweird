@@ -24,7 +24,7 @@ const StyledBox = styled(Box)({
      const [rate , setRate] = useState([])
      const show = true
     return (
-        <Box height="100%">
+        <Box >
          <FilterSearch.Provider value={{subject , setSubject ,price , setPrice ,rate , setRate}}>
          <Stack  direction="row" position={"relative"} >
          <Filter show={show} />

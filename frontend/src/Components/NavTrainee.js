@@ -17,8 +17,12 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import WalletIcon from '@mui/icons-material/Wallet';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'
-
+import axios from 'axios'
+import {useAuth} from './auth'
+import {useNavigate} from 'react-router-dom'
 function NavTrainee () {
+  const auth =useAuth()
+  const navigate = useNavigate()
 const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -27,6 +31,37 @@ const [anchorEl, setAnchorEl] = React.useState(null);
   const handleClose = () => {
     setAnchorEl(null);
   }
+
+  const handleSubmit = evt => {
+    evt.preventDefault();
+
+        let cancel
+        axios({
+            method:"GET",
+            url : '/sign/logout',
+            headers : {'Content-Type' : 'application/json'},
+            cancelToken: new axios.CancelToken (c => cancel = c)
+        }).then (res => {
+           
+           const response = res.data
+           
+           if (response==="Logout Successfull"){
+         
+            auth.logout()
+            navigate('/')
+           
+           }
+        
+        }).catch(e=>{
+        
+            console.log("An ERROR OCCURED")
+            
+            if(axios.isCancel(e)) return 
+        
+        })
+        return () => cancel ()
+  
+}
     return (
        <>
        
@@ -38,10 +73,10 @@ const [anchorEl, setAnchorEl] = React.useState(null);
             aria-controls={open ? 'account-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
-            startIcon = {<Avatar sx={{ width: 32, height: 32 }}>H</Avatar>}
+            startIcon = {<Avatar sx={{ width: 32, height: 32 }}>{auth.user.name.slice(0,1)}</Avatar>}
             endIcon = {<KeyboardArrowDownIcon />}
-            sx= {{color :"black" }}>
-            Hala Medhat
+            sx= {{color :"black",textTransfrom:"none",'&:hover':{boxShadow: "3px 2px 4px 0px rgb(0 0 0 / 7%)"}}}>
+            {auth.user.name}
           </Button>
         </Tooltip>
       <Menu
@@ -98,8 +133,8 @@ const [anchorEl, setAnchorEl] = React.useState(null);
           Report a problem
         </MenuItem>
        
-        <MenuItem>
-          <ListItemIcon>
+        <MenuItem onClick={handleSubmit}>
+          <ListItemIcon >
             <Logout fontSize="small" />
           </ListItemIcon>
           Logout

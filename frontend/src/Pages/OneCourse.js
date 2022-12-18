@@ -22,26 +22,59 @@ import Avatar from '@mui/material/Avatar';
 import Loading from "../Components/OneComponent/Loading";
 import Reviews from "../Components/OneComponent/Reviews";
 import {OneCourseResult} from "../Context/OneCourseResult";
+import {Routes, Route, useNavigate} from 'react-router-dom';
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import HourglassTopOutlinedIcon from '@mui/icons-material/HourglassTopOutlined';
+import {useAuth} from '../Components/auth';
+import DialogPay from "../Components/Trainess/DialogPay";
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import VerifiedIcon from '@mui/icons-material/Verified';
+import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
+
 
 function OneCourse (){
-    const params = new URLSearchParams(window.location.search);
-    const Onecourse = params.get('course');
+    const{coursetitle} = useParams(); 
+    const courseTitle = (coursetitle == undefined? "" : coursetitle)
+    const navigate = useNavigate();
     const [course, setCourse]= useState([])
     const [instructor, setInstructor] = useState()
     const[loading , setLoading]=useState(true)
     const {curr , setCurr,rate,setRate} = useContext(Currency)
     const [open ,setOpen] = useState(false)
+    const auth = useAuth();
+    const [openPay,setOpenPay] = useState(false)
+    const [myCourse,setMyCourse]=useState("")
+
+const handleRegister =() => {
+    if(!auth.user){
+        navigate("/login");
+    }
+    if(auth.user.type=="individual"){
+        setOpenPay(true);
+    }
+
+}
     useEffect(() =>{
         setLoading(true)
         let cancel
          axios({
              method:"GET",
-             url : `/Courses/${Onecourse}`,
+             url : `/Courses/${courseTitle}`,
+             params:{userId:(auth.user!=undefined?auth.user.id:undefined),
+                type:(auth.user ?auth.user.type:undefined)},
              cancelToken: new axios.CancelToken (c => cancel = c)
          }).then (res => {
+             
+             if(res.data.error === 'no such course')
+             {
+                navigate("/Courses")
+             }
+             else{
              setLoading(false)
             setCourse(res.data.course)
             setInstructor(res.data.instructor[0])
+            setMyCourse(res.data.myCourse)
+             }
 
          }).catch(e=>{
              if(axios.isCancel(e)) return 
@@ -62,11 +95,37 @@ function OneCourse (){
         <Typography sx={{ fontSize: "2.5rem" }} >
           {course.title}
         </Typography>
+        {auth.user ?
+    
+    <>
+    {/*  For Registered Students Corporates&individual*/}
+    {(auth.user.type=="individual" || auth.user.type=="corporate") ?
+    <>
+    {myCourse.courseInfo.some(c=>c.course==course._id && c.certificate =="")&&
+    <Stack position="absolute" right="15%" top="13%" direction="row" gap={0.5}>
+    <TaskAltIcon fontSize={"1rem"}sx={{color:"green"}}/>
+    <Typography  fontSize={"0.8rem"} color={"grey"}> Registered</Typography>
+    </Stack> }
+    {/*  For certified Students individual and Corporate*/}
+    {myCourse.courseInfo.some(c=>c.course==course._id && c.certificate !="")&&
+     <Stack position="absolute" right="15%" top="13%" direction="row" gap={0.5}>
+    <VerifiedIcon fontSize={"1rem"}sx={{color:"#faaf00"}}/>
+    <Typography  fontSize={"0.8rem"} color={"grey"}> Certified</Typography>
+    </Stack> }
+    </> 
+    :<></>}
+     {/* Instructor Courses*/}
+    {auth.user.type=="instructor"&& course.instructor_id==auth.user.id ?
+     <Stack position="absolute" right="15%" top="13%" direction="row" gap={0.5}>
+     <CollectionsBookmarkIcon fontSize={"1rem"}sx={{color:"green"}}/>
+    <Typography  fontSize={"0.8rem"} color={"grey"}> Mine</Typography>
+    </Stack> :<></>}
+    </>:<></>}
         <Typography variant="h6" color="text.secondary" component="div" gutterBottom>
          {course.subject}
         </Typography>
         
-        <Typography variant="P">
+        <Typography variant="P" fontSize={"0.8rem"}>
         {course.summary}
         </Typography>
         <Stack direction = "row" gap={10}>
@@ -91,8 +150,11 @@ function OneCourse (){
        <Typography variant="p" sx={{fontSize:"0.87rem"}} >Currently Enrolled Students:  </Typography>
         <Typography variant="p" sx={{fontSize:"0.87rem"}} >{course.enrolledStudents}</Typography>
         </Stack> 
+        {(course.promotionInst.set==true|| course.promotionAdmin.set==true) &&
+         <div className="stamp is-nope"><p style={{margin:"8% 0"}}>{(parseFloat(course.promotionInst.value.$numberDecimal)
+         +parseFloat(course.promotionAdmin.value.$numberDecimal))}% Sale</p> </div>}
 
-        <Stack direction="row" gap={0.5} paddingTop={"2rem"} >
+        {/* <Stack direction="row" gap={0.5} paddingTop={"2rem"} >
        
 
        <Typography variant="p" sx={{fontSize:"0.87rem" , fontWeight:"bolder"}} >Price:  </Typography>
@@ -101,22 +163,139 @@ function OneCourse (){
         <Typography sx={{fontSize:"0.87rem",fontWeight:"bolder"}} >{course.price * rate} {curr}</Typography>}
 
         
-        </Stack>  
-
+        </Stack>   */}
+      {course.price!="Free" &&  <Stack direction="row" paddingTop={"2rem"} marginBottom={"2rem"} alignItems={"center"}>
+        <Stack direction="row" gap={"8px"}  paddingRight={"10%"} alignItems={"center"} >
+       <Typography sx={{fontSize:"0.87rem" }} variant='h6' >Price of Course: </Typography>
+    
+    
+      <Stack direction="row" alignItems={"center"} gap={2}>
+      <Typography  sx={{fontSize:"0.87rem",fontWeight:"bolder",position:"relative"}} >{course.price*rate}{curr}
+        
+    {(course.promotionInst.set==true|| course.promotionAdmin.set==true) &&
+    <svg xmlns="http://www.w3.org/2000/svg" width="47" height="47" fill="currentColor" class="bi bi-slash-lg" viewBox="0 0 16 16" style={{ color: "#c50d0d",position: "absolute",
+    left:"-19%",
+    fontSize: "2.5rem",
+    top: "-60%",
+    transform:" rotate(10deg)",}}>
+  <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
+</svg>}
+     </Typography>
+    {(course.promotionInst.set || course.promotionAdmin.set )&& <ArrowRightAltIcon sx={{fontWeight:"bold" ,fontSize:"2rem"}}/>}
+     {(course.promotionInst.set || course.promotionAdmin.set) && <Typography  sx={{fontSize:"0.87rem",fontWeight:"bolder",position:"relative"}} >
+     {((100-(parseFloat(course.promotionInst.value.$numberDecimal)
+  +parseFloat(course.promotionAdmin.value.$numberDecimal)))/100)*course.price*rate}{curr}</Typography>}
+     </Stack>
+        </Stack>
+        </Stack>}
+        {course.price=="Free" &&  <Stack direction="row" paddingTop={"2rem"} marginBottom={"2rem"} alignItems={"center"}>
+        <Stack direction="row" gap={"8px"}  paddingRight={"10%"} alignItems={"center"} >
+       <Typography sx={{fontSize:"0.87rem" }} variant='h6' >Price of Course: </Typography>
+    
+    
+      <Stack direction="row" alignItems={"center"} gap={2}>
+      <Typography  sx={{fontSize:"0.87rem",fontWeight:"bolder",position:"relative"}} > Free</Typography>
+        </Stack></Stack></Stack>}
       </CardContent>
       <CardActions>
       <Stack direction="row" gap={3} paddingTop={"1rem"} alignItems="center">
       
-      <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
-                boxShadow:"none",
-                "&:hover":{
-                    cursor: "pointer",
-                    color:"#bbd2b1",
-                    backgroundColor:"#fff"
+      {auth.user ?
+    
+    <>
+    {/*  For Registered Students Corporates&individual*/}
+    {(auth.user.type=="individual" || auth.user.type=="corporate") ?
+    <>
+    {myCourse.courseInfo.some(c=>c.course==course._id && c.certificate =="")&&
+  
+      <>
+          <HourglassTopOutlinedIcon sx={{color:"#c50d0d",position:"absolute"}} />
+    <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"2rem",
+    boxShadow:"none",
+    "&:hover":{
+        cursor: "pointer",
+        color:"#bbd2b1",
+        backgroundColor:"#fff"
 
-                    }}}>Study Now</Button>
-      <ArrowForwardIosIcon/>
+        }}}
+        onClick={() => window.location.href=`/MyCourses/${course.title}`} >Complete My Course</Button>
+        <ArrowForwardIosIcon/>
       <SchoolIcon />
+    
+    
+      </>
+    }
+    {/*  For certified Students individual and Corporate*/}
+    {myCourse.courseInfo.some(c=>c.course==course._id && c.certificate !="")&&
+     
+     <>
+     <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
+     boxShadow:"none",
+     "&:hover":{
+         cursor: "pointer",
+         color:"#bbd2b1",
+         backgroundColor:"#fff"
+ 
+         }}}
+         onClick={() => window.location.href=`/MyCourses/${course.title}`}>View My Course</Button>
+         <ArrowForwardIosIcon/>
+       <SchoolIcon sx={{color:"#faaf00"}}/>
+       </>
+     }
+    {!(myCourse.courseInfo.some(c=>c.course==course._id ))&&
+     
+     <>
+      <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
+    boxShadow:"none",
+    "&:hover":{
+        cursor: "pointer",
+        color:"#bbd2b1",
+        backgroundColor:"#fff"
+
+        }}}
+        onClick={handleRegister}>Study Now</Button>
+        <ArrowForwardIosIcon/>
+      <SchoolIcon />
+       </>
+     }
+    </> 
+    :<>  </>}
+     {/* Instructor Courses*/}
+    {auth.user.type=="instructor" && course.instructor_id==auth.user.id ?
+    
+      <>
+    <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
+    boxShadow:"none",
+    "&:hover":{
+        cursor: "pointer",
+        color:"#bbd2b1",
+        backgroundColor:"#fff"
+
+        }}}
+        onClick={() => window.location.href=`/MyCourses/${course.title}`}>View My Course</Button>
+  
+      </>
+    :<></>}
+    </>:
+    <>
+    <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
+    boxShadow:"none",
+    "&:hover":{
+        cursor: "pointer",
+        color:"#bbd2b1",
+        backgroundColor:"#fff"
+
+        }}}
+        onClick={handleRegister}>Study Now</Button>
+        <ArrowForwardIosIcon/>
+      <SchoolIcon />
+      </>}
+
+
+
+
+      
+      
       </Stack>
       </CardActions>
       </Card>
@@ -137,7 +316,7 @@ function OneCourse (){
           </Stack>
           <Divider orientation="vertical" variant="middle" flexItem sx={{border:"0.5px #bbd2b1 solid"}} />
           <Stack flex ={3} gap={2} >
-          <Typography> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</Typography>
+          <Typography variant="p"> {instructor.biography}</Typography>
           </Stack>
       </Stack>
       <Reviews/>
@@ -145,10 +324,12 @@ function OneCourse (){
      < AutoStoriesIcon sx= {{color:"#bbd2b1"}}/>
       <Typography variant={"h5"}>Begin Your Study Path</Typography>
       </Stack>
-      
+    
       <Subtitle/>
+     
      </Box>}
      {loading && <Loading />}
+     <DialogPay openPay={openPay} setOpenPay={setOpenPay} course={course}/>
      </OneCourseResult.Provider>
     )
 }

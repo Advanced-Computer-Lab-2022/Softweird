@@ -17,6 +17,10 @@ import NavCorporate from './NavCorporate'
 import NavInstructor from "./NavInstructor"
 import Logo from '../Images/Logo.png'
 import LogoShort from '../Images/LogoShort.png'
+import {useAuth} from '../Components/auth'
+import {NavLink} from 'react-router-dom'
+import { Route } from 'react-router-dom';
+import {Outlet,Navigate} from 'react-router-dom'
 
 const StyledToolbar = styled(Toolbar)({
     display:"flex",
@@ -43,51 +47,62 @@ const Icons = styled (Box)({
 
 
 })
-function Navbar () {
 
-    return(
+
+const Navbar= ({children})=> {
+    const auth= useAuth() 
+ 
+return (
 <>
-        <AppBar position="sticky" sx={{padding:{sm:"0.9rem",xs:"0.5rem"},backgroundColor:"#EC6A37",boxShadow:"none",mb:"2rem",pb:"1rem"}}>
+        <AppBar position="sticky" sx={{padding:{sm:"0.9rem",xs:"0.5rem"},backgroundColor:"#c50d0d",boxShadow:"none",mb:"2rem",pb:"1rem"}}>
             <Container>
             <StyledToolbar>
-                <Box sx={{ width:"10%" , display:{md:"block" , sm:"none",xs:"none"}}}>
-                    <img  src={Logo} style={{width:"190%"}} />
+               <Box sx={{ width:"10%" , display:{md:"block" , sm:"none",xs:"none"}}}>
+               <NavLink to='/'>  <img  src={Logo} style={{width:"190%"}} />
+               </NavLink> 
                 </Box>
+                
                 <Box sx={{ display:{md:"none" , sm:"block",xs:"block"}}}>
-                    <img  src={LogoShort} style={{width:"45%"}}/>
+                  <NavLink to='/'><img  src={LogoShort} style={{width:"45%"}}/></NavLink>  
                 </Box>
                <Searchbar/>
                <Stack direction = "row"  gap={2}>
                  <Icons sx={{ display:{sm:"flex",xs:"none"}}}>
                  <Box sx={{maxWidth:"10vw"}}><CountryDropBox /></Box>
+                {!auth.user && 
+                 <NavLink to='/login' style={{textDecoration:"none"}}>
                  <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
-                boxShadow:"none",
+                boxShadow:"none", textDecoration:"none",
                 "&:hover":{
                     cursor: "pointer",
                     color:"#bbd2b1",
                     backgroundColor:"#fff"
 
                     }}}>LOGIN</Button>
+                    </NavLink>}
+                    
               
                  </Icons>
-                 {/* <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor:"black"}}/> */}
+                {auth.user && 
+                <>
+                <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor:"black"}}/> 
+                {auth.user.type=='individual' && <NavTrainee/>}
+                {auth.user.type=='instructor' && <NavCorporate /> }
+                {auth.user.type=='corporate' && <NavInstructor/> }
+                </>}
                 
-                 {/* <NavTrainee/> */}
-                 {/* <NavCorporate /> */}
-                 {/* <NavInstructor/> */}
                  </Stack>
             </StyledToolbar>
             </Container>
            </AppBar>
+           <Container sx={{mt:"5%",pb:"3rem"}} >
+            <Outlet />
+            </Container>
           
-          
+         
            </>
-        // <div >
-
-        // <CountryDropBox />
-        // <Searchbar />
-        
-        // </div>
-    )
+)   
+    
 }
+
 export default Navbar

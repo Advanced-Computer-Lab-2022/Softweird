@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 const { create } = require('../Modules/Course')
 const Course =  require ('../Modules/Course')
+const Individual = require ('../Modules/IndividualTrainee')
+const Corporate = require ('../Modules/CorporateTrainee')
+
 
 const creates = async() =>{
     await Course.create({title:"title1",instructor:"inst1",subject:"subj1"})
@@ -37,13 +40,38 @@ const search = async (req , res) => {
 
 const searchAll = async (req , res) => {
     const {input} = req.query
+    const {type,id}=req.query
+  
    
     try {
+        var myCourse = null
+        
         const course = await Course.find({$or:[{title : {$regex: input,$options: 'i' }},
         {subject :  { $regex: input ,$options: 'i'}},
         {instructor: { $regex: input ,$options: 'i'} }]}).sort({'rating' :"desc"})
-        return res.status(200).send(course)
+        
+        if(type == "individual"){
+            if(!mongoose.Types.ObjectId.isValid(id)){
+                return res.status(404).json({error})
+       }
+       
+        var userid = mongoose.Types.ObjectId(id)
+        
+             myCourse = await Individual.findOne({user:userid})
+
         }
+        if(type == "corporate"){
+            if(!mongoose.Types.ObjectId.isValid(id)){
+                return res.status(404).json({error})
+       }
+       
+        var userid = mongoose.Types.ObjectId(id)
+             myCourse = await Corporate.findOne({user:userid}).populate("company")
+
+        }
+        
+        return res.status(200).send({course,myCourse})
+    }
         
 catch (error){
     res.status(404).send('')

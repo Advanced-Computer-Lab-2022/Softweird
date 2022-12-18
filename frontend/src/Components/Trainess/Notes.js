@@ -12,16 +12,11 @@ import { IconButton, TextareaAutosize,Button, containerClasses } from '@mui/mate
 import { Container ,Stack,Tooltip} from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useState } from 'react';
-import { createPdfFromHtml } from "./Logic";
-import { createGlobalStyle } from "styled-components";
-import { Link } from "react-router-dom";
-import * as htmlToImage from 'html-to-image';
-import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
-import { jsPDF } from "jspdf";
-// import {html2canvas} from 'app/ext'                                   
-
-
-
+import {useContext} from 'react'
+import {TraineeCourse} from '../../Context/TraineeCourse'    
+import SaveIcon from '@mui/icons-material/Save';                              
+import axios from 'axios'
+import jsPDF from 'jspdf'
 
 
 
@@ -30,30 +25,65 @@ import { jsPDF } from "jspdf";
 
 
 function Notes (){
-    const [newNotes , setNewNotes] = useState("")
-    const [notes , setNotes] = useState("")
-     function handleDownload (){
-    //     const input = newNotes;
-    //     html2canvas(input)
-    //       .then((canvas) => {
-    //         const imgData = canvas.toDataURL('image/png');
-    //         const pdf = new jsPDF();
-    //         pdf.addImage(imgData, 'JPEG', 0, 0);
-    //         // pdf.output('dataurlnewwindow');
-    //         pdf.save("download.pdf");
-    //       });
-      }
+  const {course,video,notes,setMyCourse,setReload} = useContext(TraineeCourse)
+  const [newNotes , setNewNotes] = useState('')
+   console.log(notes)
+  React.useEffect(()=>{
+    notes.map(n=>{
+      if(n.videoTitle==video)
+         setNewNotes(n.notes)
+    })
+  },[])
 
-    
+
     function handleWriting (e){
         setNewNotes(e.target.value);
-        console.log(newNotes)
     }
+
+    function handleSave(e){
+      let cancel
+      axios({
+          method:"PATCH",
+          url : "/Individual/notes/638a211fdae5256326254c29",
+          data : {videoText:video,courseTitle:course.title,notes:newNotes },
+          headers : {'Content-Type' : 'application/json'},
+          cancelToken: new axios.CancelToken (c => cancel = c)
+      }).then (res => {
+          setReload(true)
+          setMyCourse(res.data)
+         
+      }).catch(e=>{
+          if(axios.isCancel(e)) return 
+      })
+      return () => cancel ()
+    }
+
+async function handleDownload(){
+
+  var doc = new jsPDF('portrait','px','a4','false')
+  var sub ;
+  course.subtitles.map(s=>{
+    s.video.map(v=>{
+      if(v.text==video)
+      sub=s.title
+    })
+  })
+  doc.setFont('Helvertica','bold')
+  doc.stroke()
+  doc.setTextColor(255,0,0)
+  doc.text(40,60,`${course.title} -> ${sub} -> ${video}`)
+  doc.setTextColor(0,0,0)
+  doc.setFont('Helvertica')
+  doc.text(40,100,newNotes)
+  doc.save(`${course.title}.${video}.notes.pdf`)
+    
+}
+
     return(
         <>
         <div className="card" style={{marginBottom:"2rem"}}>
   <div className="card-header" style={{backgroundColor:"#bbd2b1"}} >
-  <Stack direction="row" gap={"4vw"}
+  <Stack direction="row" 
         sx={{
           display: 'flex',
           alignItems: 'flex-start',
@@ -83,20 +113,25 @@ function Notes (){
         <Divider orientation="vertical" variant="middle" flexItem style = {{backgroundColor:"#EC6A37"}}/>
         </Box>
        
-        <Box>
+        <Stack direction="row">
+        <Tooltip title="Save for Later">
+  <IconButton sx={{paddingRight:0}} onClick={handleSave}>
+    <SaveIcon />
+  </IconButton>
+</Tooltip>
         <Tooltip title="Download as PDF">
-  <IconButton onClick={handleDownload}>
+  <IconButton sx={{paddingLeft:0}} onClick={handleDownload}>
     <DownloadIcon />
   </IconButton>
 </Tooltip>
-        </Box>
+
+        </Stack>
       </Stack>
       
   </div>
   <div className="card-body">
     <TextareaAutosize onChange={handleWriting}
-  defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-      ut labore et dolore magna aliqua."
+  defaultValue={newNotes}
   style={{ width: "100%" , minHeight:"58vh",maxHeight:"80vh",overflow:"auto" ,border:"none"}}
 
 />

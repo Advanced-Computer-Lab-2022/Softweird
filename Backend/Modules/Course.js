@@ -33,7 +33,7 @@ const courseSchema = new Schema (
         },
         rating : {
             type : mongoose.Types.Decimal128 , 
-            default : 5 ,
+            default : 0 ,
         },
         numberRating : {
             type : Number ,
@@ -79,6 +79,10 @@ const courseSchema = new Schema (
 
     }],
     Finished : {
+        type:Boolean,
+        default:false
+    },
+    Deleted :{
         type:Boolean,
         default:false
     }

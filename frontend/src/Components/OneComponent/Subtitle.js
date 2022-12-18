@@ -109,15 +109,17 @@ function Subtitle (props) {
           </Stack>
           <Divider  component="Typography" />
           </div>})}
-{/* 
-          // <Stack direction="row" justifyContent={"space-between"} marginLeft={"1rem"} position="relative">
-          //   <Typography variant="p">
+
+
+          {subtitle.exercise.length!=0 &&
+           <Stack direction="row" justifyContent={"space-between"} marginLeft={"1rem"} position="relative">
+            <Typography variant="p">
           
-          // <Button variant="text" position="relative"  sx={{color:"black !important"}} disabled>
-          // <QuizIcon sx={{color:"#bbd2b1",mr:"1rem"}} id={index}/>Quiz
-          // </Button> 
-          // </Typography>
-          // </Stack> */}
+           <Button variant="text" position="relative"  sx={{color:"black !important"}} disabled>
+           <QuizIcon sx={{color:"#bbd2b1",mr:"1rem"}} id={index}/>Quiz
+          </Button> 
+           </Typography>
+          </Stack>}
           
           </Stack>
         </AccordionDetails>

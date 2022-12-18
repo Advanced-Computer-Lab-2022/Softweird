@@ -14,7 +14,7 @@ const nodemailer = require('nodemailer')
 var smtpTransport = require('nodemailer-smtp-transport');
 const { getVideoDurationInSeconds } = require('get-video-duration');
 const VideoLength = require('video-length');
-
+const Sign= require('./Routes/Sign');
 //App variables
 const app = express();
 
@@ -79,6 +79,7 @@ app.use('/Instructor',Instructor)
 app.use('/Individual',IndividualTrainee)
 app.use('/Corporate',CorporateTrainee)
 app.use('/adminAdd',AdminAdd)
+app.use('/sign',Sign)
 
 
 

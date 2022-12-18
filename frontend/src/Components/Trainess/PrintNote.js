@@ -1,43 +1,30 @@
+// import React from 'react';
+// import { Page, Text, View, Document, StyleSheet } from 'react-pdf/renderer';
 
-import React from "react";
-import { createGlobalStyle } from "styled-components";
-import { Link } from "react-router-dom";
-import { createPdfFromHtml } from "./Logic";
+// // Create styles
+// const styles = StyleSheet.create({
+//   page: {
+//     flexDirection: 'row',
+//     backgroundColor: '#E4E4E4'
+//   },
+//   section: {
+//     margin: 10,
+//     padding: 10,
+//     flexGrow: 1
+//   }
+// });
 
-
-export class PrintPage extends React.Component {
-  printContent;
-  render() {
-    return (
-      <>
-        <Global />
-        <button onClick={this.handleClick}>print</button>
-        <div id="print" className="A4">
-          <Sheet />
-          <div style={{ position: "fixed", top: "200vh" }}>
-            <div
-              ref={el => {
-                this.printContent = el;
-              }}
-            >
-              <Sheet />
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  handleClick = () => {
-    createPdfFromHtml(this.printContent);
-  };
-}
-
-const Sheet = () => {
-  return (
-    <div className="sheet padding-10mm">
-      <div>日本語対応</div>
-      <div>japanese ok</div>
-    </div>
-  );
-};
+// // Create Document Component
+// const MyDocument = () => (
+//   <Document>
+//     <Page size="A4" style={styles.page}>
+//       <View style={styles.section}>
+//         <Text>Section #1</Text>
+//       </View>
+//       <View style={styles.section}>
+//         <Text>Section #2</Text>
+//       </View>
+//     </Page>
+//   </Document>
+// );
+// export default MyDocument

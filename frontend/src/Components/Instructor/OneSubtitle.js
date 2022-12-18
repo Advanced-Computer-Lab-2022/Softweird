@@ -23,14 +23,20 @@ import SpeedDialAction from '@mui/material/SpeedDialAction';
 import { InstructorOneCourse } from '../../Context/InstructorOneCourse';
 import {Alert} from '@mui/material'
 import {OneCourseResult} from '../../Context/OneCourseResult'
+import ToastMess from '../OneComponent/ToastMess';
+import {Toast} from '../../Context/Toast'
+import axios from 'axios'
+
 function OneSubtitle (props) {
     
   const [index,setIndex]=useState(0)
   const [subInd,setSubInd] = useState(0)
   const [open,setOpen] = useState(false)
+  var old = false;
   const type = "instructor edit"
- 
-  const {openAdd,openVideo,setOpenAdd,setOpenVideo,courses,setCourse,subtitleSelected,setSubtitleSelected} =useContext(InstructorOneCourse)
+ const {setOpenToast} = useContext(Toast)
+  const {openAdd,openVideo,setOpenAdd,setOpenVideo,courses,setCourse,subtitleSelected,setSubtitleSelected,
+  openExam,setOpenExam,openReview,setOpenReview,exam,setExam,messaga,setMessage} =useContext(InstructorOneCourse)
 const subtitles = courses.subtitles
 
 
@@ -43,7 +49,19 @@ const subtitles = courses.subtitles
       setOpenVideo(!openVideo);
       setSubtitleSelected(params)
       
+      
   };
+  
+  function handleToggleExam (event,params)  {
+    setOpenExam(!openExam);
+    setSubtitleSelected(params)
+    old = false
+    
+};
+function handleExam (event,params) {
+  setOpenReview(!openReview);
+  setExam(params)
+}
   function handelVideo(event,params) {
     if(event.target.id!==""){
     setOpen(true)
@@ -53,22 +71,57 @@ const subtitles = courses.subtitles
 
     
   }
-        // props.subtitles.map( subtitle =>{
+  function handleDeleteSubtitle (event,params) {
+    if (window.confirm("Are you sure you want to delete this subtitle?")){
+      let cancel
+      axios({
+        method:"patch",
+        url : '/Instructor/deleteSubtitle',
+        data : {subtitleTitle:params,courseTitle:courses.title},
+        headers : {'Content-Type' : 'application/json'},
+        cancelToken: new axios.CancelToken (c => cancel = c)
+      }).then (res => {
+          setCourse(res.data)
+          setMessage("Subtitle Deleted Successfully")
+          setOpenToast(true)
+      }).catch(e=>{
+          if(axios.isCancel(e)) return 
+      })
+      return () => cancel ()
+      
+   }
 
-
-    //     return (
-    //         <div key = {subtitle.id}>
-    //                 <h3>{props.subtitles.title} </h3>
-    //                 <h3>{props.subtitles.totalHours}</h3>
-    //                 <h3>{props.subtitles.video.length}</h3>
-    //     </div>
-    //     )
-    // }
+  }
+  function handleDeleteVideo(event,params){
+    const videoTitle = event.target.id
+    if (window.confirm("Are you sure you want to delete this video?")){
+      let cancel
+      axios({
+        method:"patch",
+        url : '/Instructor/deleteVideo',
+        data : {subtitleTitle:params,courseTitle:courses.title,videoText:videoTitle},
+        headers : {'Content-Type' : 'application/json'},
+        cancelToken: new axios.CancelToken (c => cancel = c)
+      }).then (res => {
+          setCourse(res.data)
+          setMessage("Video Deleted Successfully")
+          setOpenToast(true)
+      }).catch(e=>{
+          if(axios.isCancel(e)) return 
+      })
+      return () => cancel ()
+      
+    }
+  }
+    
       return ( 
           <OneCourseResult.Provider value={{open,setOpen}}>
           <Box position={"relative"}>
     {courses.subtitles && courses.subtitles.map ((subtitle,subtitleInd) => {
-        return  <Accordion key={subtitle._id} position="relative" sx = {{mb:"0.3rem",boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px #bbd2b1, 0px 1px 3px 0px rgb(0 0 0 / 12%)"}}> 
+        return  <Stack direction="row">
+           
+        <Accordion key={subtitle._id} position="relative" sx = {{mb:"0.3rem",boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px #bbd2b1, 0px 1px 3px 0px rgb(0 0 0 / 12%)",flex:1}}> 
+
         <AccordionSummary 
           expandIcon={<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-journal-arrow-up" viewBox="0 0 16 16" fontWeight={"bolder"}>
           <path fillRule="evenodd" d="M8 11a.5.5 0 0 0 .5-.5V6.707l1.146 1.147a.5.5 0 0 0 .708-.708l-2-2a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L7.5 6.707V10.5a.5.5 0 0 0 .5.5z"/>
@@ -96,17 +149,18 @@ const subtitles = courses.subtitles
           return <>
           
           <Stack key={video.text} direction="row" justifyContent={"space-between"} marginLeft={"1rem"} position="relative">
-          
           <Typography position="relative" sx={{"&:hover":{cursor:"pointer"}}}>
          {!courses.Finished && 
-         <IconButton color="primary" aria-label="upload picture" component="label" 
+         <Tooltip title="edit video">
+         <IconButton color="primary" component="label" 
           sx={{position:"relative",left:"-2rem"}}
          >
           <input hidden  />
           <EditIcon sx={{color:"black"}} />
-        </IconButton>}
+        </IconButton>
+        </Tooltip>}
         <YouTubeIcon sx={{color:"#bbd2b1",mr:"0.2rem"}} id={videoInd} />
-        <Button sx={{textDecoration:"underline"}}variant="text" position="relative" id={videoInd} 
+        <Button sx={{textDecoration:"underline",textTransform:"none"}}variant="text" position="relative" id={videoInd} 
         
         onClick={(event)=>handelVideo(event,subtitleInd)} >
            {video.text}
@@ -116,18 +170,49 @@ const subtitles = courses.subtitles
           <Typography position="relative">
             {video.length} hours 
             {!courses.Finished && 
-            <IconButton color="primary" aria-label="upload picture" component="label" 
-          sx={{position:"absolute" , right:"-120%" ,top:"-0.5rem" }}>
+            <Tooltip title="delete Video">
+            <IconButton id={video.text}color="primary" aria-label="upload picture" component="label" 
+          sx={{position:"absolute" , right:"-120%" ,top:"-0.5rem" }} onClick={event=>handleDeleteVideo(event,subtitle.title)}>
           <input hidden  />
-          <DeleteIcon sx={{color:"black"}} />
-          </IconButton>}
+          <DeleteIcon id={video.text} sx={{color:"black"}} />
+          </IconButton>
+          </Tooltip>}
           </Typography>
-          
           </Stack>
           <Divider  component="Typography" />
 
          </>
            })}
+           {subtitle.exercise.length!=0 &&
+           <Stack direction="row" justifyContent={"space-between"} marginLeft={"1rem"} position="relative">
+          
+           <Typography position="relative" sx={{"&:hover":{cursor:"pointer"}}}>
+          {!courses.Finished && 
+          <IconButton color="primary" aria-label="upload picture" component="label" 
+           sx={{position:"relative",left:"-2rem"}}
+          >
+           <input hidden  />
+           <EditIcon sx={{color:"black"}} />
+         </IconButton>}
+         <QuizIcon sx={{color:"#bbd2b1",mr:"0.2rem"}} />
+         <Button sx={{textDecoration:"underline",textTransform:"none"}}variant="text" position="relative" 
+         
+         onClick={(event)=>handleExam(event,subtitle.exercise)}>
+            Exam
+           </Button>
+            
+           </Typography>
+           
+             {!courses.Finished && 
+             <IconButton color="primary" aria-label="upload picture" component="label" 
+           sx={{position:"relative" ,right:"-9%",top:"-0.5rem" }} onClick={event=>handleDeleteVideo(event,subtitle.title)}>
+           <input hidden  />
+           <DeleteIcon sx={{color:"black"}} />
+           </IconButton>}
+           
+           
+           </Stack> }
+
            </Stack>
           <Box sx={{ height: 100, transform: 'translateZ(0px)', flexGrow: 1 }}>
           {!courses.Finished && 
@@ -153,17 +238,30 @@ const subtitles = courses.subtitles
             tooltipTitle="Video"
             onClick={event => handleToggleVideo(event,subtitle.title)}
           />
-          <SpeedDialAction                          
+          {subtitle.exercise.length==0 && <SpeedDialAction                          
             key="Exam"
             id={subtitle.title}
-            icon= {<QuizIcon />}
+            icon= {<QuizIcon id={subtitle.title}/>}
             tooltipTitle="Exam"
-          />
+            onClick={event => handleToggleExam (event,subtitle.title)}
+          />}
         
       </SpeedDial>}
         </Box>
         </AccordionDetails>
-      </Accordion>        
+      
+      </Accordion> 
+      {!courses.Finished && 
+          <Tooltip title="Delete subtitle" flex={0.5} sx={{mr:"1rem"}}>
+          <IconButton color="primary" component="label" 
+           sx={{position:"relative"}} onClick={event => handleDeleteSubtitle(event,subtitle.title)}
+          >
+           <input hidden  />
+           <DeleteIcon sx={{color:"rgba(0, 0, 0, 0.54)"}} />
+         </IconButton>
+         </Tooltip>}
+    
+      </Stack>       
     })}
     </Box>
     {!courses.Finished && 
@@ -177,6 +275,7 @@ const subtitles = courses.subtitles
      
 {open && <PreviewVideo previews={{subtitles,index,type,subInd}}/>}
        </OneCourseResult.Provider>
+       
 
     )
    

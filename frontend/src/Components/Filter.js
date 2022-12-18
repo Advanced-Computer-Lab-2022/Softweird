@@ -111,7 +111,7 @@ function Filter (props) {
         <>
             
     <AppBar className="navbar navbar-expand-lg navbar-light bg-light" sx={{width:"30%" , left:{md:"-1.5rem",lg:"-3.5rem",xl:"-11.5rem"} , 
-        top:{md:"-3rem",lg:"-4rem",xl:"-5rem"},marginBottom:"-30rem", paddingBottom:"3rem",position:"relative",zIndex:"initial",boxShadow:"none",color:"#000",display:{xs:"none",sm:"none",md:"block",lg:"block",xl:"block"}}}>
+        top:{sm:"-3rem",md:"-3rem",lg:"-4rem",xl:"-5rem"},marginBottom:"-15rem", paddingBottom:"3rem",position:"relative",zIndex:"initial",boxShadow:"none",color:"#000",display:{xs:"none",sm:"none",md:"block",lg:"block",xl:"block"}}}>
 
         <Stack  sx={{alignSelf:"flex-start",mt:"3rem",ml:"2rem",display:{sm:"none",md:"flex",xs:"none"}}} flex={1} gap={4} paddingLeft={"1rem"}>
         

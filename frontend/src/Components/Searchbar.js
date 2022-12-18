@@ -94,7 +94,7 @@ const SearchIconWrapper = styled('IconButton')(({ theme }) => ({
            boxShadow:" 1px 0.5px 1px grey",
            cursor:"pointer"
          }}} 
-         onClick={() => window.location.href=`/OneCourse?course=${course._id}`}>
+         onClick={() => window.location.href=`/Courses/${course.title}`}>
         <ListItemAvatar>
           <Avatar alt="Remy Sharp" src={Coding} />
         </ListItemAvatar>

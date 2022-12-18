@@ -1,8 +1,8 @@
 const express = require ('express')
 const router = express.Router()
 const Course =  require ('../Modules/Course')
-const {  getInstructorCourses,addOneCourse,getMyProfile,UpdateBiography, 
-addVideo, deleteVideo, deleteSubtitle, addSubtitle,getOneCourse,FinishCourse} = require('../Controller/Instructor')
+const {  getInstructorCourses,addOneCourse,getMyProfile,UpdateBiography, deleteCourse,
+addVideo, deleteVideo, deleteSubtitle, addSubtitle,getOneCourse,FinishCourse,PromoteCourse,makeExam,RemovePromote} = require('../Controller/Instructor')
 const {UpdatePass, ForgotPassword,UpdateEmail} = require('../Controller/ProfileInfo')
 
 
@@ -18,11 +18,15 @@ router.patch('/updateMyBiography/:id',UpdateBiography)
 router.patch('/updateMyEmail/:id',UpdateEmail)
 router.patch('/uploadVideo', addVideo)
 router.patch('/addSubtitles', addSubtitle)
-router.delete('/deleteVideo', deleteVideo )
-router.delete('/deleteSubtitle', deleteSubtitle )
+router.patch('/deleteVideo', deleteVideo )
+router.patch('/deleteSubtitle', deleteSubtitle)
 router.post('/forgetMyPass',ForgotPassword)
 router.patch('/updateMyPass/:id',UpdatePass)
 router.patch('/publishCourse',FinishCourse)
+router.patch('/promoteCourse',PromoteCourse)
+router.patch('/removePromote',RemovePromote)
+router.post('/makeExam/:id',makeExam)
+router.patch('/deleteCourse', deleteCourse)
 
 //router.patch ('/setPromotion',setPromotion)
 

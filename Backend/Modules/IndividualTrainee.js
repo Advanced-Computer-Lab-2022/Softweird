@@ -7,37 +7,44 @@ const Schema = mongoose.Schema
      },
      courseInfo: [{
          course :{ type :mongoose.Types.ObjectId , ref : 'Course'} , 
-         percentage:{type:Number} ,
-         rating:[{type:Number}],
+         percentage:{progress:Number,total:Number} ,
+         rating:{type:Boolean,default:false},
+         rateInst:{type:Boolean,default:false},
          certificate:{
             type:String,
             default:""
-        }
+        },
+        firstOpen:{type:Boolean,default:true},
     }], 
     videoWatched:[{
         course :{ type :String} , 
         subtitlesWatched:[{
             title:String,
-            video:[{type :String}]
+            video:[String]
         }]
 
     }],
+    
     
      wallet:{
             type: Number
         },
         
-     exercises: [{course :{ type :mongoose.Types.ObjectId , ref : 'Course'}, subtitle:{ type:String} ,
-                  answers:[{type:String, required :true}]}],
+     exercises: [{course :{ type :mongoose.Types.ObjectId , ref : 'Course'}, subtitle:{type:String} ,
+                  answers:[{type:String, required :true}],grade:{type:Number}}],
 
-     notes : [{
-         course:String,
-         subtitle : String,
-         videoId : Number , 
-         note : String 
-     }]
-        
+    notes:[{
+        course :{ type :String} , 
+        subtitleNotes:[{
+            videoTitle:String,
+            notes:String
+        }]
+
+    }],
     
  })
+
+
+ 
 
  module.exports = mongoose.model('individualTrainee' , individualtraineeSchema )

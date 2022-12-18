@@ -5,11 +5,18 @@ import {useContext} from 'react'
 import {Link} from 'react-router-dom'
 import axios from 'axios'
 import {SearchInstructor} from '../../Context/SearchInstructor';
+import Loading from '../OneComponent/Loading';
+import './Search.css'
+import {useAuth} from '../auth'
 
 function SearchBarCourses () {
-    const[searchInput,setSearchInput]=useState('')
-    const {courses,setCourses} = useContext(SearchInstructor)
-    const [loading,setLoading] = useState(false)
+    const auth= useAuth()
+    const params = new URLSearchParams(window.location.search);
+    const search = params.get('search');
+    console.log(search)
+    const a = search ==null ? "":search
+    const[searchInput,setSearchInput]=useState(a)
+    const {courses,setCourses,loading,setLoading} = useContext(SearchInstructor)
     function handleSearch (e) {
         setSearchInput(e.target.value)
       }
@@ -19,7 +26,7 @@ function SearchBarCourses () {
          axios({
              method:"GET",
              url : "/Instructor/myCourses",
-             params : {value:searchInput , instructor: "6384c29e9bed14d581bf6292"},
+             params : {value:searchInput , instructor: auth.user.id},
              cancelToken: new axios.CancelToken (c => cancel = c)
          }).then (res => {
              setLoading(false)
@@ -34,7 +41,6 @@ function SearchBarCourses () {
      }, [searchInput])
     return(
         <>
-        
         {/* <form>
         <input type="text" placeholder="Search.." name="search" value={searchInput}  onChange={handleSearch}/>
         <Link to ={{
@@ -44,6 +50,13 @@ function SearchBarCourses () {
         <button type="submit"  ><i className="fa fa-search" onChange={handleSearch} ></i> </button>
         </Link>
     </form> */}
+
+<div class="search-box">
+<Link to = {`/MyCourses/?search=${searchInput}`}>
+    <button class="btn-search"><i class="fa fa-search" onChange={handleSearch}></i></button>
+    <input type="text" class="input-search" placeholder="Search for your courses" value={searchInput}  onChange={handleSearch} />
+</Link>
+  </div>
 
 
         </>

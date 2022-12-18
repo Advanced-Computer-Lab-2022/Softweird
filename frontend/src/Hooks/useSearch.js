@@ -3,7 +3,6 @@ import axios from "axios"
 
 
  function useSearch (searchResult , clicking) {
-     console.log(searchResult)
       const [courses , setCourses] = useState ([])
       const [loading , setLoading] = useState(true)
       useEffect(() =>{

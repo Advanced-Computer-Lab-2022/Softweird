@@ -11,9 +11,10 @@ const { getVideoDurationInSeconds } = require('get-video-duration');
 
 // get instructor course + search instructor
 const getInstructorCourses =  async (req,res) => {
-    console.log("ff")
+   
     const {value} = req.query
-    const {instructor} = req.query  //Get id from instructor frontend
+  const {instructor} = req.query  //Get id from instructor frontend
+  console.log(instructor)
     if(instructor==undefined){
         return res.status(404).json({error:'404'})
     }
@@ -52,16 +53,14 @@ const getOneCourse =  async (req,res) => {
     }
     var inst = mongoose.Types.ObjectId(id)
    
-
      
-    course = await Course.findOne({instructor_id: inst,title:courseTitle}) //instructor = id
-
+   const course = await Course.findOne({instructor_id:inst,title:courseTitle}) //instructor = id
+console.log(course)
     return res.status(200).json(course)
 
 }
-
 const addOneCourse = async (req,res) => {
-    const {Title , Subtitle ,Subject , Price , Summary } = req.body
+    const {Title ,Subject , Price , Summary } = req.body
     const coursee = await Course.find({title : Title})
     console.log(req.body)
     //console.log(coursee)
@@ -75,10 +74,12 @@ const addOneCourse = async (req,res) => {
         return res.status(404).json({error:'no such instructor'})
     }
     var inst = mongoose.Types.ObjectId(id)
-   
+    console.log(id)
     const name = await User.findById(inst)
+    console.log(name)
+    console.log(name._id)
     await Course.create({instructor: name.fName+" "+ name.lName, instructor_id: inst ,title: Title,subject:Subject , price: Price, summary: Summary})
-   
+    console.log(Title)
     return res.status(201).json("Sucess")
 }
 
@@ -132,8 +133,7 @@ const addVideo = async (req,res)=>{
         if(!preview){
         const videoNew = {link:videoLink,text:videoDescription,length:videoLength}
       
-       await Course.findOneAndUpdate(({title:courseTitle,subtitles:{$elemMatch:{title:subtitleTitle}}}),{$push:{"subtitles.$.video":videoNew},$inc:{"subtitles.$.totalHours":videoLength} ,$set :{totalHours:hours+videoLength}},{returnOriginal: false})
-       const courseNew = await Course.find()
+       courseNew = await Course.findOneAndUpdate(({title:courseTitle,subtitles:{$elemMatch:{title:subtitleTitle}}}),{$push:{"subtitles.$.video":videoNew},$inc:{"subtitles.$.totalHours":videoLength} ,$set :{totalHours:hours+videoLength}},{returnOriginal: false})
         res.status(200).json(courseNew)
         }
         else{
@@ -168,13 +168,16 @@ const addSubtitle = async (req,res)=>{
 const deleteSubtitle = async (req,res)=>{
     try{
         const {subtitleTitle,courseTitle} = req.body
-
          const courses = await Course.findOne({title:courseTitle})
+      
          var subtitles = courses.subtitles
-        var totalHoursSubtitle = subtitles.totalHours
+        
+        var totalHoursSubtitle = subtitles.totalHours*-1
+      
          var courseHours = courses.totalHours
-       const courseNew =  await Course.findOneAndUpdate(({title:courseTitle}),{$pull:{subtitles:{title: subtitleTitle}},$set:{ totalHours:courseHours-totalHoursSubtitle}},{returnOriginal: false})
          
+       await Course.findOneAndUpdate({title:courseTitle,subtitles:{$elemMatch:{title:subtitleTitle}}},{$pull:{subtitles:{title:subtitleTitle}}},{returnOriginal:false})
+const courseNew = await Course.findOne({title:courseTitle})
         res.status(200).json(courseNew)
     }
     catch(error){res.status(404).json(error)}
@@ -182,13 +185,29 @@ const deleteSubtitle = async (req,res)=>{
 } 
 const deleteVideo = async (req,res) =>{
 
-    const {subtitleTitle,videoText,courseTitle,videoLength,type}=req.body
+    const {subtitleTitle,videoText,courseTitle}=req.body
     try{
+        
         const courses = await Course.findOne({title:courseTitle})
         var courseHours = courses.totalHours
-       const courseNew  = await Course.findOneAndUpdate(({title:courseTitle,subtitles:{$elemMatch:{title:subtitleTitle}}}),{$pull:{"subtitles.$.video":{text:videoText}},$inc:{"subtitles.$.totalHours":-1*videoLength},$set:{totalHours:courseHours-videoLength}},{returnOriginal: false})
-       
+console.log(videoText)
+       const courseNew  = await Course.findOneAndUpdate(({title:courseTitle,subtitles:{$elemMatch:{title:subtitleTitle}}}),{$pull:{"subtitles.$.video":{text:videoText}}},{returnOriginal:false})
         res.status(200).json(courseNew)
+    }
+    catch(error){
+        res.status(404).json(error)
+    }
+} 
+
+
+const deleteCourse = async (req,res) =>{
+
+    const {courseTitle}=req.body
+    try{
+      
+       await Course.findOneAndUpdate({title:courseTitle},{$set:{Deleted:true}})
+       
+        res.status(200).json({success:"tamam"})
     }
     catch(error){
         res.status(404).json(error)
@@ -205,10 +224,72 @@ const FinishCourse = async (req,res) =>{
         res.status(404).json(error)
     }
 }
+ const PromoteCourse = async(req,res)=>{
+     const {courseTitle,promotion,endDate}=req.body
+     try{
+         const prom ={
+            set :  true,
+            value:promotion, 
+            endDate: endDate
+         }
+    
+        
+        const courseNew = await Course.findOneAndUpdate({title:courseTitle},({$set:{promotionInst:prom}}),{returnOriginal: false})
+        res.status(200).json(courseNew)
+     }
+     catch(e){
+        res.status(404).json(error)
+    }
 
+ }
+ const RemovePromote= async(req,res)=>{
+    const {courseTitle}=req.body
+    try{
+        const prom ={
+           set :  false,
+        }
+   
+       
+       const courseNew = await Course.findOneAndUpdate({title:courseTitle},({$set:{promotionInst:prom}}),{returnOriginal: false})
+       res.status(200).json(courseNew)
+    }
+    catch(e){
+       res.status(404).json(error)
+   }
+
+}
+
+ const makeExam = async(req,res) => {
+    const {Subtitle , Blk, courseTitle } = req.query
+    const {id} = req.params
+    console.log(Subtitle)
+    console.log(Blk)
+    console.log(Subtitle , Blk, courseTitle )
+    
+    
+    const InstID = mongoose.Types.ObjectId(id)
+    var arr = new Array()
+    if (Blk != undefined)
+    for(i = 0 ; i<Blk.length/3;i++)
+    {
+        const exer = { 
+        number :"" +(i+1) ,
+        question : Blk[i*3] ,
+        choices : Blk[(i*3)+1] ,
+        answer : Blk[(i*3)+2]};
+        arr[i] = exer
+    }
+    try{
+    const course = await Course.findOneAndUpdate( { title:courseTitle , instructor_id: InstID  , subtitles: {$elemMatch: {title : Subtitle }}} , {$set:{"subtitles.$.exercise":arr} },{returnOriginal:false})
+    res.status(200).json(course)
+}
+    catch(error){
+        res.status(404).json(error)
+    }
+}
 
 
 module.exports = {
-    getInstructorCourses,addOneCourse,getMyProfile,UpdateBiography, addVideo, 
-     deleteVideo, deleteSubtitle, addSubtitle , getOneCourse ,FinishCourse
+    getInstructorCourses,addOneCourse,getMyProfile,UpdateBiography, addVideo,deleteCourse, 
+     deleteVideo, deleteSubtitle, addSubtitle , getOneCourse ,FinishCourse,PromoteCourse,makeExam,RemovePromote
 }    

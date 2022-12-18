@@ -28,9 +28,23 @@ import DialogDelete from '../../Components/Instructor/DialogDelete'
 import DialogPublish from '../../Components/Instructor/DialogPublish'
 import {useParams} from "react-router-dom"
 import Loading from '../../Components/OneComponent/Loading'
-import { Toast } from 'react-bootstrap'
+import DialogExam from '../../Components/Instructor/DialogExam'
+import DialogReviewExam from '../../Components/Instructor/DialogReviewExam'
+import {BsSlashLg} from 'react-icons/bs'
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { IconContext } from "react-icons";
+import ApplyDiscount from '../../Components/Instructor/ApplyDiscount';
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import Tooltip from '@mui/material/Tooltip';
+import ToastMess from '../../Components/OneComponent/ToastMess'
+import { Toast } from '../../Context/Toast';
+import { useNavigate, useLocation,Navigate } from 'react-router-dom';
+import OneCourseResult from '../../Components/OneComponent/OneCourseResult';
+import { useAuth } from '../../Components/auth';
 
-function OneOfMyCourses () {  
+function OneOfMyCourses () { 
+  const auth = useAuth() 
+  const {setOpenToast} = useContext(Toast)
      const[loading , setLoading]=useState(true)
     const {curr , setCurr,rate,setRate} = useContext(Currency)
     const [openAdd, setOpenAdd] = React.useState(false);
@@ -38,28 +52,35 @@ function OneOfMyCourses () {
     const [openDisc, setOpenDisc] = React.useState(false);
     const [openDelete,setOpenDelete] = useState(false)
     const [openPublish , setOpenPublish]=useState(false)
+    const [openExam,setOpenExam]=useState(false)
+    const [openReview,setOpenReview]=useState(false)
+    const [exam ,setExam] = useState([])
     const [courses,setCourse] = useState([])
     const [subtitleSelected,setSubtitleSelected]=useState("")
     const params = new URLSearchParams(window.location.search);
-    const{course} = useParams() 
-    const courseTitle = (course == undefined? "" : course)
+    const{coursetitle} = useParams(); 
+    console.log(coursetitle)
+    const courseTitle = (coursetitle == undefined? "" : coursetitle)
     const [reload,setReload] = useState(true)
-    const[toast,showToast] = useState(true)
-    
+    const [message ,setMessage] = useState('')
+    const navigate= useNavigate()
+
     useEffect(() =>{
-      console.log("dd")
       setLoading(true)
        let cancel
        axios({
            method:"GET",
-           url : "/Instructor/oneCourse/6384c29e9bed14d581bf6292",
+           url : `/Instructor/oneCourse/${auth.user.id}`,
            params : {courseTitle:courseTitle },
            cancelToken: new axios.CancelToken (c => cancel = c)
        }).then (res => {
            setLoading(false)
-           setCourse(res.data)
-           console.log(courses)
-          
+           setCourse(res.data)  
+           if(res.data==null){
+             navigate('/MyCourses')
+
+           }  
+           
        }).catch(e=>{
            if(axios.isCancel(e)) return 
        })
@@ -67,13 +88,34 @@ function OneOfMyCourses () {
        
    
    }, [reload])
+   function handleRemove() {
+    if (window.confirm("Are you sure you want to remove promotion?")){
+          let cancel
+          axios({
+            method:"PATCH",
+            url : '/Instructor/removePromote',
+            data : {courseTitle:courses.title},
+            headers : {'Content-Type' : 'application/json'},
+            cancelToken: new axios.CancelToken (c => cancel = c)
+          }).then (res => {
+        
+              setCourse(res.data)
+              setMessage("Promotion Removed Successfully")
+              setOpenToast(true)
+          }).catch(e=>{
+              if(axios.isCancel(e)) return 
+          })
+          return () => cancel ()
+          
+       }
+  }
   
-   
     return(
       <>
             {!loading && courses &&
         <InstructorOneCourse.Provider value={{openVideo,setOpenVideo,openAdd,setOpenAdd,openDisc,setOpenDisc,
-        openPublish , setOpenPublish,openDelete,setOpenDelete,courses,setCourse,subtitleSelected,setSubtitleSelected,setReload,setLoading}}>
+        openPublish , setOpenPublish,openDelete,setOpenDelete,courses,setCourse,subtitleSelected,setSubtitleSelected,
+        openExam,setOpenExam,setReload,setLoading,openReview,setOpenReview,exam,setExam,message ,setMessage}}>
         <Box sx={{position:"relative"}}>
         <div className="wire"></div>
         <Card className="card-course" sx={{position:"relative",left:"0",right:"0",p:"2rem",mb:"3rem"}}>
@@ -86,12 +128,14 @@ function OneOfMyCourses () {
         {courses.subject}
         </Typography>
         
-        <Typography variant="P">
+        <Typography variant="P" sx={{fontSize:"0.8rem"}}>
        {courses.summary}
         </Typography>
         <Stack direction = "row" gap={10}>
     
         <Stack direction="row" gap={0.5} paddingTop={"2rem"}>
+            
+            <>
             <Typography sx={{fontSize:"0.87rem"}} >{courses.rating.$numberDecimal}</Typography>
              <Rating 
              name="text-feedback1"
@@ -99,6 +143,7 @@ function OneOfMyCourses () {
              readOnly
             precision={0.5}
              size='small'/>
+             </> 
              <Typography sx={{fontSize:"0.87rem"}} >({courses.numberRating})</Typography>
              </Stack>
         <Stack direction="row" gap={0.5} paddingTop={"2rem"}>
@@ -112,18 +157,66 @@ function OneOfMyCourses () {
        <Typography sx={{fontSize:"0.87rem"}} >Currently Enrolled Students:  </Typography>
         <Typography sx={{fontSize:"0.87rem"}} >{courses.enrolledStudents}</Typography>
         </Stack> 
-        <Stack direction="row" paddingTop={"2rem"} alignItems={"center"}>
-        <Stack direction="row" gap={0.5}  paddingRight={"15%"} >
+        {courses.price!="Free" &&   <>
+        <Stack direction="row" paddingTop={"2rem"} marginBottom={"2rem"} alignItems={"center"}>
+        <Stack direction="row" gap={"8px"}  paddingRight={"10%"} alignItems={"center"} >
        <Typography sx={{fontSize:"0.87rem" }} variant='h6' >Price of Course: </Typography>
-        <Typography sx={{fontSize:"0.87rem",fontWeight:"bolder"}} >{courses.price} {curr}</Typography>
-        </Stack>
+    
+    
+      <Stack direction="row" alignItems={"center"} gap={2}>
+      <Typography  sx={{fontSize:"0.87rem",fontWeight:"bolder",position:"relative"}} >{courses.price*rate}{curr}
         
-        <Button variant="contained" href="#contained-buttons" sx={{backgroundColor:"#bbd2b1",fontWeight:"bolder",
-      '&: hover':{ cursor: "pointer",
-      color:"#bbd2b1",
-      backgroundColor:"#fff"}}}
-      onClick={()=>{setOpenDisc(true)}}
-       >Apply Discount</Button></Stack>
+    {(courses.promotionInst.set==true|| courses.promotionAdmin.set==true) &&
+    <svg xmlns="http://www.w3.org/2000/svg" width="47" height="47" fill="currentColor" class="bi bi-slash-lg" viewBox="0 0 16 16" style={{ color: "#c50d0d",position: "absolute",
+    left:"-19%",
+    fontSize: "2.5rem",
+    top: "-60%",
+    transform:" rotate(10deg)",}}>
+  <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
+</svg>}
+     </Typography>
+    {(courses.promotionInst.set || courses.promotionAdmin.set )&& <ArrowRightAltIcon sx={{fontWeight:"bold" ,fontSize:"2rem"}}/>}
+     {(courses.promotionInst.set || courses.promotionAdmin.set) && <Typography  sx={{fontSize:"0.87rem",fontWeight:"bolder",position:"relative"}} >
+     {((100-(parseFloat(courses.promotionInst.value.$numberDecimal)
+  +parseFloat(courses.promotionAdmin.value.$numberDecimal)))/100)*courses.price*rate}{curr}</Typography>}
+     </Stack>
+        </Stack>
+        <Stack direction="row" alignItems="center" gap={2}>
+        {(courses.promotionInst.set || courses.promotionAdmin.set )&& 
+        <Typography variant="p">
+         <DiscountIcon sx={{color:"#bbd2b1"}} />
+         </Typography>}
+        {courses.promotionInst.set && 
+        <Typography variant="p" sx={{border: "1px solid rgb(197 13 13)", borderRadius: "12px", padding:" 0.5rem",
+    boxShadow: "-2px 3px 0px 0px rgb(197 13 13 / 24%)"}}>{courses.promotionInst.value.$numberDecimal}% by You
+        <Tooltip title="remove discount" >
+        <IconButton onClick={handleRemove} >
+        <DeleteIcon  sx={{fontSize:"1.4rem",ml:"1rem"}} />
+        </IconButton>
+        </Tooltip></Typography>}
+       
+        {courses.promotionAdmin.set && courses.promotionInst.set && 
+        <Typography variant="p" sx={{fontStyle:"italic"}}>and</Typography>}
+       {courses.promotionAdmin.set && <Typography variant="p" sx={{border: "1px solid rgb(197 13 13)", borderRadius: "12px", padding:" 0.9rem",
+    boxShadow: "-2px 3px 0px 0px rgb(197 13 13 / 24%)"}}>{courses.promotionAdmin.value.$numberDecimal}% by admin</Typography>
+    }
+         
+       </Stack>
+       </Stack>
+       {courses.promotionInst.set ? <ApplyDiscount sx={{mt:"3rem"}} discount={"Update Discount"}/> :
+    <ApplyDiscount sx={{mt:"3rem"}} discount={"Apply Discount"}/>} 
+    </>}
+    {courses.price=="Free" && 
+     
+      <Stack direction="row" paddingTop={"2rem"} marginBottom={"2rem"} alignItems={"center"}>
+        <Stack direction="row" gap={"8px"}  paddingRight={"10%"} alignItems={"center"} >
+    <Typography sx={{fontSize:"0.87rem" }} variant='h6' >Price of Course: </Typography>
+   <Typography  sx={{fontSize:"0.87rem",fontWeight:"bolder",position:"relative"}} >Free
+   </Typography>
+   </Stack>
+</Stack>
+   }
+      
       </CardContent>
       <CardActions>
       </CardActions>
@@ -142,25 +235,28 @@ function OneOfMyCourses () {
      {!courses.Finished && 
      <Stack direction={"row"} paddingTop={"8%"} gap={10} justifyContent={"center"}>
      <Button variant="outlined" startIcon={<DeleteIcon sx= {{color:"#bbd2b1"}} />}
-     sx={{color:"#000" , border:"1px solid rgba(187, 210, 177, 0.8)" ,
+     sx={{color:"#000" , border:"1px solid rgba(197, 13, 13, 0.8)" ,
      '&:hover':{
-      border:"1px solid rgba(187, 210, 177)" 
+      border:"1px solid rgba(197, 13, 13)" 
      }}} onClick={()=>{setOpenDelete(true)}}>
         Delete Course
       </Button>
       <Button data-bs-toggle="modal" data-bs-target="#exampleModal" variant="outlined" startIcon={<PublishIcon sx= {{color:"#bbd2b1"}}/>} sx={{color:"#000",
-     border:"1px solid rgba(187, 210, 177, 0.8)" ,
+     border:"1px solid rgba(197, 13, 13, 0.8)" ,
     '&:hover':{
-     border:"1px solid rgba(187, 210, 177)" 
+     border:"1px solid rgba(197, 13, 13)" 
       }}} onClick={()=>{setOpenPublish(true)}}>
         Publish Course
       </Button>
 </Stack>}
 <DialogDelete />
 <DialogPublish course={{title:courses.title}} />
+<DialogExam />
+<DialogReviewExam />
   
 </InstructorOneCourse.Provider>}
 {loading && <> <Loading /> </>}
+<ToastMess message={message} />
 </>
 
 

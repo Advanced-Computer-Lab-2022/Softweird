@@ -1,6 +1,6 @@
 
 import 'font-awesome/css/font-awesome.min.css';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -18,15 +18,77 @@ import EditIcon from '@mui/icons-material/Edit';
 import QuizIcon from '@mui/icons-material/Quiz';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import { Button ,Checkbox} from '@mui/material';
+import {TraineeCourse} from '../../Context/TraineeCourse'
+import Star from '@mui/icons-material/Star';
+import DialogSolveExam from './DialogSolveExam'
+import DialogGrade from './DialogGrade' 
+
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+var exams = []
 
 function SubtitleContent(){
-    const x =[1,2,3,4,5,6,7,8,9,10]
-    const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
-    console.log(x)
+ 
+  const{myCourse,setMyCourse,course,index,setIndex,subIndex,setSubIndex,videosWatched,video,setmyVideo,
+    setVideo,notes,setNotes,openSolve,setOpenSolve,exam,setexam,openGrade,setOpenGrade,playVideo,setPlayVideo,setFirstOpen} = useContext(TraineeCourse)
+    const [subtitleSelected,setSubtitleSelected]=useState("");
+    const label = { inputProps: {'aria-label': 'controlled' } };
+
+   
+   function handleClick (event,params){
+     setIndex(event.target.id)
+     setSubIndex(params)
+     setPlayVideo(true)
+     setFirstOpen(false)
+
+   }
+   useEffect(()=>{
+    if(myCourse.videoWatched.length !=0){
+     
+      myCourse.videoWatched.map(video=>{
+        if(video.course==course.title)
+              video.subtitlesWatched.map(sw=>{
+                  sw.video.map(v=>{
+                      setVideo (videos => [... new Set ([...videos , v])])
+                      
+                     
+                  })
+              })
+          
+      })
+   }
+   if(myCourse.notes.length!=0){
+       myCourse.notes.map(notes =>{  
+           if(notes.course == course.title){
+               setNotes(notes.subtitleNotes)
+           }
+       })
+   }
+ 
+   },[myCourse])
+console.log(exam)
+   function handleExam (event,params){
+     setFirstOpen(false)
+     if(!exam.includes(params)){
+    setOpenSolve(true)
+
+     }
+     else{
+         setOpenGrade(true)
+     }
+    setSubtitleSelected(params)
+   
+    
+    setPlayVideo(false)
+   }
+   
+
     return(
-        <Stack maxHeight={"28rem"} sx={{overflow:"auto"}}>
-        {x.map(i=>{
-        return <Accordion key={i} position="relative" sx = {{maxWidth:"100%",mb:"1%"}} disableGutters> 
+      <>
+       {course && 
+       <Stack maxHeight={"28rem"} sx={{overflow:"auto"}} >
+        {course.subtitles.map((subtitle,subIndex2)=>{
+        return <Accordion defaultExpanded={subIndex==subIndex2} key={subtitle._id} position="relative" 
+        sx = {{maxWidth:"100%",mb:"1%",boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px #bbd2b1, 0px 1px 3px 0px rgb(0 0 0 / 12%)"}} disableGutters> 
         <AccordionSummary
           expandIcon={<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-journal-arrow-up" viewBox="0 0 16 16" fontWeight={"bolder"}>
           <path fill-rule="evenodd" d="M8 11a.5.5 0 0 0 .5-.5V6.707l1.146 1.147a.5.5 0 0 0 .708-.708l-2-2a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L7.5 6.707V10.5a.5.5 0 0 0 .5.5z"/>
@@ -42,85 +104,85 @@ function SubtitleContent(){
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin-angle-fill" viewBox="0 0 16 16" color="black">
             <path d="M9.828.722a.5.5 0 0 1 .354.146l4.95 4.95a.5.5 0 0 1 0 .707c-.48.48-1.072.588-1.503.588-.177 0-.335-.018-.46-.039l-3.134 3.134a5.927 5.927 0 0 1 .16 1.013c.046.702-.032 1.687-.72 2.375a.5.5 0 0 1-.707 0l-2.829-2.828-3.182 3.182c-.195.195-1.219.902-1.414.707-.195-.195.512-1.22.707-1.414l3.182-3.182-2.828-2.829a.5.5 0 0 1 0-.707c.688-.688 1.673-.767 2.375-.72a5.922 5.922 0 0 1 1.013.16l3.134-3.133a2.772 2.772 0 0 1-.04-.461c0-.43.108-1.022.589-1.503a.5.5 0 0 1 .353-.146z"/>
             </svg>
-          <Typography variant={"p"}sx={{ pl:"4%",width: '60%', flexShrink: 0}}>Subtitle 1</Typography> <br/>
-          <Typography sx={{ color: 'text.secondary', fontSize:"0.8rem",mr:"2%"}}>
-               2h 
+          <Typography variant={"p"}sx={{ pl:"4%",width: '60%', flexShrink: 0,fontSize:"0.9rem"}}>{subtitle.title}</Typography> <br/>
+         
+          <Typography sx={{ color: 'text.secondary', fontSize:"0.8rem",mr:"3%",ml:"7%",fontSize:"0.75rem",position: "relative",
+    bottom: "-10px"}}>
+               {subtitle.totalHours}h 
               </Typography>
-              <Divider orientation="vertical" variant="middle" flexItem style = {{backgroundColor:"#EC6A37",opacity:1}}/>
-              <Typography sx={{ color: 'text.secondary', fontSize:"0.8rem",ml:"2%"}}>
+              <Divider orientation="vertical" variant="middle"  style = {{backgroundColor:"#EC6A37",opacity:1,height:"0.85rem",position: "relative",
+    bottom: "-10px"}}/>
+              <Typography sx={{ color: 'text.secondary', fontSize:"0.8rem",ml:"2%",fontSize:"0.75rem",position: "relative",
+    bottom: "-10px"}}>
                3/4
+            
               </Typography>
               </Stack>
         </AccordionSummary>
-        
-      
-        <AccordionDetails >
-        <Stack gap={1} marginTop={"2%"} >
-          <Stack direction="row" justifyContent={"space-between"} maxWidth={"85%"} alignItems={"center"}  position="relative">
+        <AccordionDetails sx={{padding:0,paddingTop:"0.2%" }}>
+        <Stack  marginTop={"2%"} >
+      {subtitle.video.map((video,index2)=>{
+       return <div id ={video.text}>
+          <Button id ={index2}  position="relative" sx={{color:"black !important" ,fontSize:"0.85rem",textTransform:"none",textAlign:"inherit",textTransform:"none",width:"100%",padding:0,
+         }} 
+          onClick={event=>handleClick(event,subIndex2)}>
+          <Stack   id ={index2}  direction="row"  backgroundColor={subIndex2==subIndex && index==index2 ?"lightgrey":"white"} alignItems={"center"}  position="relative" sx={{paddingLeft:"5%",width:"100%"}}>
           
-          <Typography variant="p">
-         
-          <Button variant="text" position="relative" sx={{color:"black !important"}} >
-          <Checkbox {...label} disabled sx={{
-         
-          '&.Mui-checked': {
-            color: "#bbd2b1",
-          },
-        }}/>
-            Preview
-
-          </Button>
-          </Typography>
-          <Typography position="relative"fontSize={"0.9rem"} color="text.secondary">
-            4 hours 
-          </Typography>
-          
-          </Stack>
-          <Divider  component="Typography" />
-          <Stack direction="row"  direction="row" justifyContent={"space-between"} maxWidth={"85%"} alignItems={"center"}  position="relative">
-         
-          <Typography variant="p">
-         
-          <Button variant="text" position="relative"   sx={{color:"black !important"}} >
-          <Checkbox {...label} disabled sx={{
+        <Stack  id ={index2}   direction={"row"} width={"85%"} alignItems={"center"} gap={"1%"}>
+          <Checkbox  {...label} disabled checked={videosWatched.includes(video.text)} size="small" sx={{
          
          '&.Mui-checked': {
-           color: "#bbd2b1",
+           color: "black",
          },
        }}/>
-            Content
-
-          </Button>
-          </Typography>
-          <Typography position="relative" fontSize={"0.9rem"} color="text.secondary">
-            4 hours 
+         <Typography variant="p"  id ={index2} sx={{maxWidth:"75%"}} >
+           {video.text}
+           </Typography>
+          </Stack>
+          <Typography id ={index2} position="relative" fontSize={"0.7rem"} color="text.secondary">
+            {video.length}h
           </Typography>
           
           </Stack>
-
+          </Button>
           <Divider  component="Typography" />
-
-          <Stack  direction="row" justifyContent={"space-between"} maxWidth={"85%"} alignItems={"center"}  position="relative">
-          <Typography variant="p">
+        </div>})}
+        {subtitle.exercise.length!=0 && 
+         <Button   position="relative" sx={{color:"black !important" ,fontSize:"0.85rem",textTransform:"none",textAlign:"inherit",textTransform:"none",width:"100%",padding:0}} 
+         onClick={event=>handleExam(event,subtitle.title)}>
+         <Stack direction="row"  alignItems={"center"}  position="relative" sx={{paddingLeft:"5%",width:"100%"}}>
          
-         <Button variant="text" position="relative"   sx={{color:"black !important"}} >
-         <Checkbox {...label} disabled sx={{
+       <Stack direction={"row"} width={"80%"} alignItems={"center"} gap={"1%"}>
+         <Checkbox  {...label} disabled checked={exam.includes(subtitle.title)} size="small" sx={{
         
         '&.Mui-checked': {
-          color: "#bbd2b1",
+          color: "black",
         },
       }}/>
-           Quiz
-
-         </Button>
-         </Typography>
-         
-          </Stack>
+        <Typography variant="p" sx={{textDecoration:"underline"}}  >
+          Exam
+          </Typography>
+          <QuizIcon sx={{fontSize:"1.1rem",ml:"4%",color:"#000",position: "relative",
+    }}/>
+         </Stack>
+         {exam.includes(subtitle.title) &&  
+        myCourse.exercises.map(e =>{
+          return <> {e.course==course._id && e.subtitle==subtitle.title && 
+            <Typography position="relative"fontSize={"0.7rem"} sx={{color:"#c50d0d",fontStyle:"italic !important"}}>
+              {e.grade} %
+            </Typography>}  </>
+           
+          })}
+         </Stack>
+         </Button>}
           </Stack>
         </AccordionDetails>
       </Accordion>   
       })}     
-        </Stack>
+        </Stack>}
+        <DialogSolveExam subtitle={subtitleSelected}/>
+        <DialogGrade subtitle={subtitleSelected}/>
+        </>
     )
 }
 export default SubtitleContent

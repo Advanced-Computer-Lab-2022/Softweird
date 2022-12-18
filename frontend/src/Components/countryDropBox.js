@@ -56,8 +56,10 @@ const CountryDropBox = () => {
     }, [value.value])
     
     const changeHandler =(event, value) => {
+        if(value!=null){
         setValue(value)
         sessionStorage.setItem("country",value.label)
+        }
     }
 
     return (
