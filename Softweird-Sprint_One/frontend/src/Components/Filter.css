@@ -1,0 +1,10 @@
+
+.checkboxes label {
+    float: left;
+  }
+  .checkboxes ul {
+   
+    list-style: none;
+    float: left;
+    margin-right: 3rem;
+  }

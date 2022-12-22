@@ -5,20 +5,30 @@ const Schema = mongoose.Schema
     user: {
         type :mongoose.Types.ObjectId , ref : 'Users'
      },
-     progress: [{
+     courseInfo: [{
          course :{ type :mongoose.Types.ObjectId , ref : 'Course'} , 
          percentage:{type:Number} ,
+         rating:[{type:Number}],
          certificate:{
             type:String,
             default:""
         }}], 
+    
      wallet:{
             type: Number
         },
         
      exercises: [{course :{ type :mongoose.Types.ObjectId , ref : 'Course'}, subtitle:{ type:String} ,
                   answers:[{type:String, required :true}]}],
+
+     notes : [{
+         course:String,
+         subtitle : String,
+         videoId : Number , 
+         note : String 
+     }]
         
     
  })
+
  module.exports = mongoose.model('individualTrainee' , individualtraineeSchema )

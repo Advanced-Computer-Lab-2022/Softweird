@@ -82,12 +82,14 @@ const addVideoForprev = async(req,res) => {
 }
 
 const makeExam = async(req,res) => {
-const {Subtitle , Blk } = req.body
+const {Subtitle , Blk, courseTitle , id } = req.query
+console.log(Subtitle)
+console.log(Blk)
 
 
-
-//let exer = {num:"" , question:0 , choices:[] , answer:""}
+const InstID = mongoose.Types.ObjectId(id)
 var arr = new Array()
+if (Blk != undefined)
 for(i = 0 ; i<Blk.length/3;i++)
 {
     const exer = { 
@@ -97,11 +99,7 @@ for(i = 0 ; i<Blk.length/3;i++)
     answer : Blk[(i*3)+2]};
     arr[i] = exer
 }
-console.log(Subtitle)
-await Course.findOneAndUpdate( {subtitles: {$elemMatch: {title : Subtitle }}} , {$set:{"subtitles.0.exercise":arr} })
-/*title : "kemo",
-video : ["aa"],
-totalHours : 5 ,
-exercise : []*/
+console.log( courseTitle +"///////////////")
+await Course.findOneAndUpdate( { title:courseTitle , instructor_id: InstID  , subtitles: {$elemMatch: {title : Subtitle }}} , {$set:{"subtitles.$.exercise":arr} })
 }
 module.exports = {getInstructorCourses,addOneCourse,addVideoForprev,addVideoForSub,makeExam}

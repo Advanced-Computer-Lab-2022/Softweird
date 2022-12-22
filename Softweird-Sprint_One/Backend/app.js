@@ -1,15 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config()
-const Courses = require('./Routes/Courses')
-const Welcome = require ('./Routes/Welcome')
-const Search = require('./Routes/Search')
+const Courses = require('./Routes/Courses');
+const Welcome = require ('./Routes/Welcome');
+const Search = require('./Routes/Search');
 const currency = require('./Routes/countryCurrency');
 const bodyParser = require('body-parser');
-const Instructor = require('./Routes/Instructor')
-const AdminAdd = require ('./Routes/AdminAdd')
-const IndividualTrainee = require ('./Routes/IndividualTrainee')
-const corporateTrainee = require('./Routes/corporateTrainee')
+const Instructor = require('./Routes/Instructor');
+const AdminAdd = require ('./Routes/AdminAdd');
+const IndividualTrainee = require ('./Routes/IndividualTrainee');
+const corporateTrainee = require('./Routes/corporateTrainee');
+const Admin = require('./Routes/Admin');
 //App variables
 const app = express();
 
@@ -41,7 +42,7 @@ app.use('/IndividualTrainee',IndividualTrainee)
 app.use('/corporateTrainee',corporateTrainee)
 app.use('/CurrencyChange',currency)
 app.use('/Instructor',Instructor)
-
+app.use('/Admin',Admin)
 app.use('/adminAdd',AdminAdd)
 
 

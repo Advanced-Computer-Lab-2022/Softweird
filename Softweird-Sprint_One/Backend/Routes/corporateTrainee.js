@@ -1,7 +1,7 @@
 const express = require ('express')
 const router = express.Router()
-const corporateTrainee =  require ('../Modules/corporateTrainee')
-const {solve , grade,modelAns} = require('../Controller/IndividualTrainee')
+const corporateTrainee =  require ('../Modules/CorporateTrainee')
+const {solve , grade,modelAns ,getQusetions} = require('../Controller/corporateTrainee')
 
 
 
@@ -11,5 +11,5 @@ const {solve , grade,modelAns} = require('../Controller/IndividualTrainee')
 router.post('/solve/:id',solve)
 router.get('/grade/:id',grade)
 router.get('/modelAns/:id',modelAns)
-
+router.get('/getQusetions',getQusetions)
 module.exports = router

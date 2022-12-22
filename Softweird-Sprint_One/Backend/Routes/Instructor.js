@@ -12,6 +12,6 @@ router.get('/:id',getInstructorCourses)
 router.post('/addOneCourse/:id',addOneCourse)
 router.post('/Course/Subtitle/:id' , addVideoForSub)
 router.post('/Course/:id',addVideoForprev)
-router.post('/makeExam/:id',makeExam)
+router.post('/makeExam',makeExam)
 
 module.exports = router
