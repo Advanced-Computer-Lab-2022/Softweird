@@ -7,7 +7,7 @@ This is a main project of **CSEN 704 Advanced Computer Lab** course. The prime g
 - [Tools and Frameworks] 
 
 
-
+<a name="purpose"></a>
 ## Purpose
 
 - Learn to research and master the use of the **MERN Stack**.
