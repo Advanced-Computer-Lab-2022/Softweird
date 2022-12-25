@@ -2,12 +2,7 @@
 
 This is a main project of **CSEN 704 Advanced Computer Lab** course. The prime goal of the project is to create a complete Online Learning System. An Online Learning System is a web application through which individuals can attend pre-recorded courses online. Existing web applications include but are not limited to Coursera, Udemy, LinkedIn Learning, Great Learning and Udacity.
 
-## Table of Contents
-- [Purpose] (#purpose)
-- [Tools and Frameworks] 
 
-
-<a name="purpose"></a>
 ## Purpose
 
 - Learn to research and master the use of the **MERN Stack**.
