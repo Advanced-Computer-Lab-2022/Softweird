@@ -6,7 +6,7 @@ This is a main project of **CSEN 704 Advanced Computer Lab** course. The prime g
 - [Purpose](#purpose)
 - [Tools and Frameworks](#tools-and-frameworks)
 - [Coding Style](#coding-style)
-
+- [Installation](#installation)
 
 
 ## Purpose
@@ -28,4 +28,12 @@ This project is fully implemented using the **MERN Stack**. *MERN* stands for *M
 ## Coding Style
 This project is divided into two main parts, frontend and backend. Our backend is divide into routes that act as a middle point between the client and the database. On the other hand, the frontend focuses on the coding and creation of elements and features of our website that will then be seen by the user (the client-side).
 
+
+## Installation
+In order to run our project, you should have the following installed in your machine:
+ - [Node JS](https://nodejs.org/en/)
+ - [NPM](https://www.npmjs.com/)
+ - [React JS](https://react-cn.github.io/react/downloads.html) or you can use `NPM`
+ - And you can choose any text editor.
+ - [MongoDB](https://docs.mongodb.com/manual/installation/) either locally or on a cloud. You have to create `.env` with the dbconnectionString.
 
