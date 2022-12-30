@@ -7,7 +7,9 @@ This is a main project of **CSEN 704 Advanced Computer Lab** course. The prime g
 - [Tools and Frameworks](#tools-and-frameworks)
 - [Coding Style](#coding-style)
 - [Installation](#installation)
-
+- [Samples](#samples)
+- [Features](#features)
+- [API References](#api-references)
 
 ## Purpose
 
@@ -36,4 +38,18 @@ In order to run our project, you should have the following installed in your mac
  - [React JS](https://react-cn.github.io/react/downloads.html) or you can use `NPM`
  - And you can choose any text editor.
  - [MongoDB](https://docs.mongodb.com/manual/installation/) either locally or on a cloud. You have to create `.env` with the dbconnectionString.
+
+## Samples
+### Signing Up
+
+### Applying for a Course
+
+
+## Features
+
+Mainly this website provides an easy way to apply and attend pre-recorded courses online. Also, allows admins to perform CRUD operations on courses in a flexible way. Moreover, our website allows user to pay in order to reserve in a course and after the completion of any course, users receive a certificate of completion.
+
+
+## API References
+Our backend is divided into the following routes, each route has a set of *APIs* with different functionalities.
 
