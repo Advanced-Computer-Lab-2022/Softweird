@@ -207,7 +207,7 @@ OR
     message: "Admin Added Successfully!"
 }
 ```
-2. ***Add Instructor
+2. ***Add Instructor***
 - Route `/inst`
 - Request Type `POST`
 - Response Body
