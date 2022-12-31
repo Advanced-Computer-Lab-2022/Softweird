@@ -10,6 +10,8 @@ This is a main project of **CSEN 704 Advanced Computer Lab** course. The prime g
 - [Samples](#samples)
 - [Features](#features)
 - [API References](#api-references)
+  * [General](#general)
+  * [Admin](#admin)
 
 ## Purpose
 
@@ -71,6 +73,7 @@ password: "Mariam123!"
 }
 
 ```
+- Note: All these fields are required!
 - Response Body
 ```
 {   
@@ -111,10 +114,10 @@ OR
     message: "Login Successful!"
 }
 ```
-- Note: A token is created and user's id is saved in the webiste's cookies.
+- Note: A token is created and user's id is saved in our website's cookies.
 
 3. ***Add Company***
-- Add a company into our system (done by main administrator)
+- Add a company into our system (done by main administrator/developer)
 - Route `/addCompany`
 - Request Type `POST`
 - Request Body 
@@ -136,7 +139,7 @@ OR
 }
 ```
 4. ***Update Company***
-- Add a course to the company's courses in our system (done by main administrator)
+- Add a course to the company's courses in our system (done by main administrator/developer)
 - Route `/updateCompany/:id`
 - Parameters: `id`
 - Request Type `PATCH`
@@ -160,6 +163,107 @@ OR
     message: "Updated Successfully!"
 }
 ```
+5. ***Logout***
+- Route `/logout`
+- Request Type `GET`
+- Response Body
+```
+{   
+    success:  true,
+    message: "Logout Successful!"
+}
+```
+- Note: The token is removed and our website's cookies are cleared.
+
 
 ### Admin
-1. ***
+1. ***Add Admin***
+- Route `/admin`
+- Request Type `POST`
+- Response Body
+```
+{
+
+fName: "Mariam"
+lName: "Tamer"
+gender: "Female"
+username: "mariam237"
+email: "mariamtamer237@gmail.com"
+password: "Mariam123!"
+
+}
+
+```
+- Note: All these fields are required!
+- Response Body
+```
+{   
+    success: false,
+    message: error.message
+}
+OR
+{   
+    success:  true,
+    message: "Admin Added Successfully!"
+}
+```
+2. ***Add Instructor
+- Route `/inst`
+- Request Type `POST`
+- Response Body
+```
+{
+
+fName: "Hala"
+lName: "Medhat"
+gender: "Female"
+username: "hala1234"
+email: "lolometo2000@gmail.com"
+password: "Hala123!"
+
+}
+
+```
+- *Note*: All these fields are required!
+- Response Body
+```
+{   
+    success: false,
+    message: error.message
+}
+OR
+{   
+    success:  true,
+    message: "Instructor Added Successfully!"
+}
+```
+3. ***Add Corporate***
+- Route `/corp`
+- Request Type `POST`
+- Response Body
+```
+{
+
+fName: "Rana"
+lName: "Emad"
+gender: "Female"
+username: "rana1234"
+email: "rana3madelnahas@gmail.com"
+password: "Rana123!"
+
+}
+
+```
+- *Note*: All these fields are required!
+- Response Body
+```
+{   
+    success: false,
+    message: error.message
+}
+OR
+{   
+    success:  true,
+    message: "Corporate Added Successfully!"
+}
+```
