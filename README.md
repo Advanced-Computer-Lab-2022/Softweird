@@ -53,3 +53,7 @@ Mainly this website provides an easy way to apply and attend pre-recorded course
 ## API References
 Our backend is divided into the following routes, each route has a set of *APIs* with different functionalities.
 
+### Registering
+1. ***SignUp***
+2. ***Login***
+3. ***
