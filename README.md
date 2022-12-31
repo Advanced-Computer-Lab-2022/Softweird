@@ -51,9 +51,115 @@ Mainly this website provides an easy way to apply and attend pre-recorded course
 
 
 ## API References
-Our backend is divided into the following routes, each route has a set of *APIs* with different functionalities.
+Our backend is divided into different routes either general for all users or specific, based on the type of the user. Each route has a set of *APIs* with different functionalities.
 
-### Registering
+### General
 1. ***SignUp***
+- Route `/signUp`
+- Request Type `POST`
+- Request Body 
+```
+{
+
+fName: "Mariam"
+lName: "Tamer"
+gender: "Female"
+username: "mariam237"
+email: "mariamtamer237@gmail.com"
+password: "Mariam123!"
+
+}
+
+```
+- Response Body
+```
+{   
+    success: false,
+    message: "You couldn't sign-up. Error : ", 
+    err
+}
+OR
+{   
+    success:  true,
+    message: "You have Signed-Up Successfully!"
+}
+```
+
 2. ***Login***
-3. ***
+- Route `/login`
+- Request Type `POST`
+- Request Body 
+
+```
+{
+
+email: "mariamtamer237@gmail.com"
+password: "Mariam123!"
+
+}
+
+```
+- Response Body
+```
+{   
+    success: false,
+    message: "Email or Password is incorrect."
+}
+OR
+{   
+    success:  true,
+    message: "Login Successful!"
+}
+```
+- Note: A token is created and user's id is saved in the webiste's cookies.
+
+3. ***Add Company***
+- Add a company into our system (done by main administrator)
+- Route `/addCompany`
+- Request Type `POST`
+- Request Body 
+```
+{
+   name: "GUC"
+}
+```
+- Response Body
+```
+{   
+    success: false,
+    message: error.message
+}
+OR
+{   
+    success:  true,
+    message: "Added Successfully!"
+}
+```
+4. ***Update Company***
+- Add a course to the company's courses in our system (done by main administrator)
+- Route `/updateCompany/:id`
+- Parameters: `id`
+- Request Type `PATCH`
+- Request Body 
+```
+{
+  courseTitle: "Computer Science",
+  expiryDate: "09/2023",
+  level: "3"
+}
+```
+- Response Body
+```
+{   
+    success: false,
+    message: error.message
+}
+OR
+{   
+    success:  true,
+    message: "Updated Successfully!"
+}
+```
+
+### Admin
+1. ***
