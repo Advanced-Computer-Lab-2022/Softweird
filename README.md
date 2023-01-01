@@ -138,6 +138,7 @@ OR
     message: "Added Successfully!"
 }
 ```
+
 4. ***Update Company***
 - Add a course to the company's courses in our system (done by main administrator/developer)
 - Route `/updateCompany/:id`
@@ -163,6 +164,7 @@ OR
     message: "Updated Successfully!"
 }
 ```
+
 5. ***Logout***
 - Route `/logout`
 - Request Type `GET`
@@ -175,6 +177,106 @@ OR
 ```
 - Note: The token is removed and our website's cookies are cleared.
 
+6.***Update Password***
+- All users can update their password.
+- Route `/updateMyPass/:id`
+- Parameters: `id`
+- Request Type `PATCH`
+- Request Body 
+```
+{
+  password: "rana123321!"
+}
+```
+- Response Body
+```
+{   
+    success: false,
+    message: "Password is weak. Please enter a stronger password."
+}
+OR
+{   
+    success:  true,
+    message: "Password changed Successfully!"
+}
+```
+
+7.***Forget Password***
+- All users can update their password.
+- Route `/forgetMyPass`
+- Request Type `POST`
+- Request Body 
+```
+{
+  email: "rana3madelnahas@gmail.com"
+}
+```
+- Response Body
+```
+{   
+    success: false,
+    message: "This email is not registered in the system, please try again."
+}
+OR
+{   
+    success:  true,
+    message: "Successfully!"
+}
+```
+- *Note:* An email is sent to the user to change his/her password.
+
+8.***Update Email*** 
+- All users can update their password.
+- Route `/updateMyEmail/:id`
+- Parameters : `id`
+- Request Type `PATCH`
+- Request Body 
+```
+{
+  email: "rana3madelnahas@gmail.com"
+}
+```
+- Response Body
+```
+{   
+    success: false,
+    message: error.message
+}
+OR
+{   
+   
+fName: "Mariam",
+lName: "Tamer",
+gender: "Female",
+username: "mariam237",
+email: "mariamtamer237@gmail.com",
+password: "$2b$10$uwvCcFOQk4IoZwj3hMmdV.6KRhjulcU85fz3kL4oLEE.yslhdWtAC",
+type: "admin"
+
+}
+```
+- *Note:* An email is sent to the user to confirm the association of the email updated.
+
+9. View Profile
+All users can view their profile info.
+- Route `/getMyProfile/:id`
+- Parameters : `id`
+- Request Type `GET`
+- Response Body
+```
+{   
+   
+
+fName: "Reem",
+lName: "Mohamed",
+gender: "Female",
+username: "reem",
+email: "reem@gmail.com",
+password: "$2b$10$CbqmiF/UcuAaCrsiEWZpmefT2ZLqTwC8ktl/8WM9e9CpLkcz7UQs6",
+type: "individual"
+
+}
+```
 
 ### Admin
 1. ***Add Admin***
@@ -267,3 +369,18 @@ OR
     message: "Corporate Added Successfully!"
 }
 ```
+4. router.get('/getreports',getreports)
+5. router.post('/addFollowUp',addFollowUp)
+6. router.get('/getfollow',getfollow)
+7. router.post('/solveR',solveR)
+8. router.post('/pendingR',pendingR)
+9. router.post('/OpenR',OpenR)
+10. router.post('/getreport',getreport)
+11. router.post('/solveAccess',solveAccess)
+12. router.post('/solveRefund',solveRefund)
+13. router.get('/getRefunds',getRefunds) 
+14. router.get('/getAccess',getAccess)
+
+18. router.patch('/removePromote',RemovePromote)
+19. router.patch('/promoteCourse',PromoteCourse)
+
