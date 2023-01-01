@@ -1,4 +1,4 @@
-# Easy Learning
+# Easy Learning  (Easy-L)
 
 This is a main project of **CSEN 704 Advanced Computer Lab** course. The prime goal of the project is to create a complete Online Learning System. An Online Learning System is a web application through which individuals can attend pre-recorded courses online. Existing web applications include but are not limited to Coursera, Udemy, LinkedIn Learning, Great Learning and Udacity.
 
@@ -16,6 +16,7 @@ This is a main project of **CSEN 704 Advanced Computer Lab** course. The prime g
   * [Trainees](#trainees)
     * [Individual Trainee](#individual-trainee)
     * [Corporate Trainee](#corporate-trainee)
+-[Meet Our Team](#meet-our-team)
   
 
 
@@ -1552,6 +1553,8 @@ OR
     }
 }
 ```
+
+## Meet Our Team
 
 
 
