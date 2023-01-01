@@ -16,7 +16,7 @@ This is a main project of **CSEN 704 Advanced Computer Lab** course. The prime g
   * [Trainees](#trainees)
     * [Individual Trainee](#individual-trainee)
     * [Corporate Trainee](#corporate-trainee)
--[Meet Our Team](#meet-our-team)
+- [Meet Our Team](#meet-our-team)
   
 
 
