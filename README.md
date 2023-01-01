@@ -1555,6 +1555,6 @@ OR
 ```
 
 ## Meet Our Team
-
+![team](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/4.png)
 
 
