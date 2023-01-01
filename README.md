@@ -73,7 +73,7 @@ password: "Mariam123!"
 }
 
 ```
-- *Note: * All these fields are required!
+- *Note:* All these fields are required!
 - Response Body
 ```
 {   
@@ -114,7 +114,7 @@ OR
     message: "Login Successful!"
 }
 ```
-- *Note: * A token is created and user's id is saved in our website's cookies.
+- *Note:* A token is created and user's id is saved in our website's cookies.
 
 3. ***Add Company***
 - Add a company into our system (done by main administrator/developer)
@@ -175,7 +175,7 @@ OR
     message: "Logout Successful!"
 }
 ```
-- *Note: * The token is removed and our website's cookies are cleared.
+- *Note:* The token is removed and our website's cookies are cleared.
 
 6.***Update Password***
 - All users can update their password.
@@ -223,7 +223,7 @@ OR
     message: "Successfully!"
 }
 ```
-- *Note: * An email is sent to the user to change his/her password.
+- *Note:* An email is sent to the user to change his/her password.
 
 8.***Update Email*** 
 - All users can update their password.
@@ -296,7 +296,7 @@ password: "Mariam123!"
 }
 
 ```
-- Note: All these fields are required!
+- *Note:* All these fields are required!
 - Response Body
 ```
 {   
@@ -326,7 +326,7 @@ password: "Hala123!"
 }
 
 ```
-- *Note*: All these fields are required!
+- *Note:* All these fields are required!
 - Response Body
 ```
 {   
@@ -356,7 +356,7 @@ password: "Rana123!"
 }
 
 ```
-- *Note*: All these fields are required!
+- *Note:* All these fields are required!
 - Response Body
 ```
 {   
@@ -383,4 +383,77 @@ OR
 
 18. router.patch('/removePromote',RemovePromote)
 19. router.patch('/promoteCourse',PromoteCourse)
+
+###Instructor
+
+router.get('/myCourses',getInstructorCourses)
+router.get('/oneCourse/:id',getOneCourse)
+router.post('/addOneCourse/:id',addOneCourse)
+router.patch('/updateMyBiography/:id',UpdateBiography)
+router.patch('/updateMyEmail/:id',UpdateEmail)
+router.patch('/uploadVideo', addVideo)
+router.patch('/addSubtitles', addSubtitle)
+router.patch('/deleteVideo', deleteVideo )
+router.patch('/deleteSubtitle', deleteSubtitle)
+router.post('/forgetMyPass',ForgotPassword)
+router.patch('/updateMyPass/:id',UpdatePass)
+router.patch('/publishCourse',FinishCourse)
+router.patch('/promoteCourse',PromoteCourse)
+router.patch('/removePromote',RemovePromote)
+router.post('/makeExam/:id',makeExam)
+router.patch('/deleteCourse', deleteCourse)
+
+
+###Individual Trainee
+
+router.patch('/course/rate/:id', RateCourse)
+router.patch('/instructor/rate/:id',RateInstructor)
+router.get('/allCourses',AllCourses)
+router.get('/myCourse/:id',MyCourse) 
+router.get('/myCourses/:id',MyCourses) 
+router.patch('/updateMyPass/:id',UpdatePass)
+router.post('/forgetMyPass',ForgotPassword)
+router.patch('/updateMyEmail/:id',UpdateEmail)
+router.patch('/videoWatched/:id',VideoWatched)
+router.patch('/notes/:id',Notes)
+router.patch('/registerCourse/:id',RegisterCourse)
+
+router.post('/solve',solve)
+router.get('/modelAns',modelAns)
+router.get('/getQusetions',getQusetions)
+router.post('/payForCourse',payForCourse)
+router.post('/paymentIntent',paymentIntent)
+router.patch('/reviewCourse/:id',reviewPost)
+router.patch('/deleteReviewCourse/:id',DeletereviewPost)
+
+router.patch('/reviewInst/:id',reviewPostInst)
+router.patch('/deleteReviewInst/:id',DeletereviewPostInst)
+router.post('/refundRequests/:id',RefundRequests)
+
+
+###Corporate Trainee
+
+router.patch('/course/rate/:id', RateCourse)
+router.patch('/instructor/rate/:id',RateInstructor)
+router.get('/allCourses',AllCourses)
+router.get('/myCourse/:id',MyCourse) 
+router.get('/myCourses/:id',MyCourses) 
+router.patch('/updateMyPass/:id',UpdatePass)
+router.post('/forgetMyPass',ForgotPassword)
+router.patch('/updateMyEmail/:id',UpdateEmail)
+router.patch('/videoWatched/:id',VideoWatched)
+router.patch('/notes/:id',Notes)
+router.patch('/registerCourse/:id',RegisterCourse)
+
+router.post('/solve',solve)
+router.get('/modelAns',modelAns)
+router.get('/getQusetions',getQusetions)
+
+router.patch('/reviewCourse/:id',reviewPost)
+router.patch('/deleteReviewCourse/:id',DeletereviewPost)
+
+router.patch('/reviewInst/:id',reviewPostInst)
+router.patch('/deleteReviewInst/:id',DeletereviewPostInst)
+
+router.patch('/accessRequests/:id',AccessRequests)
 
