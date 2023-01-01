@@ -13,8 +13,9 @@ This is a main project of **CSEN 704 Advanced Computer Lab** course. The prime g
   * [General](#general)
   * [Admin](#admin)
   * [Instructor](#instructor)
-  * [Individual Trainee](#individual-trainee)
-  * [Corporate Trainee](#corporate-trainee)
+  * [Trainees](#trainees)
+    * [Individual Trainee](#individual-trainee)
+    * [Corporate Trainee](#corporate-trainee)
   
 
 
@@ -1436,8 +1437,8 @@ OR
 }
 ```
 
-#### Individual Trainee (different route than Corporate Trainee)
-12. ***Pay for Course***
+#### Individual Trainee
+12. ***Pay for Course***  (different route than Corporate Trainee)
 - Only Individual Trainees in the system can pay for a specific course he/she are willing to register for.
 - Route `/payForCourse`
 - Request Type `POST`
@@ -1463,7 +1464,7 @@ OR
 - **Important Note:** For the paymnet to be successful, a payment intent is created and the user is redirected to a payment page where he/she needs to enter his/her credit card details. If the card details is valid, the user will be redirected again to the course page. Thus, the user in now registered in the course.
 
 
-13. ***Request Refund***
+13. ***Request Refund*** (different route than Corporate Trainee)
 - Only Individual Trainees in the system can request a refund for a specific course he/she are registered in.
 - Route `/refundRequests/:id`
 - Request Type `POST`
@@ -1509,8 +1510,8 @@ OR
 }
 ```
 
-#### Corporate Trainee (different route than Individual Trainee)
-14. ***Request Access for Course***
+#### Corporate Trainee
+14. ***Request Access for Course*** (different route than Individual Trainee)
 - Only Corporate Trainees in the system can request am access for a specific course he/she want to register in.
 - Route `/accessRequests/:id`
 - Request Type `PATCH`
