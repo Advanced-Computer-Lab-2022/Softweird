@@ -73,7 +73,7 @@ password: "Mariam123!"
 }
 
 ```
-- Note: All these fields are required!
+- *Note: * All these fields are required!
 - Response Body
 ```
 {   
@@ -114,7 +114,7 @@ OR
     message: "Login Successful!"
 }
 ```
-- Note: A token is created and user's id is saved in our website's cookies.
+- *Note: * A token is created and user's id is saved in our website's cookies.
 
 3. ***Add Company***
 - Add a company into our system (done by main administrator/developer)
@@ -175,7 +175,7 @@ OR
     message: "Logout Successful!"
 }
 ```
-- Note: The token is removed and our website's cookies are cleared.
+- *Note: * The token is removed and our website's cookies are cleared.
 
 6.***Update Password***
 - All users can update their password.
@@ -197,7 +197,7 @@ OR
 OR
 {   
     success:  true,
-    message: "Password changed Successfully!"
+    message: "Password updated Successfully!"
 }
 ```
 
@@ -223,7 +223,7 @@ OR
     message: "Successfully!"
 }
 ```
-- *Note:* An email is sent to the user to change his/her password.
+- *Note: * An email is sent to the user to change his/her password.
 
 8.***Update Email*** 
 - All users can update their password.
@@ -257,8 +257,8 @@ type: "admin"
 ```
 - *Note:* An email is sent to the user to confirm the association of the email updated.
 
-9. View Profile
-All users can view their profile info.
+9. ***View Profile***
+- All users can view their profile info.
 - Route `/getMyProfile/:id`
 - Parameters : `id`
 - Request Type `GET`
