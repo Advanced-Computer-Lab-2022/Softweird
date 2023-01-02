@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import isEmpty from 'validator/lib/isEmpty';
 import axios from "axios"
 import isEmail from 'validator/lib/isEmail';
@@ -17,22 +17,23 @@ import Loading from '../Components/OneComponent/Loading';
 import { useNavigate, useLocation,Navigate } from 'react-router-dom';
 import cookie from 'react-cookie';
 import {useAuth} from '../Components/auth'
-
-
-  
+import ToastMess from '../Components/OneComponent/ToastMess';
+import { Toast } from '../Context/Toast';
+import LogoShortRed from '../Images/LogoShortRed.png'
+  import { Stack } from '@mui/material';
 
 
 function SignUp() {
-    const navigate= useNavigate()
+	const navigate= useNavigate()
     const location =useLocation()
     const redirectPath = location.state?.path || '/'
     const auth= useAuth()
-    
+    const {setOpenToast} = useContext(Toast)
 	const [agree,setAgree]= useState(false);
 	const [open, setOpen] = React.useState(false);
       const theme = useTheme();
       const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-
+	  const [taken,setTaken] =useState('')
     const [errorMessage, setErrorMessage] = useState('')
  
   const validate = (value) => {
@@ -96,6 +97,8 @@ function SignUp() {
 	 * EVENT HANDLERS
 	 ***************************/
 	const handleChange = evt => {
+		if(evt.target.name=="Password")
+		setErrorMessage("")
 		//console.log(evt);
 		setFormData({
 			...formData,
@@ -137,6 +140,7 @@ function SignUp() {
 		}
      else if(Password!== ConfrimPassword){
         setFormData({
+			...formData,
             successMsg: false,
             errorMsg: "Password Mismatch",
             loading: false,
@@ -145,6 +149,7 @@ function SignUp() {
         console.log("passwords");}
     else if (agree===false){
 		setFormData({
+			...formData,
             successMsg: false,
             errorMsg: "Please agree to the terms and conditions",
             loading: false,
@@ -156,19 +161,20 @@ function SignUp() {
 			const data = { FirstName,LastName,Gender,Username, Password,Email };
             console.log("dfghg")
 
-			setFormData({ ...formData, loading: true });
-
+			
             let cancel
+			setFormData({ ...formData, loading: false });
+
             axios({
                 method:"POST",
-                url : "/signUp",
+                url : "sign/signup",
                 data : data,
                 headers : {'Content-Type' : 'application/json'},
                 cancelToken: new axios.CancelToken (c => cancel = c)
             }).then (res => {
                
                const response = res.data
-                console.log(response,"hhhhhhhh")
+          console.log(response)
                if (response==="Sign up Successful"){
                  setFormData({
                     FirstName: '',
@@ -182,25 +188,48 @@ function SignUp() {
                     errorMsg: false,
                     loading: false,
                 });
-                navigate(redirectPath,{replace:true})
+				
+				navigate('/login')
+				setOpenToast(true)
                }
                else if(response === "This email is already signed in"){
+				setpassword("password");
+			seteye(true);
+			settype(false);
                 setFormData({
+					FirstName: FirstName,
+                    LastName: LastName,
+                    Username: Username,
                     Email: '',
                     Password: '',
-                    successMsg: true,
+                    ConfrimPassword:'',
+                    Gender: Gender,
+                    successMsg: false,
                     errorMsg: "This email is already signed in",
+                    loading: false,
+                });
+               }
+			   else if(response === "username already taken"){
+				setpassword("password");
+			seteye(true);
+			settype(false);
+                setFormData({
+					FirstName: FirstName,
+                    LastName: LastName,
+                    Username: "",
+                    Email: Email,
+                    Password: '',
+                    ConfrimPassword:'',
+                    Gender: Gender,
+                    successMsg: false,
+                    errorMsg: "username taken",
                     loading: false,
                 });
                }
             
             }).catch(e=>{
                 
-                    setFormData({
-                        successMsg: false,
-                        errorMsg: " taken",
-                        loading: false,
-                    });
+                 
 
                     
                    
@@ -235,19 +264,24 @@ function SignUp() {
 
                 <div className="form-content">
                     <div className="form-items">
-                        
+						<Stack direction="row" justifyContent={"space-between"}>
+						<Stack>
                         <h3>Registeration</h3>
-                        <p style={{color:"grey"}}>Fill in the data below.</p>
-                
-        {successMsg && <p> User created successfully</p>}
+                        <p style={{color:"grey",paddingTop:"0.5rem"}}>Fill in the data below.</p>
+						</Stack>
+						<div className='text-end' style={{width:"13%"}}>
+						<img src={LogoShortRed} style={{width:"100%"}}/>
+                        </div>
+						</Stack>
+       
         {loading && <Loading/>}
         {!loading &&
         <>
-        {errorMsg==="username taken" && <p>This Username is already taken</p>}
-        {errorMsg==="All fields are required" && <p>All fields are required</p>}
-        {errorMsg==="This email is already signed in" && <p>This email is already signed in</p>}
-		{errorMsg==="Password Mismatch" && <p>Passwords Mismatch, Please try again!</p>}
-		{errorMsg==="Please agree to the terms and conditions" && <p>Please agree to the terms and conditions</p>}
+        {errorMsg==="username taken" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*This Username is already taken</p>}
+        {errorMsg==="All fields are required" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*All fields are required</p>}
+        {errorMsg==="This email is already signed in" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*This email is already signed in</p>}
+		{errorMsg==="Password Mismatch" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*Passwords Mismatch, Please try again!</p>}
+		{errorMsg==="Please agree to the terms and conditions" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*Please agree to the terms and conditions</p>}
             {/* firstName */}
 			<div className='form-group input-group'>
 			<div className='input-group-prepend'>
@@ -313,6 +347,7 @@ function SignUp() {
 				/>
 			</div>
 			{/* password */}
+			
 			<div className='form-group input-group'>
 			<div className='input-group-prepend'>
 					<span className='input-group-text'>
@@ -323,6 +358,7 @@ function SignUp() {
 				<input
 					name='Password'
 					value={Password || ''}
+					autoComplete='new-password'
 					className='form-control'
 					placeholder='Create password'
 					type={paswo}
@@ -330,15 +366,18 @@ function SignUp() {
                     onInput={(e) => validate(e.target.value)}></input> 
                     <i onClick={Eye} className={`fa ${eye ? "fa-eye-slash" : "fa-eye" }`}></i>
                     <br />
-                    {errorMessage === '' ? null :
-                   <> <br/><span style={{fontSize:12,
-                      color: 'red',
-                    }}> {errorMessage}</span></>}
+                  
 					
 				
 			</div>
+			{errorMessage!=='' &&<div className='form-group input-group'>
+			{errorMessage === '' ? null :
+                    <div style={{fontSize:12,
+                      color: 'red',marginLeft:"4%"
+                    }}> *{errorMessage}</div>}</div>}
 			{/* confirm password */}
 			<div className='form-group input-group'>
+				
 			<div className='input-group-prepend'>
 					<span className='input-group-text'>
 						<i className='fa fa-lock'></i>
@@ -401,7 +440,7 @@ function SignUp() {
         
 <div>
 	<label style={{color: "black"}}>
-      <input type="checkbox" style={{marginTop: "22px"}} onChange={agreeSet}  />
+      <input type="checkbox" style={{marginTop: "22px",marginRight:"0.5rem"}} onChange={agreeSet}  />
 	  I agree to the payment terms aand conditions
 	  </label>
     </div>

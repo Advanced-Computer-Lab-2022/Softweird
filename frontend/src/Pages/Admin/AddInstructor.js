@@ -1,21 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import isEmpty from 'validator/lib/isEmpty';
 import axios from "axios"
 import isEmail from 'validator/lib/isEmail';
 import validator from 'validator';
-
-//import { showErrorMsg, showSuccessMsg } from '../helpers/alert';
-//import { showLoading } from '../helpers/loading';
-//import { isAuthenticated } from '../helpers/auth';
-//import './AddUsers.css';
-//import {StyleSheet,Text,View,ScrollView,TouchableOpacity,LayoutAnimation} from "react-native";
-//import { addAdmin,addCorporate,addInstructor } from '../../../../../Backend/Controller/AdminAdd';
+import {Toast} from '../../Context/Toast'
+import ToastMess from '../../Components/OneComponent/ToastMess'
 import { Stack } from '@mui/material';
 
 function AddInstructor() {
 
 	const [errorMessage, setErrorMessage] = useState('')
-
+const{setOpenToast}=useContext(Toast)
 	const validate = (value) => {
  
 		if (validator.isStrongPassword(value, {
@@ -72,6 +67,7 @@ function AddInstructor() {
 	 ***************************/
 	const handleChange = evt => {
 		//console.log(evt);
+		if(evt.target.name=="Password") setErrorMessage("")
 		setFormData({
 			...formData,
 			[evt.target.name]: evt.target.value,
@@ -86,7 +82,9 @@ function AddInstructor() {
 	
 
 	const handleSubmit = evt => {
-        evt.preventDefault();
+
+		if(window.confirm("Are you sure you want to add this Instructor"))
+       { evt.preventDefault();
         console.log("form")
         console.log(FirstName)
         console.log(Username)
@@ -125,7 +123,7 @@ function AddInstructor() {
 			const data = { FirstName,LastName,Gender,Username, Password,Email };
             console.log("dfghg")
 
-			setFormData({ ...formData, loading: true });
+			setFormData({ ...formData, loading: false });
 
             let cancel
             axios({
@@ -151,21 +149,59 @@ function AddInstructor() {
                     errorMsg: false,
                     loading: false,
                 });
+
+				setOpenToast(true)
                 
                }
+			   else if(response === "This email is already signed in"){
+				setpassword("password");
+			seteye(true);
+			settype(false);
+                setFormData({
+					FirstName: FirstName,
+                    LastName: LastName,
+                    Username: Username,
+                    Email: '',
+                    Password: '',
+                    ConfrimPassword:'',
+                    Gender: Gender,
+                    successMsg: false,
+                    errorMsg: "This email is already signed in",
+                    loading: false,
+                });
+               }
+			   else if(response === "username already taken"){
+				setpassword("password");
+			seteye(true);
+			settype(false);
+                setFormData({
+					FirstName: FirstName,
+                    LastName: LastName,
+                    Username: "",
+                    Email: Email,
+                    Password: '',
+                    ConfrimPassword:'',
+                    Gender: Gender,
+                    successMsg: false,
+                    errorMsg: "username taken",
+                    loading: false,
+                });
+               }
+            
             
             }).catch(e=>{
                 
-                    setFormData({
-                        successMsg: false,
-                        errorMsg: "username taken",
-                        loading: false,
-                    });
+				setFormData({
+						...formData,
+					successMsg: false,
+					errorMsg: e,
+					loading: false,
+				});
                    
                 if(axios.isCancel(e)) return 
             })
             return () => cancel ()
-		}}
+		}}}
 
     function handleInst(){
         setPage("/adminAdd/inst")
@@ -195,12 +231,12 @@ function AddInstructor() {
                         <h3>Instructor Registeration</h3>
                         <p style={{color:"grey"}}>Fill in the data below.</p>
 
-		{successMsg && <p> User created successfully</p>}
+		
         {loading && <p> Loading</p>}
-        {errorMsg==="username taken" && <p style={{marginTop:0,color:'red'}}>*This Username is already taken</p>}
-        {errorMsg==="All fields are required" && <p style={{marginTop:0,color:'red'}}>*All fields are required</p>}
-        {errorMsg==="This email is already signed in" && <p style={{marginTop:0,color:'red'}}>*This email is already signed in</p>}
-		{ errorMsg==="Password Mismatch" && <p style={{marginTop:0,color:'red'}}>*Passwords Mismatch, Please try again!</p>}
+        {errorMsg==="username taken" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*This Username is already taken</p>}
+        {errorMsg==="All fields are required" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*All fields are required</p>}
+        {errorMsg==="This email is already signed in" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*This email is already signed in</p>}
+		{ errorMsg==="Password Mismatch" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*Passwords Mismatch, Please try again!</p>}
 
             {/* firstName */}
 			<div className='form-group input-group'>
@@ -281,6 +317,7 @@ function AddInstructor() {
 					className='form-control'
 					placeholder='Create password'
 					type={paswo}
+					autoComplete='new-password'
 					onChange={handleChange}
                     onInput={(e) => validate(e.target.value)}></input> 
                     <i onClick={Eye} className={`fa ${eye ? "fa-eye-slash" : "fa-eye" }`}></i>
@@ -290,11 +327,11 @@ function AddInstructor() {
 					
 				
 			</div>
-			<div className='form-group input-group'>
+			{errorMessage!='' &&<div className='form-group input-group'>
 			{errorMessage === '' ? null :
                     <div style={{fontSize:12,
                       color: 'red',marginLeft:"4%"
-                    }}> *{errorMessage}</div>}</div>
+                    }}> *{errorMessage}</div>}</div>}
 			{/* confirm password */}
 			<div className='form-group input-group'>
 			<div className='input-group-prepend'>
@@ -334,6 +371,7 @@ function AddInstructor() {
         </div>
 				</div></form>
         <p></p>
+		{successMsg && <ToastMess message="Instructor Created successfully" />}
         </>
 	);
 

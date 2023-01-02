@@ -48,7 +48,7 @@ const searchAll = async (req , res) => {
         
         const course = await Course.find({$or:[{title : {$regex: input,$options: 'i' }},
         {subject :  { $regex: input ,$options: 'i'}},
-        {instructor: { $regex: input ,$options: 'i'} }]}).sort({'rating' :"desc"})
+        {instructor: { $regex: input ,$options: 'i'} }]}).sort({'rating' :"desc"}).populate('reviews.traineeId')
         
         if(type == "individual"){
             if(!mongoose.Types.ObjectId.isValid(id)){

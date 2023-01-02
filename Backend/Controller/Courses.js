@@ -29,7 +29,7 @@ const getOneCourse = async (req,res) =>{
     const {id} = req.params;
     const{userId,type} =req.query
 
-    const course = await Course.findOne({title:id})
+    const course = await Course.findOne({title:id}).populate('reviews.traineeId')
     if(!course){
         return res.status(200).json({error:'no such course'})
     }
@@ -61,16 +61,13 @@ const getOneCourse = async (req,res) =>{
 
 const getMostViewed = async(req,res) =>{
     try {
-        if (input==='' ){
-            
-                return res.status(200).send([])
-            }
+       
         
-        else{
+     
                 const course = await Course.find({}).sort({enrolledStudents :'desc'})
                 const arr = course.slice(0,10)
                 return res.status(200).send(arr)
-        }
+        
         
     }
         

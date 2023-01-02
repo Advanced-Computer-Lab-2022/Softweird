@@ -1,20 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import isEmpty from 'validator/lib/isEmpty';
 import axios from "axios"
 import isEmail from 'validator/lib/isEmail';
 import Select from 'react-select';
 import validator from 'validator';
-//import { showErrorMsg, showSuccessMsg } from '../helpers/alert';
-//import { showLoading } from '../helpers/loading';
-//import { isAuthenticated } from '../helpers/auth';
+
 import './AddUser.css';
-//import {StyleSheet,Text,View,ScrollView,TouchableOpacity,LayoutAnimation} from "react-native";
-//import { addAdmin,addCorporate,addInstructor } from '../../../../../Backend/Controller/AdminAdd';
+
+import {Toast} from '../../Context/Toast'
+import ToastMess from '../../Components/OneComponent/ToastMess'
 
 function AddCorporate() {
 	//let Com="mm";
 	const [errorMessage, setErrorMessage] = useState('')
-
+	const{setOpenToast}=useContext(Toast)
 	const validate = (value) => {
  
 		if (validator.isStrongPassword(value, {
@@ -45,6 +44,7 @@ function AddCorporate() {
 		Password: '',
         ConfrimPassword:'',
 		Gender: '',
+		Level: '',
 		successMsg: false,
 		errorMsg: false,
 		loading: false,
@@ -56,6 +56,7 @@ function AddCorporate() {
 		LastName,
 		Username,
 		Email,
+		Level,
 		Password,
         ConfrimPassword,
 		Gender,
@@ -65,7 +66,8 @@ function AddCorporate() {
 	} = formData;
 
 	const [values, setValue] = useState("Select Company")
-	const companies = [{ value: 'GUC', label: 'GUC' },
+	const companies = [{ value: 'Select Company', label: 'Select Company' },
+	{ value: 'GUC', label: 'GUC' },
 	{ value: 'AUC', label: 'AUC' },
 	{ value: 'GIU', label: 'GIU' },{ value: 'CIB', label: 'CIB' },
 	{ value: 'ADIB', label: 'ADIB' },
@@ -74,16 +76,43 @@ function AddCorporate() {
 	const changeHandler = value => {
 		console.log(value)
         setValue(value.value)
-		console.log(value.value)
-		Com=value.value
+		
+		setFormData({
+			...formData,
+			Com: value.value,
+			successMsg: '',
+			errorMsg: '',
+		});
 	}
+
+
+	const [values2, setValue2] = useState("Select Level")
+	const levels = [{ value: 'Select Level', label: 'Select Level' },
+	{ value:1, label: 1 },
+	{ value: 2, label: 2 },
+	{ value: 3, label: 3 },{ value: 4, label: 4 },
+	{ value: 5, label: 5 },
+	];
+
+	const changeHandler2 = value => {
+		console.log(value)
+        setValue2(value.value)
+		
+		setFormData({
+			...formData,
+			Level: value.value,
+			successMsg: '',
+			errorMsg: '',
+		});
+	}
+
 
 	/****************************
 	 * EVENT HANDLERS
 	 ***************************/
 	const handleChange = evt => {
 		//console.log(evt);
-		
+		if(evt.target.name=="Password") setErrorMessage("")
 		setFormData({
 			...formData,
 			[evt.target.name]: evt.target.value,
@@ -96,7 +125,8 @@ function AddCorporate() {
 	const[type,settype]=useState(false);
 
 	const handleSubmit = evt => {
-        evt.preventDefault();
+		if(window.confirm("Are you sure you want to add this Corporate"))
+{        evt.preventDefault();
         console.log("form")
         console.log(FirstName)
         console.log(Username)
@@ -110,7 +140,7 @@ function AddCorporate() {
 			isEmpty(Email) ||
 			isEmpty(Password) ||
 			isEmpty(ConfrimPassword)||
-			isEmpty(Gender)
+			isEmpty(Gender)||Level=="Select Level"||Com=="Select Company"
 		) {
 			setFormData({
 				...formData,
@@ -130,8 +160,8 @@ function AddCorporate() {
         });
         console.log("passwords");
     }else {
-			const {Com,FirstName,LastName,Gender,Username, Password,Email } = formData;
-			const data = {Com,FirstName,LastName,Gender,Username, Password,Email };
+			const {Com,FirstName,LastName,Gender,Username, Password,Email,Level } = formData;
+			const data = {Com,FirstName,LastName,Gender,Username, Password,Email,Level };
             console.log(values+" hna ")
 
 
@@ -150,35 +180,80 @@ function AddCorporate() {
                 console.log(response,"hhhhhhhh")
                if (response==="Sucess"){
                  setFormData({
-					Com:'',
+					Level:"Select Level",
+					Com:"Select Company",
+					
                     FirstName: '',
                     LastName: '',
                     Username: '',
                     Email: '',
                     Password: '',
+					
                     ConfrimPassword:'',
                     Gender: '',
                     successMsg: true,
                     errorMsg: false,
                     loading: false,
                 });
-                console.log(successMsg)
+				setOpenToast(true)
+
+                
                }
+			   else if(response === "This email is already signed in"){
+				setpassword("password");
+			seteye(true);
+			settype(false);
+                setFormData({
+					Com:Com,
+					FirstName: FirstName,
+                    LastName: LastName,
+                    Username: Username,
+                    Email: '',
+                    Password: '',
+                    ConfrimPassword:'',
+                    Gender: Gender,
+					Level:Level,
+                    successMsg: false,
+                    errorMsg: "This email is already signed in",
+                    loading: false,
+                });
+               }
+			   else if(response === "username already taken"){
+				setpassword("password");
+			seteye(true);
+			settype(false);
+                setFormData({
+					Com:Com,
+					FirstName: FirstName,
+                    LastName: LastName,
+                    Username: "",
+                    Email: Email,
+                    Password: '',
+                    ConfrimPassword:'',
+                    Gender: Gender,
+					Level:Level,
+                    successMsg: false,
+                    errorMsg: "username taken",
+                    loading: false,
+                });
+               }
+            
             
             }).catch(e=>{
                 
-                    setFormData({
-                        successMsg: false,
-                        errorMsg: "username taken",
-                        loading: false,
-                    });
-					console.log(e);
+				setFormData({
+						
+					successMsg: false,
+					errorMsg: e,
+					loading: false,
+				});
                    
                 if(axios.isCancel(e)) return 
             
             })
             return () => cancel ()
 		}}
+	}
 
     function handleCorp(){
         setPage("/adminAdd/corp")
@@ -209,12 +284,11 @@ function AddCorporate() {
                         <h3>Corporate Registeration</h3>
                         <p style={{color:"grey"}}>Fill in the data below.</p>
 
-		{successMsg && <p> User created successfully</p>}
-        {loading && <p> Loading</p>}
-        {errorMsg==="username taken" && <p>This Username is already taken</p>}
-        {errorMsg==="All fields are required" && <p>All fields are required</p>}
-        {errorMsg==="This email is already signed in" && <p>This email is already signed in</p>}
-		{ errorMsg==="Password Mismatch" && <p>Passwords Mismatch, Please try again!</p>}  
+      
+        {errorMsg==="username taken" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>This Username is already taken</p>}
+        {errorMsg==="All fields are required" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>All fields are required</p>}
+        {errorMsg==="This email is already signed in" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>This email is already signed in</p>}
+		{errorMsg==="Password Mismatch" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>Passwords Mismatch, Please try again!</p>}  
 			  {/* company */}
 			  <div className='form-group input-group' >
 			  <div className='input-group-prepend '>
@@ -226,6 +300,18 @@ function AddCorporate() {
      <Select options={companies} value={Com} onChange={changeHandler} placeholder={values} style={{width:"2rem"}}  />
      </>
 			</div>
+
+			<div className='form-group input-group'style={{paddingTop:"1rem"}} >
+			  <div className='input-group-prepend '>
+					<span className='input-group-text'>
+						<i className='fa fa-building'></i>
+					</span>
+				</div>
+			<>
+     <Select options={levels} value={Level} onChange={changeHandler2} placeholder={values2} style={{width:"2rem"}}  />
+     </>
+			</div>
+
             {/* firstName */}
 			<div className='form-group input-group'>
 			<div className='input-group-prepend'>
@@ -259,13 +345,14 @@ function AddCorporate() {
 				/>
 			</div>
 			{/* username */}
-			<div className='form-group input-group'>
+			<div className='form-group input-group' autoComplete="off">
 			<div className='input-group-prepend'>
 					<span className='input-group-text'>
 						<i className='fa fa-address-card'></i>
 					</span>
 				</div>
 				<input
+				autoComplete='false'
 					name='Username'
 					value={Username || ''}
 					className='form-control'
@@ -291,7 +378,7 @@ function AddCorporate() {
 				/>
 			</div>
 			{/* password */}
-			<div className='form-group input-group'>
+			<div className='form-group input-group'  autoComplete= "off">
 			<div className='input-group-prepend'>
 					<span className='input-group-text'>
 						<i className='fa fa-lock'></i>
@@ -299,10 +386,12 @@ function AddCorporate() {
 					</span>
 				</div>
 				<input
+				autoComplete='false'
 					name='Password'
 					value={Password || ''}
 					className='form-control'
 					placeholder='Create password'
+					autoComplete="new-password"
 					type={paswo}
 					onChange={handleChange}
                     onInput={(e) => validate(e.target.value)}></input> 
@@ -312,11 +401,11 @@ function AddCorporate() {
 					
 				
 			</div>
-			<div className='form-group input-group'>
+			{errorMessage!='' && <div className='form-group input-group'>
 			{errorMessage === '' ? null :
                     <div style={{fontSize:12,
                       color: 'red',marginLeft:"4%"
-                    }}> *{errorMessage}</div>}</div>
+                    }}> *{errorMessage}</div>}</div>}
 			{/* confirm password */}
 			<div className='form-group input-group'>
 			<div className='input-group-prepend'>
@@ -336,7 +425,7 @@ function AddCorporate() {
 			</div>
             <p > </p>
 		{/* gender */}
-        <div className='form-group'>
+        <div className='form-group' value={Gender}>
 		<h6>Gender: </h6>
             <input
 			name='Gender' type="radio" value="Male" onChange={onChange} />  Male    
@@ -359,6 +448,7 @@ function AddCorporate() {
       
         </form>
         <p></p>
+		{successMsg && <ToastMess message="Corporate Created successfully" />}
         </>
 	);
 

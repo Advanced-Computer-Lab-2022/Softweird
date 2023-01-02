@@ -19,7 +19,7 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'
 import axios from 'axios'
 import {useAuth} from './auth'
-import {useNavigate} from 'react-router-dom'
+import {useNavigate,NavLink} from 'react-router-dom'
 function NavTrainee () {
   const auth =useAuth()
   const navigate = useNavigate()
@@ -114,24 +114,27 @@ const [anchorEl, setAnchorEl] = React.useState(null);
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
+           <NavLink to="MyProfile/"  style={{textDecoration:"none",color:"rgba(0,0,0,0.9)"}}>  
         <MenuItem>
           <Avatar/> My Profile
         </MenuItem>
-        <MenuItem>
-        <WalletIcon sx={{marginRight:"8px" ,marginLeft:"-4px", color:"#bdbdbd" , fontSize:"1.9rem"}}/>
-           My Wallet
-        </MenuItem>
+        </NavLink>
+        
+        <NavLink to="MyCourses/"  style={{textDecoration:"none",color:"rgba(0,0,0,0.9)"}}>  
         <MenuItem>
         <LibraryBooksIcon sx={{marginRight:"8px" ,marginLeft:"-4px", color:"#bdbdbd" , fontSize:"1.9rem"}}/>
            My Courses
         </MenuItem>
+        </NavLink>
         <Divider />
+        <NavLink to="reports/"  style={{textDecoration:"none",color:"rgba(0,0,0,0.9)"}}>  
         <MenuItem>
           <ListItemIcon>
             <ReportProblemIcon fontSize="small" />
           </ListItemIcon>
-          Report a problem
+          Reports
         </MenuItem>
+        </NavLink>
        
         <MenuItem onClick={handleSubmit}>
           <ListItemIcon >

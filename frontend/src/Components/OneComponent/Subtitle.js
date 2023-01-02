@@ -74,7 +74,8 @@ function Subtitle (props) {
             </svg>
           <Typography sx={{ width: '42%', flexShrink: 0,pl:"3rem" }}>{subtitle.title}</Typography>
               <Typography sx={{ color: 'text.secondary',width:"56%" }}>
-                {subtitle.video.length} Lectures . {subtitle.totalHours} hours
+                {subtitle.video.length} Lectures . {subtitle.totalHours<60?subtitle.totalHours+ " min" :
+                Math.round(subtitle.totalHours*10)/10+ " hrs"} 
               </Typography>
             
              
@@ -87,23 +88,23 @@ function Subtitle (props) {
           <Stack direction="row" justifyContent={"space-between"} marginLeft={"1rem"} marginRight={"3rem"} position="relative">
           
           {video.preview ? <>
-          <Typography variant="p">
+          <Stack direction="row" alignItems={"center"} maxWidth={"75%"}>
           <YouTubeIcon sx={{color:"#bbd2b1",mr:"1rem"}} />
-          <Button variant="text" sx={{textDecoration:"underline"}} position="relative" id={counter++} onClick={event =>handelPreview(event,subInd)} >
+          <Button variant="text" sx={{textDecoration:"underline",textAlign:"inherit"}} position="relative" id={counter++} onClick={event =>handelPreview(event,subInd)} >
           
             {video.text}
 
           </Button>
-          </Typography> </>: <Typography variant="p">
+          </Stack> </>: <Stack direction="row" alignItems={"center"} maxWidth={"75%"}>
           <YouTubeIcon sx={{color:"#bbd2b1",mr:"1rem"}} />
-         <Button variant="text" position="relative"  disabled sx={{color:"black !important"}} >
+         <Button variant="text" position="relative"  disabled sx={{color:"black !important",textAlign:"inherit"}} >
         
-           {video.text}
+         {video.text}
 
          </Button>
-         </Typography>}
-          <Typography position="relative">
-            {video.length} hours 
+         </Stack>}
+          <Typography position="relative" sx={{fontWeight:"bold"}}>
+            {video.length<60?video.length+" min" : Math.round(video.length*10)/10+ " hrs"} 
           </Typography>
           
           </Stack>
@@ -112,7 +113,7 @@ function Subtitle (props) {
 
 
           {subtitle.exercise.length!=0 &&
-           <Stack direction="row" justifyContent={"space-between"} marginLeft={"1rem"} position="relative">
+           <Stack direction="row" justifyContent={"space-between"} marginLeft={"0.3rem"} position="relative">
             <Typography variant="p">
           
            <Button variant="text" position="relative"  sx={{color:"black !important"}} disabled>

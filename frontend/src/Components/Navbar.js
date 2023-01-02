@@ -13,7 +13,7 @@ import PublicIcon from '@mui/icons-material/Public';
 import { Container,Stack } from "@mui/material"
 import NavTrainee from './NavTrainee'
 import { Divider } from "@mui/material"
-import NavCorporate from './NavCorporate'
+
 import NavInstructor from "./NavInstructor"
 import Logo from '../Images/Logo.png'
 import LogoShort from '../Images/LogoShort.png'
@@ -21,7 +21,7 @@ import {useAuth} from '../Components/auth'
 import {NavLink} from 'react-router-dom'
 import { Route } from 'react-router-dom';
 import {Outlet,Navigate} from 'react-router-dom'
-
+import NavAdmin from "./NavAdmin"
 const StyledToolbar = styled(Toolbar)({
     display:"flex",
     justifyContent:"space-between"
@@ -70,6 +70,7 @@ return (
                  <Icons sx={{ display:{sm:"flex",xs:"none"}}}>
                  <Box sx={{maxWidth:"10vw"}}><CountryDropBox /></Box>
                 {!auth.user && 
+                <>
                  <NavLink to='/login' style={{textDecoration:"none"}}>
                  <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
                 boxShadow:"none", textDecoration:"none",
@@ -79,16 +80,27 @@ return (
                     backgroundColor:"#fff"
 
                     }}}>LOGIN</Button>
-                    </NavLink>}
+                    </NavLink>
+                     <NavLink to='/signup' style={{textDecoration:"none"}}>
+                     <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
+                    boxShadow:"none", textDecoration:"none",
+                    "&:hover":{
+                        cursor: "pointer",
+                        color:"#bbd2b1",
+                        backgroundColor:"#fff"
+    
+                        }}}>SignUp</Button>
+                        </NavLink>
+                        </>}
                     
               
                  </Icons>
                 {auth.user && 
                 <>
                 <Divider orientation="vertical" variant="middle" flexItem sx={{backgroundColor:"black"}}/> 
-                {auth.user.type=='individual' && <NavTrainee/>}
-                {auth.user.type=='instructor' && <NavCorporate /> }
-                {auth.user.type=='corporate' && <NavInstructor/> }
+                {(auth.user.type=='individual' || auth.user.type=='corporate') && <NavTrainee/>}
+                {auth.user.type=='instructor' && < NavInstructor/> }
+                {auth.user.type=="admin" && <NavAdmin />}
                 </>}
                 
                  </Stack>

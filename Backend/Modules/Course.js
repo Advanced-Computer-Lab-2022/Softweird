@@ -75,7 +75,9 @@ const courseSchema = new Schema (
     },
    reviews :[{
         trainee: String,
-        review : String
+        traineeId :{type:mongoose.Types.ObjectId , ref : 'Users'},
+        review : String,
+        date :Date
 
     }],
     Finished : {

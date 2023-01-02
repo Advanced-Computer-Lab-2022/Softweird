@@ -6,8 +6,10 @@ import {Toast} from '../../Context/Toast'
 function ToastMess({message,open}) {
   const {openToast,setOpenToast} = useContext(Toast)
 
+
     return (
-        <Pop
+      <>
+       <Pop
         onClose={() => {setOpenToast(false)}}
         autohide
         show={openToast}
@@ -20,6 +22,7 @@ function ToastMess({message,open}) {
         </Pop.Header>
         <Pop.Body>{message}</Pop.Body>
       </Pop>
+      </>
     )
 
     

@@ -20,30 +20,68 @@ import { createTheme , ThemeProvider} from "@mui/material/styles"
 import VerticalNav from "./VerticalNav"
 import StarIcon from "@mui/icons-material/Star"
 import FilterListIcon from '@mui/icons-material/FilterList';
+import MoneyIcon from '@mui/icons-material/Money';
+import { Currency } from "../Context/Currency"
+import {useAuth} from '../Components/auth'
 
+import MuiInput from '@mui/material/Input';
 
+const Input = styled(MuiInput)`
+  width: 42px;
+`;
 
+const SliderStyled = styled(Slider)({
+    MuiSlider: {
+        markLabel: {
+         
+          '&[data-index="1"]': {
+            transform: "translate(50%,20%) rotate(135deg)"
+          },
+        },
+      },
+      
+    
+    '& .MuiSlider-valueLabel': {
+        lineHeight: 1.2,
+        fontSize: 11,
+        background: 'unset',
+        padding: 0,
+        width: 32,
+        height: 32,
+        borderRadius: '50% 50% 50% 0',
+        backgroundColor: '#bbd2b1',
+        transformOrigin: 'bottom left',
+        transform: 'translate(50%, -100%) rotate(-45deg) scale(0)',
+        '&:before': { display: 'none' },
+        '&.MuiSlider-valueLabelOpen': {
+          transform: 'translate(50%, -100%) rotate(-45deg) scale(1)',
+        },
+        '& > *': {
+          transform: 'rotate(45deg)',
+        },
+    },
+})
   
 function Filter (props) {
-
+    const topsm = props.shift==true?"-2rem" : "-3rem"
+    const topmd = props.shift==true?"1rem" : "-3rem"
+    const toplg = props.shift==true?"2rem" : "-4rem"
+    const topxl = props.shift==true?"-1rem" : "-5rem"
+    const auth = useAuth()
     const [subjects , setSubjects]=useState([])
     const [prices , setprices]=useState([])
     const[loading,setLoading]=useState(true)
+    
     const [state, setState] = useState({
         gilad: true,
         jason: false,
         antoine: false,
       });
-      const { gilad, jason, antoine } = state;
-      const handleChange = (e) => {
-        setState({
-          ...state,
-          [e.target.name]: e.target.checked,
-        });
-      };
+     
     const {subject , setSubject ,price , setPrice ,rate , setRate} = useContext(FilterSearch)
     useEffect(() =>{
         setRate([0,1,2,3,4,5])
+        setPrice(["Free",0,2000])
          let cancel
          axios({
              method:"GET",
@@ -98,20 +136,80 @@ function Filter (props) {
     
         if (activeThumb === 0) {
           setValue1([Math.min(newValue[0], value1[1] - minDistance), value1[1]]);
+          if(checked){
+              setPrice(["Free",Math.min(newValue[0], value1[1] - minDistance), value1[1]])
+          }
+          else{
+            setPrice([null,Math.min(newValue[0], value1[1] - minDistance), value1[1]])
+          }
         } else {
           setValue1([value1[0], Math.max(newValue[1], value1[0] + minDistance)]);
+          if(checked){
+            setPrice(["Free",value1[0], Math.max(newValue[1], value1[0] + minDistance)])
+        }
+        else{
+          setPrice([null,value1[0], Math.max(newValue[1], value1[0] + minDistance)])
+        }
         }
       };
-      const [value1, setValue1] = useState([200, 1000]);
+      const [value1, setValue1] = useState([0, 2000]);
 
-        
-     
+
+      const [checked, setChecked] = React.useState(false);
+
+      const handleChange = (event) => {
+        setChecked(event.target.checked);
+        if(event.target.checked==false){
+            if(checked2){
+                setPrice([null,value1[0],value1[1]])
+            }
+            else{
+                setPrice(["Free",0,2000])
+            }
+           
+      
+            
+        }
+        else{
+
+            if(checked2){
+                setPrice(["Free",value1[0],value1[1]])
+            }
+            else{
+                setPrice(["Free",-1,-1])
+            }
+        }
+      };
+
+      const [checked2, setChecked2] = React.useState(false);
+
+      const handleChange2 = (event) => {
+        setChecked2(event.target.checked);
+        if(event.target.checked==false)
+        { 
+            setValue1([0,2000])
+            if(checked){
+                setPrice(["Free",-1,-1])
+            }
+            else setPrice(["Free",0,2000])
+        }
+        else{
+            if(checked){
+                setPrice(["Free",value1[0],value1[1]])
+            }
+            else setPrice([null,value1[0],value1[1]])
+        }
+
+        }
+      
+
+     console.log(price)
 
     return(
         <>
             
-    <AppBar className="navbar navbar-expand-lg navbar-light bg-light" sx={{width:"30%" , left:{md:"-1.5rem",lg:"-3.5rem",xl:"-11.5rem"} , 
-        top:{sm:"-3rem",md:"-3rem",lg:"-4rem",xl:"-5rem"},marginBottom:"-15rem", paddingBottom:"3rem",position:"relative",zIndex:"initial",boxShadow:"none",color:"#000",display:{xs:"none",sm:"none",md:"block",lg:"block",xl:"block"}}}>
+   <AppBar className="navbar navbar-expand-lg navbar-light bg-light" sx={{width:"30%" , left:{md:"-1.5rem",lg:"-3.5rem",xl:"-11.5rem"} , 
+        top:{sm:topsm,md:topmd,lg:toplg,xl:topxl},marginBottom:"-15rem", paddingBottom:"3rem",position:"relative",zIndex:"initial",boxShadow:"none",color:"#000",display:{xs:"none",sm:"none",md:"block",lg:"block",xl:"block"}}}>
 
         <Stack  sx={{alignSelf:"flex-start",mt:"3rem",ml:"2rem",display:{sm:"none",md:"flex",xs:"none"}}} flex={1} gap={4} paddingLeft={"1rem"}>
         
@@ -197,25 +295,68 @@ function Filter (props) {
                 </div>
         </List></>}
         </Stack>
-        <Stack  direction={"row"} flex={1} sx={{pt:"2rem"}}>
-        <FormLabel component="legend" sx={{maxWidth:"4rem",color:"black",textAlign:"center",
-     fontWeight:"bold"}}>Price:</FormLabel>
+
+ {  ( !auth.user || (auth.user && auth.user.type!="corporate") )&&
+       <Stack gap={3}>
+        <Stack direction="row" alignItems={"flex=start"}> 
+        <MoneyIcon sx={{fontSize:"1.4rem"}}/>
+        <FormLabel component="legend" sx={{maxWidth:"3rem",color:"black",textAlign:"center",
+     fontWeight:"bold"}}>Price:</FormLabel></Stack>
+
+  <div className="form-check" key = {"Free"}>
+  <input className="form-check-input" type="checkbox" value="" id="Free" onChange={handleChange} checked={checked} />
+   <label className="form-check-label" >Free
+     </label>
+      </div>
   
-      <Slider
+
+<Stack gap={2}>
+    <Stack direction ="row" gap={2}>
+    
+    <div className="form-check" key = {"Free"}>
+  <input className="form-check-input" type="checkbox" value="" id="Values" onChange={handleChange2} checked={checked2} />
+      </div>
+        <SliderStyled
         
         value={value1}
         onChange={handleChange1}
         valueLabelDisplay="auto"
-        valueLabelDisplay="on"
-        step={100}
-        min={200}
+      disabled={!checked2}
+        step={20}
+        min={0}
         max={2000}
         disableSwap
-        sx={{color:"#EC6A37",width: "70%",}}
+        
+        sx={{color:"#c50d0d",width: "80%"}}
       />
-   
-</Stack>
         </Stack>
+        <Stack direction ="row" gap={5} justifyContent={"center"}>
+          <Stack direction="row" alignItems={"center"} gap={2}>
+              <Typography sx={{fontWeight:"bold"}}>Min:</Typography>
+          <Input
+            value={value1[0]}
+            size="small"
+           
+          />
+</Stack>
+
+<Stack direction="row" alignItems={"center"} gap={2}>
+              <Typography sx={{fontWeight:"bold"}}>Max:</Typography>
+          <Input
+            value={value1[1]}
+            size="small"
+           
+          />
+</Stack>
+
+
+          
+
+       </Stack>
+</Stack>
+</Stack>}
+        </Stack>
+        
 <Stack>
     
     </Stack>

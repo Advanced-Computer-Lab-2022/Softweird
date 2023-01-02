@@ -7,14 +7,28 @@ const Schema = mongoose.Schema
      },
      courseInfo: [{
          course :{ type :mongoose.Types.ObjectId , ref : 'Course'} , 
-         percentage:{progress:Number,total:Number} ,
+         rateCourse : Number,
+         rateInstructor : Number,
+        pricePayed :{ type : mongoose.Types.Decimal128 , default:0},
+        refund :{ set: {type:Boolean,default:false} , state : {
+            type : String,
+            enum : ['pending','rejected','accepted']
+        }},
+         percentage:{progress:Number,total:Number,exer:Number} ,
          rating:{type:Boolean,default:false},
          rateInst:{type:Boolean,default:false},
          certificate:{
             type:String,
             default:""
         },
+        certDate:{
+            type:Date
+        },
+        registeredAt :{type:Date},
         firstOpen:{type:Boolean,default:true},
+        subtitlesTotal :[{
+            exercises:{type:Number},
+            videos:{type:Number}}]
     }], 
     videoWatched:[{
         course :{ type :String} , 
@@ -24,11 +38,10 @@ const Schema = mongoose.Schema
         }]
 
     }],
-    
-    
-     wallet:{
-            type: Number
-        },
+    wallet:{
+        type: Number,
+        default:0
+    },
         
      exercises: [{course :{ type :mongoose.Types.ObjectId , ref : 'Course'}, subtitle:{type:String} ,
                   answers:[{type:String, required :true}],grade:{type:Number}}],

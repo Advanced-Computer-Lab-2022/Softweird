@@ -231,7 +231,8 @@ function OneOfMyCourses () {
      <DialogSubtitle/>
      <DialogDisc />
     <Stack sx={{mt:"5rem"}}>
-     <Reviews/> </Stack>
+     <Reviews course={courses} cn={true}/>
+      </Stack>
      {!courses.Finished && 
      <Stack direction={"row"} paddingTop={"8%"} gap={10} justifyContent={"center"}>
      <Button variant="outlined" startIcon={<DeleteIcon sx= {{color:"#bbd2b1"}} />}

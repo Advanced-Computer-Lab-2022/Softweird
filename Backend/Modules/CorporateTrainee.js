@@ -8,33 +8,61 @@ const Schema = mongoose.Schema
      },
      level:Number,
      courseInfo: [{
-         course :{ type :mongoose.Types.ObjectId , ref : 'Course'} , 
-         percentage:{type:Number} ,
-         rating :[{type:Number}],
-         certificate:{
-            type:String,
-            default:""
-        },
-        fistOpen:{type:Boolean,default:true}
-    }], 
-     exercises: [{course :{ type :mongoose.Types.ObjectId , ref : 'Course'}, subtitle:{ type:String} ,
-                  answers:[{type:String, required :true}]}],
+        course :{ type :mongoose.Types.ObjectId , ref : 'Course'} , 
+        rateCourse : Number,
+        rateInstructor : Number,
 
-     notes : [{
-         course:String,
-         subtitle : String,
-         videoId : Number , 
-         note : String 
-     }],
+        percentage:{progress:Number,total:Number,exer:Number} ,
+        rating:{type:Boolean,default:false},
+        rateInst:{type:Boolean,default:false},
+        certificate:{
+           type:String,
+           default:""
+       },
+       certDate:{
+           type:Date
+       },
+       firstOpen:{type:Boolean,default:true},
+       subtitlesTotal :[{
+           exercises:{type:Number},
+           videos:{type:Number}}]
+   }], 
+   videoWatched:[{
+       course :{ type :String} , 
+       subtitlesWatched:[{
+           title:String,
+           video:[String]
+       }]
+
+   }],
+   
+   
+    wallet:{
+           type: Number
+       },
+       
+    exercises: [{course :{ type :mongoose.Types.ObjectId , ref : 'Course'}, subtitle:{type:String} ,
+                 answers:[{type:String, required :true}],grade:{type:Number}}],
+
+   notes:[{
+       course :{ type :String} , 
+       subtitleNotes:[{
+           videoTitle:String,
+           notes:String
+       }]
+
+   }],
      accessRequests :[{
           course :{ type :mongoose.Types.ObjectId , ref : 'Course'} , 
-          status : {
-            type : String,
-            enum : ['pending','accepted','rejected'],
-            default : 'pending'
+        
+            state : {
+                type : String,
+                enum : ['pending','rejected','accepted'],
+                default:"pending"
         }
+    }]
 
-     }]
+     
         
     
  })

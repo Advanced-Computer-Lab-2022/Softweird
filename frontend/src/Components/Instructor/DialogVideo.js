@@ -123,7 +123,7 @@ const {setOpenToast}=useContext(Toast)
             method:"PATCH",
             url : '/Instructor/uploadVideo',
             data : {subtitleTitle:subtitleSelected,courseTitle:courses.title,
-              videoLink:videoLink,videoDescription:videoTitle,videoLength:0,preview:checked},
+              videoLink:videoLink,videoDescription:videoTitle,preview:checked},
             headers : {'Content-Type' : 'application/json'},
             cancelToken: new axios.CancelToken (c => cancel = c)
           }).then (res => {

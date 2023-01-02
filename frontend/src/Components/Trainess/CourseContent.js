@@ -25,6 +25,15 @@ import {Toast} from '../../Context/Toast'
 import axios from 'axios'
 import Loading from '../OneComponent/Loading'
 import {useAuth} from '../auth'
+import MilitaryTechIcon from '@mui/icons-material/MilitaryTech';
+
+import Congratulations from '../../Images/congratulations.png'
+import CertificateButton from './CertificateButton'
+
+
+
+
+
 
 const AntTabs = styled(Tabs)({
     borderBottom: '1px solid #e8e8e8',
@@ -55,38 +64,45 @@ var time= 0;
 
 function CourseContent (){
   const {openToast,setOpenToast} = useContext(Toast)
-  const{myCourse,course,setMyCourse,setReload,CourseInfo,setCourseInfo,exam,setexam} = useContext(TraineeCourse)
+  const{myCourse,course,setMyCourse,setReload,setCourse,CourseInfo,setCourseInfo,exam,setexam,successExam,setSuccesexam,failedExam,setFailedexam,
+    openSolve,setOpenSolve,openGrade,setOpenGrade,playVideo,setPlayVideo,reload,prog,setProg} = useContext(TraineeCourse)
     const [value, setValue] = useState('1');
     const [valuerate, setRateValue] = useState(0);
-   
     const[loading,setLoading] = useState(true)
     const [rated,setRated]=useState(false)
+  
     const auth = useAuth()
+const [rating,setRating]=useState()
+    
 
     useEffect(()=>{
       setTimeout(function () {
+        setLoading(true)
+        var p=""
+        if(myCourse.length!=0)
+        {  myCourse.courseInfo.map(c=>{
+            if(c.course===course._id){
+               p= Math.round(((c.percentage.progress/c.percentage.total)*100)*10)/10
+               setRating(c.rating)
+              
+      
+            }
+           
+            })}
+            setProg(p)
        
       setRated(false)
-      setLoading(true)
-      myCourse.courseInfo.map(c=>{
-        if(c.course==course._id)
-        setCourseInfo(c)
-
-        
-      })
-      if(myCourse.exercises.length!=0){
-        myCourse.exercises.map(e =>{
-          if(e.course==course._id){
-            setexam(s => [... new Set([...s,e.subtitle])])
-           
-          }
-        })
-      }
+     
+    console.log("gg")
+     
+  
+      
       setLoading(false)
-      console.log(CourseInfo)
+      
     }, time);
     time = 0
-    },[myCourse])
+    },[myCourse,course])
+    console.log(prog)
 
     const handleChange = (event, newValue) => {
       setValue(newValue);
@@ -100,7 +116,9 @@ function CourseContent (){
       setRateValue(event.target.value)
     }
     function handleSendRate(){
-      let cancel
+
+      if(auth.user.type=="individual")
+  {    let cancel
       axios({
      method:"PATCH",
      url : `/Individual/course/rate/${auth.user.id}`,
@@ -118,7 +136,28 @@ function CourseContent (){
      if(axios.isCancel(e)) return 
   })
   return () => cancel ()
-  
+  }
+
+  else if(auth.user.type=="corporate")
+  {    let cancel
+      axios({
+     method:"PATCH",
+     url : `/Corporate/course/rate/${auth.user.id}`,
+     data : {courseTitle:course.title,rating : parseInt(valuerate) },
+     headers : {'Content-Type' : 'application/json'},
+      cancelToken: new axios.CancelToken (c => cancel = c)
+  }).then (res => {
+    setMyCourse(res.data)
+    setRated(true)
+    setOpenToast(true)
+    setAnchorEl(null);
+    setReload(true)
+    time = 3000
+  }).catch(e=>{
+     if(axios.isCancel(e)) return 
+  })
+  return () => cancel ()
+  }
 
     }
     const [anchorEl, setAnchorEl] = useState(null);
@@ -127,7 +166,7 @@ function CourseContent (){
       setAnchorEl(null);
     };
 
-    console.log(rated)
+   
 
   
     return (
@@ -143,11 +182,11 @@ function CourseContent (){
        <Card sx={{ minWidth: 275 ,position:"relative",top:"-6px"}}>
       <CardContent sx={{pt:"5%"}}>
           <Stack direction="row" alignItems={"center"} justifyContent={"space-between"} sx={{mt:"2%"}}>
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-        48% progress
+        <Typography sx={{ fontSize: "1rem",fontWeight:"bold" }} color="text.secondary" gutterBottom>
+       {prog || 0}%   progress
         </Typography>
                   
-           {CourseInfo.rating===false && 
+      {rating===false && 
            <>
            <Button variant="outlined" startIcon={<Star sx={{color:"#faaf00"}} />}
                       onClick={handleRateClick}  aria-controls={open ? 'demo-customized-menu' : undefined}
@@ -182,9 +221,11 @@ function CourseContent (){
      '&:hover':{
       color:"rgba(197, 13, 13)" ,
       backgroundColor:"white"
-     }}} onClick={handleSendRate}>
-        Done
-      </Button></Typography>
+     }}} onClick={handleSendRate} disabled={rated}>
+       Done
+      </Button>
+     
+      </Typography>
       </Stack>
  
       </Menu></>}
@@ -205,14 +246,27 @@ function CourseContent (){
       >
         <AntTab value="1" label="Course Content" />
         <AntTab value="2" label="Notes" />
+        {myCourse.courseInfo.some(c=>c.course==course._id && c.certificate=="true") &&
+        <AntTab value="3" label="Certificate" sx={{ml:"1rem"}}icon={<MilitaryTechIcon sx={{color:"#faaf30",position:"absolute",left:"-0.3rem",top:"1.5rem"}}/>}/>}
       </AntTabs>
       </Box>
         <TabPanel value="1" style={{padding:0}}>
-            <SubtitleContent/>
+            <SubtitleContent />
         </TabPanel>
         <TabPanel value="2" style={{padding:0}}>
             <Notes />
         </TabPanel >
+
+        <TabPanel value="3" style={{padding:0}}>
+          <Box backgroundColor="white" sx={{border: "1px solid #f1f1f1",
+    borderTop: "0px" , pb:"0.5rem"}}>
+      <Stack alignItems={"center"}>
+           <img src={Congratulations} style={{position:"relative"}}/>
+           <CertificateButton course={course} myCourse={myCourse}/>
+           </Stack>
+           </Box>
+        </TabPanel >
+
       </TabContext>
     </Box>
         </AppBar>}

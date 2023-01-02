@@ -3,11 +3,30 @@ const Course =  require ('../Modules/Course')
 const Users = require('../Modules/Users')
 const individual = require('../Modules/IndividualTrainee')
 const Instructor = require ('../Modules/Instructor')
+const refundRequest = require ('../Modules/RefundRequests')
 const stripe = require('stripe')(process.env.STRIPE_KEY)
 const express = require('express');
 const app = express();
+const { jsPDF } = require('jspdf');
+const nodemailer = require('nodemailer')
+
+let transporter =nodemailer.createTransport({
+    service: 'gmail',
+    secure: false,
+    port: 25,
+    auth:{
+      user: process.env.EMAIL_USERNAME,
+      pass: process.env.EMAIL_PASSWORD
+    },
+     tls: {
+      rejectUnauthorized: false
+  
+  }
+  }
+  )
 
 const RateCourse = async(req,res)=>{
+    
      const {courseTitle,rating} = req.body
      const {id} = req.params
      if(!mongoose.Types.ObjectId.isValid(id)){
@@ -15,12 +34,20 @@ const RateCourse = async(req,res)=>{
     }
     
      var userid = mongoose.Types.ObjectId(id)
+    
      try{
         
          const c = await Course.findOne({title:courseTitle})
-         const i =await individual.findOneAndUpdate({user:userid,courseInfo:{$elemMatch:{course:c._id}}},
+        
+         var i =await individual.findOneAndUpdate({user:userid,courseInfo:{$elemMatch:{course:c._id}}},
             {$set:{'courseInfo.$.rating':true}},{returnOriginal:false})
-         const rate =parseFloat(c.rating)+parseInt(rating)
+        
+            i=await individual.findOneAndUpdate({user:userid,courseInfo:{$elemMatch:{course:c._id}}},
+                {$set:{'courseInfo.$.rateCourse':rating}},{returnOriginal:false})
+           
+
+            var rate =(((parseFloat(c.rating)*c.numberRating)+parseInt(rating))/(c.numberRating+1))
+            rate = Math.round(rate*10)/10
         const cnew = await Course.findOneAndUpdate({title:courseTitle},{$set:{rating:rate},$inc:{numberRating:1}},
             {returnOriginal:false})
         res.status(200).json(i)
@@ -28,69 +55,34 @@ const RateCourse = async(req,res)=>{
      catch(error){
          res.status(404).json(error)
      }
-    //  var courseID = mongoose.Types.ObjectId(courseId)
-    //  const indv = await individual.findOne({user:userid})
-    //  const courses = indv.courseInfo
-    //  var i = 0;
-    //  var sumRate=0
-    //  var num = 0;
-    //  courses.map(element => {
-    //      if(element.course == courseID){
-    //          if(element.rating.find(e => e>-1)!=undefined){
-    //              i=1;
-    //          }
-    //          var oldRate = element.rate[subtitleNumber-1]
-    //          element.rate[subtitleNumber-1] = rating
-    //          element.rate.forEach(e => {
-    //              if(e>-1)
-    //              {num++ 
-    //              sumRate+=e
-    //              }
-
-                 
-    //          });
-    //      }
-         
-    //  });
-    //  var sumOld = 0
-    //  var numOld = 0
-    //  if(oldRate!=-1) {sumOld = sumRate-rate+oldRate 
-    //  numOld=num
-    //  }
-    //  else {
-    //      sumOld = sumRate-rate
-    //      numOld=num-1
-    //  }
-    //  var rateNew = sumRate/num
-    //  var rateOld = sumOld/numOld
-    // await individual.findOneAndUpdate(({user:userid}),{$set:{courseInfo :courses }})
-    //  course = await Course.findById(courseId)
-    // var rateCourse=0
-    // if(i==1){
-    //     rateCourse = course.rating - rateOld + rateNew 
-    // }
-    // else rateCourse = course.rating + rateNew 
-
-    // await Course.findByIdAndUpdate(courseId,{$set:{rating:rateCourse , numberRating:course.numberRating+i}})
 
  }
 
  const AllCourses = async (req,res)=>{
-     const {id}=req.params
-      if(!mongoose.Types.ObjectId.isValid(id)){
-             return res.status(404).json({error})
+    const {id}=req.params
+     if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(404).json("No such Trainee")
+   }
+   else{
+    var userid = mongoose.Types.ObjectId(id)
+    try{  
+   let myTitles=[];
+   const MyCourse =await individual.find({user:userid}).populate('courseInfo.course')
+   for (var i=0; i<=MyCourse.length; i++){
+   ccc= MyCourse[0].courseInfo[i].course
+   const titles = await Course.findById(ccc)
+   console.log(titles)
+   myTitles.push(titles.title);
+}
+let all= MyCourse[0].courseInfo
+       console.log(all[0].percentage)
+
+       res.status(200).json({titles:myTitles,all:all})
     }
-    
-     var userid = mongoose.Types.ObjectId(id)
-     try{
-    const AllCourses =await Course.find({})
-    const MyCourse =await individual.findOne({user:userid}).select(courseInfo)
-    res.status(200).send({AllCourses,MyCourse})
-     }
-     catch(error){
-         res.status(404).json(error)
-     }
- }
+    catch(error){
+       res.status(404).json(error)
+   }
+}}
  //to get videos
 
 
@@ -116,7 +108,7 @@ const s = await individual.findOne({user:userid})
         if (c.course.equals(course._id) && c.firstOpen === true)
              firstOpen=true
      } )
-console.log(firstOpen)
+
   
      const myCourse =await individual.findOne({user:userid,courseInfo:{$elemMatch:{course:course._id}}});
     res.status(200).send({myCourse,course,firstOpen});
@@ -124,35 +116,57 @@ console.log(firstOpen)
      catch(e){res.status(404).json(e)}
  }
 
- const RateInstructor = async (req,res) =>{
-     const {rate,courseId} = req.body
-     const {userId} =req.params
-    
-      if(!mongoose.Types.ObjectId.isValid(courseId)){
-             return res.status(404).json(error)
-    }
-    if(!mongoose.Types.ObjectId.isValid(userId)){
+ const MyCourses = async (req,res) => {
+     const {id} = req.params
+     if(!mongoose.Types.ObjectId.isValid(id)){
         return res.status(404).json(error)
+
+}
+try{
+var userID = mongoose.Types.ObjectId(id)
+const courses = await Course.find({})
+const myCourses = await individual.findOne({user:userID});
+const instructors = await Instructor.find({})
+
+res.status(200).json({myCourses,courses,instructors});
+}
+catch (error){
+    res.status(404).json(error)
+}
+ }
+
+ const RateInstructor = async (req,res) =>{
+     const {rating,courseTitle} = req.body
+     const {id} =req.params
+    
+     
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json("invalid user")
 }
 
     
-     var courseID = mongoose.Types.ObjectId(courseId)
-     var userID = mongoose.Types.ObjectId(userId)
+   
+     var userID = mongoose.Types.ObjectId(id)
    
      try{
-         const course = await Course.findById(courseID)
+         const course = await Course.findOne({title:courseTitle})
          const instructor = await Instructor.findOne({user:course.instructor_id})
-         const rating = instructor.rating.rate
+         const rate = instructor.rating.rate
          const number = instructor.rating.numberPeople
          const newNumber = number+1
          const newRate = {
-             rate: (parseFloat(rating)+parseInt(rate)),
+             rate: Math.round((((parseFloat(rate)*number)+parseInt(rating))/newNumber)*10)/10,
              numberPeople : newNumber
              }
+            
 
          await Instructor.findOneAndUpdate({user:course.instructor_id},{$set:{rating:newRate}})
-        const i =  await individual.findOneAndUpdate({user:userID,courseInfo:{$elemMatch:{course:courseID}}},
+         
+         var i =  await individual.findOneAndUpdate({user:userID,courseInfo:{$elemMatch:{course:course._id}}},
             {$set:{'courseInfo.$.rateInst':true}},{returnOriginal:false})
+           
+         i =  await individual.findOneAndUpdate({user:userID,courseInfo:{$elemMatch:{course:course._id}}},
+                {$set:{'courseInfo.$.rateInstructor':rating}},{returnOriginal:false})    
          res.status(200).json(i)
      }
      catch(error){
@@ -161,30 +175,21 @@ console.log(firstOpen)
 
 
  }
+
 //update watched videos
  const VideoWatched = async (req,res) =>{
     const {subtitleTitle,videoText,courseTitle}=req.body
+    var cer=""
     console.log(subtitleTitle,videoText,courseTitle)
     const {id} =req.params
       if(!mongoose.Types.ObjectId.isValid(id)){
              return res.status(404).json({error:"error"})
     }
     const courseCon = await Course.findOne({title:courseTitle})
-    var count
      var userID = mongoose.Types.ObjectId(id)
      var c = await individual.findOne({user:userID,videoWatched:{$elemMatch:{course:courseTitle}}})
      var u = await individual.findOne({user:userID})
-     let coursenew
- 
-     var progOld
-     u.courseInfo.forEach(p=>{
-         if(p.course==courseCon._id){
-             progOld = p.percentage.progress;
-           
-         }
-     })
-     
-     
+     let coursenew     
      try{
      if(c==null){
          
@@ -210,7 +215,8 @@ console.log(firstOpen)
             coursenew=await individual.findOneAndUpdate({user:userID ,videoWatched:{$elemMatch:{course:courseTitle}}},{
                 $push:{"videoWatched.$.subtitlesWatched":sub}},{returnOriginal: false})
         }
-        var subtitle 
+       else {
+           var subtitle =[]
          s.videoWatched.forEach(v=>{
             if(v.course==courseTitle){subtitle=v.subtitlesWatched}
         })
@@ -219,18 +225,45 @@ console.log(firstOpen)
             if (s.title==subtitleTitle ){
                 if (!s.video.includes(videoText)){
                 s.video.push(videoText)}
-            titlesWatched=s.video.length
+           
             }
         })
       
         
         coursenew= await individual.findOneAndUpdate({user:userID,videoWatched:{$elemMatch:{course:courseTitle}}},
-            {$set:{'videoWatched.$.subtitlesWatched':subtitle}},{returnOriginal: false})
+            {$set:{'videoWatched.$.subtitlesWatched':subtitle}},{returnOriginal: false})}
      }
-     const progNew = progOld+=1
-     const indvFianl = await individual.findOneAndUpdate({user:userID,courseInfo:{$elemMatch:{course:courseCon._id}}},{$set:{"courseInfo.$.percentage.progress":progNew}})
-  
-     res.status(200).json(coursenew)
+     var prog = 0
+     courseCon.subtitles.map(s=>{
+         if(s.title==subtitleTitle){
+             s.video.map(v=>{
+                 if(v.text==videoText){
+                     prog=v.length
+                 }
+             })
+         }
+     })
+      coursenew = await individual.findOneAndUpdate({user:userID,courseInfo:{$elemMatch:{course:courseCon._id}}},{$inc:{"courseInfo.$.percentage.progress":prog}},{returnOriginal:false})
+      
+      console.log(coursenew)
+      coursenew.courseInfo.forEach(c=>{
+          console.log(c.course.equals(courseCon._id))
+         
+          console.log(c.percentage.progress>=c.percentage.total)
+        if(c.course.equals(courseCon._id) && c.percentage.progress==c.percentage.total){
+          cer="true"
+       
+      }
+          
+
+      })
+
+      if(cer=="true"){
+        coursenew = await individual.findOneAndUpdate({user:userID,courseInfo:{$elemMatch:{course:courseCon._id}}},{$set:{"courseInfo.$.certificate":"true"}},{returnOriginal:false}).populate("user")
+        coursenew = await individual.findOneAndUpdate({user:userID,courseInfo:{$elemMatch:{course:courseCon._id}}},{$set:{"courseInfo.$.certDate":new Date()}},{returnOriginal:false}).populate("user")
+        
+      }
+     res.status(200).json({coursenew,cer})
     }
     catch(error){
         res.status(404).json(error)
@@ -248,18 +281,33 @@ console.log(firstOpen)
 try{
        var userID = mongoose.Types.ObjectId(id)
 
-     const c = await Course.findOne({title:courseTitle,firstOpen:true})
+     const c = await Course.findOne({title:courseTitle})
      if(c==null){
          res.status(404).json({error:"no such course"})
      }
      var count=0
+    var subtitle=0
+    var exercise = 0
+    var sub =[]
+    var totExercise = 0 
      c.subtitles.forEach(s=>{
-         count+=1
+         subtitle=0
+         exercise = 0 
+         count+=s.totalHours;
+         
         s.video.forEach(v=>{
-            count+=1;
+            
+            subtitle+=1
+           
         })
+        if(s.exercise.length!=0){ exercise+=1,totExercise+=1}
+
+        sub.push({exercises:exercise,videos:subtitle})
     })
-     const courses = {course:c._id,percentage:{progress:0,total:count}};
+      var exPerc = count*0.05
+      count+=exPerc*totExercise
+     const courses = {course:c._id,percentage:{progress:0,total:count,exer:exPerc},subtitlesTotal:sub,
+     registeredAt:new Date()};
      const ind = await individual.findOneAndUpdate({user:userID},{$push:{courseInfo:courses}});
      await Course.findOneAndUpdate({title:courseTitle},{$inc:{enrolledStudents:1}})
      res.status(200).json(ind);
@@ -343,6 +391,7 @@ try{
   
 
    const solve = async(req,res) => {
+    var cer=""
     const  {Answers ,id,Subtitle ,courseId  } = req.query
     console.log(Subtitle,id)
    console.log()
@@ -351,14 +400,14 @@ try{
    const cId = mongoose.Types.ObjectId(courseId)
      const model = await Course.findOne( {_id:cId},{subtitles: {$elemMatch: {title : Subtitle }}})
      const u = await individual.findOne({user:userId})
-     var progOld
-    //  u.courseInfo.forEach(p=>{
-    //      if(p.course==courseCon._id){
-    //          progOld = p.percentage.progress;
+     var exer
+     u.courseInfo.forEach(p=>{
+         if(p.course.equals(cId)){
+             exer = p.percentage.exer;
            
-    //      }
-    //  })
-//      console.log(model,"dd")
+         }
+     })
+
     var g =0;
    for (i= 0 ; i<Answers.length ; i++ )
     {
@@ -376,13 +425,26 @@ try{
 const old =  await individual.findOne({ user:userId,exercises:{$elemMatch:{course:cId,subtitle:Subtitle}}})
 var p = (g/(model.subtitles[0].exercise.length)) * 100
 const exercise = {course:cId,subtitle:Subtitle,answers:Answers,grade:p }
+await individual.findOneAndUpdate({user:userId,exercises:{$elemMatch:{subtitle:Subtitle,course:cId}}},
+    {$pull:{exercises:{subtitle:Subtitle,course:cId}}})
+ var user =  await individual.findOneAndUpdate({ user:userId } ,{$push:{exercises:exercise} },{returnOriginal:false})
+ if(p>30){
+ user = await individual.findOneAndUpdate({user:userId,courseInfo:{$elemMatch:{course:cId}}},{$inc:{"courseInfo.$.percentage.progress":exer}},{returnOriginal:false})
+ }
+ 
+ 
+ user.courseInfo.forEach(c=>{
+     if(c.course.equals(cId) &&c.percentage.progress==c.percentage.total)
+     cer="true"
 
- const user =  await individual.findOneAndUpdate({ user:userId } ,{$push:{exercises:exercise} },{returnOriginal:false})
+ })
 
-// else{
-//     const user =  await individual.findOneAndUpdate({ user:userId,exercises:{$elemMatch:{course:{cId},subtitle:{Subtitle}}} } ,{$set:{"exercises":exercise} },{returnOriginal:false})
-// }
-  res.status(200).json(user)
+ if(cer=="true"){
+   user = await individual.findOneAndUpdate({user:userId,courseInfo:{$elemMatch:{course:cId}}},{$set:{"courseInfo.$.certificate":"true"}},{returnOriginal:false}).populate("user")
+   user = await individual.findOneAndUpdate({user:userID,courseInfo:{$elemMatch:{course:courseCon._id}}},{$set:{"courseInfo.$.certDate":new Date()}},{returnOriginal:false}).populate("user")
+ }
+
+  res.status(200).json({user,p,cer})
  }
   
  
@@ -454,6 +516,129 @@ const exercise = {course:cId,subtitle:Subtitle,answers:Answers,grade:p }
     }
 
 
+const reviewPost = async (req,res) =>{
+    console.log("ff")
+    const {courseTitle,username,review} = req.body
+    const {id} = req.params
+   
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({error:"error"})
+}
+var userID = mongoose.Types.ObjectId(id)
+const rev = { trainee: username,
+    traineeId :userID,
+    review : review,
+    date :new Date()}
+ 
+try{
+   
+    await Course.findOneAndUpdate({title:courseTitle,reviews:{$elemMatch:{traineeId:userID}}},
+        {$pull:{reviews:{traineeId:userID}}})
+   await Course.findOneAndUpdate({title:courseTitle},{$push:{reviews:rev}},{returnOriginal:false})
+   const c = await Course.findOne({title:courseTitle})
+    res.status(200).json(c)
+
+}
+catch(error){
+    res.status(404).json(error)
+}
+}
+
+
+const DeletereviewPost = async (req,res) =>{
+    const {courseTitle} = req.body
+    const {id} = req.params
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({error:"error"})
+}
+var userID = mongoose.Types.ObjectId(id)
+
+ 
+try{
+   
+    await Course.findOneAndUpdate({title:courseTitle,reviews:{$elemMatch:{traineeId:userID}}},
+        {$pull:{reviews:{traineeId:userID}}})
+   const c = await Course.findOne({title:courseTitle})
+    res.status(200).json(c)
+
+}
+catch(error){
+    res.status(404).json(error)
+}
+
+}
+
+
+
+const reviewPostInst = async (req,res) =>{
+   
+    const {instructor,username,review} = req.body
+    const {id} = req.params
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({error:"error"})
+}
+var userID = mongoose.Types.ObjectId(id)
+
+if(!mongoose.Types.ObjectId.isValid(instructor)){
+    return res.status(404).json({error:"error"})
+}
+var inst = mongoose.Types.ObjectId(instructor)
+
+const rev = { 
+    trainee: username,
+    traineeId :userID,
+    review : review,
+    date :new Date()}
+ 
+try{
+
+    await Instructor.findOneAndUpdate({user:inst,reviews:{$elemMatch:{traineeId:userID}}},
+        {$pull:{reviews:{traineeId:userID}}})
+   await Instructor.findOneAndUpdate({user:inst},{$push:{reviews:rev}},{returnOriginal:false})
+   const c = await Instructor.findOne({user:inst})
+    res.status(200).json(c)
+
+}
+catch(error){
+    res.status(404).json(error)
+}
+}
+
+
+const DeletereviewPostInst = async (req,res) =>{
+    const {instructor} = req.body
+    const {id} = req.params
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({error:"error"})
+}
+var userID = mongoose.Types.ObjectId(id)
+if(!mongoose.Types.ObjectId.isValid(instructor)){
+    return res.status(404).json({error:"error"})
+}
+var InstID = mongoose.Types.ObjectId(instructor)
+
+ 
+try{
+   
+    await Instructor.findOneAndUpdate({user:InstID,reviews:{$elemMatch:{traineeId:userID}}},
+        {$pull:{reviews:{traineeId:userID}}})
+   const c = await Instructor.findOne({user:InstID})
+    res.status(200).json(c)
+
+}
+catch(error){
+    res.status(404).json(error)
+}
+
+}
+
+
+
+
+
+
+
+
 
  const payForCourse  = async(req,res) =>{
         const {id,courseTitle} = req.body;
@@ -472,17 +657,29 @@ const exercise = {course:cId,subtitle:Subtitle,answers:Answers,grade:p }
     if(c.promotionInst.set==true){
         InstructorPriceDefault = InstructorPriceDefault*((100-((parseFloat(c.promotionInst.value))))/100)
     }
-   
     var count=0
-    c.subtitles.forEach(s=>{
-        count+=1
-       s.video.forEach(v=>{
-           count+=1;
-       })
-   })
-   console.log(c)
-//    console.log(InstructorPriceDefault)
-    const courses = {course:c._id,percentage:{progress:0,total:count}};
+    var subtitle=0
+    var exercise = 0
+    var sub =[]
+    var totExercise = 0 
+     c.subtitles.forEach(s=>{
+         subtitle=0
+         exercise = 0 
+         count+=s.totalHours;
+         
+        s.video.forEach(v=>{
+            
+            subtitle+=1
+           
+        })
+        if(s.exercise.length!=0){ exercise+=1,totExercise+=1}
+
+        sub.push({exercises:exercise,videos:subtitle})
+    })
+      var exPerc = count*0.05
+      count+=exPerc*totExercise
+      const courses = {course:c._id,percentage:{progress:0,total:count,exer:exPerc},subtitlesTotal:sub,pricePayed:price,
+registeredAt:new Date()};
     const ind = await individual.findOneAndUpdate({user:userID},{$push:{courseInfo:courses}});
     await Course.findOneAndUpdate({title:courseTitle},{$inc:{enrolledStudents:1}})
     await Instructor.findOneAndUpdate({user:c.instructor_id},{$inc:{amountOwed:InstructorPriceDefault}})
@@ -492,11 +689,78 @@ catch(error){
     res.status(404).json(error)
 }
     }
-    
-    
 
-     
+
+const RefundRequests = async (req,res) =>{
+    const {courseId,reason} = req.body
+    const {id} = req.params
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({error:"error"})
+}
+var userID = mongoose.Types.ObjectId(id)
+if(!mongoose.Types.ObjectId.isValid(courseId)){
+    return res.status(404).json({error:"error"})
+}
+const a = {set:true , state:"pending"}
+var CID = mongoose.Types.ObjectId(courseId)
+try{
+    await individual.findOneAndUpdate({user:userID,courseInfo:{$elemMatch:{course:CID}}},
+        {$set:{"courseInfo.$.refund":a}},{returnOriginal:false});
+    
+    
+    
+    await refundRequest.create({Trainee:userID ,Course:CID , reason:reason ,state:"pending"})
+    const i = await individual.findOne({user:userID})
+    res.status(200).json(i)
+
+}
+catch (error) {
+    res.status(404).json(error)
+}
+
+}
+    
+    
+const getMyProfile = async (req,res)=>{   //Editted by RANA!! NEW!!
+    const {id} = req.params;  
+    try {
+         if(!mongoose.Types.ObjectId.isValid(id)){
+             return res.status(404).json({error})
+    }
+        var ind = mongoose.Types.ObjectId(id)
+         const individualTrain = await individual.findOne({user:ind}).populate('user');
+         res.status(200).json(individualTrain);
+
+    }
+    catch(error){
+        res.status(404).json(error);
+
+    }
+}
+
+
+
+const sendCert= async (req,res) =>{
+ 
+    const {pdf,email} = req.body
+console.log(email)
+         transporter.sendMail ({
+             from: process.env.EMAIL_USERNAME,
+             to:email,
+             subject:"EasyLearning Course Certificate",
+             text : "You have received your course's certificate. Congratulation in finishing one of our courses! We hope you gained new knowledge. ",
+             attachments: [{path: pdf}]
+ 
+             }, (error,info)=>{
+         if(error) return res.json({error})
+         res.send("tamam")});
+            
+         // if(error) return res.json({error})
+        
+        
+ }
 module.exports = {
     RateCourse, AllCourses, RateInstructor, MyCourse ,VideoWatched,RegisterCourse , Notes ,solve,modelAns,getQusetions,
-    payForCourse,paymentIntent
+    payForCourse,paymentIntent,MyCourses,reviewPost ,DeletereviewPost ,reviewPostInst ,DeletereviewPostInst ,RefundRequests,
+    getMyProfile ,sendCert
 }

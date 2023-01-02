@@ -22,7 +22,8 @@ import PendingIcon from '@mui/icons-material/Pending';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem'
 import axios from 'axios'
 import {useAuth} from './auth'
-import {useNavigate} from 'react-router-dom'
+import {Navigate, NavLink, useNavigate} from 'react-router-dom'
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 
 function NavInstructor () {
   const auth =useAuth()
@@ -119,29 +120,35 @@ const [anchorEl, setAnchorEl] = React.useState(null);
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
+      <NavLink to="MyProfile/"  style={{textDecoration:"none",color:"rgba(0,0,0,0.9)"}}>  
         <MenuItem>
           <Avatar/> My Profile
         </MenuItem>
-        <MenuItem>
-        <WalletIcon sx={{marginRight:"8px" ,marginLeft:"-4px", color:"#bdbdbd" , fontSize:"1.9rem"}}/>
-           My Wallet
-        </MenuItem>
-        <MenuItem>
+        </NavLink>
+      <NavLink to="MyCourses/"  style={{textDecoration:"none",color:"rgba(0,0,0,0.9)"}}>  
+      <MenuItem>
         <LibraryBooksIcon sx={{marginRight:"8px" ,marginLeft:"-4px", color:"#bdbdbd" , fontSize:"1.9rem"}}/>
-           My Courses On System
+           My Courses 
         </MenuItem>
-        <MenuItem>
-        <PendingIcon sx={{marginRight:"8px" ,marginLeft:"-4px", color:"#bdbdbd" , fontSize:"1.9rem"}}/>
-           Pending Courses to Publish
+        </NavLink>
+
+        <NavLink to="addCourse/"  style={{textDecoration:"none",color:"rgba(0,0,0,0.9)"}}>  
+      <MenuItem>
+        <LibraryAddIcon sx={{marginRight:"8px" ,marginLeft:"-4px", color:"#bdbdbd" , fontSize:"1.9rem"}}/>
+           Add Course
         </MenuItem>
+        </NavLink>
+       
         
         <Divider />
+        <NavLink to="reports/"  style={{textDecoration:"none",color:"rgba(0,0,0,0.9)"}}>  
         <MenuItem>
           <ListItemIcon>
             <ReportProblemIcon fontSize="small" />
           </ListItemIcon>
-          Report a problem
+          Reports
         </MenuItem>
+        </NavLink>
        
         <MenuItem onClick={handleSubmit}>
           <ListItemIcon >

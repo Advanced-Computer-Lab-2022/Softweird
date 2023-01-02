@@ -14,8 +14,8 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import { Input } from '@mui/material';
-import logo1 from '../Images/Logo.png'
+import { Input, Stack } from '@mui/material';
+import logo1 from '../Images/LogoRed.png'
 import {useAuth} from '../Components/auth'
 import { useNavigate, useLocation,Navigate } from 'react-router-dom';
 import cookie from 'react-cookie';
@@ -225,7 +225,7 @@ const handleClose2 = () =>{
 			const data = {Email, Password };
            
 
-			setFormData({ ...formData, loading: true });
+			setFormData({ ...formData, loading: false });
 
             let cancel
             axios({
@@ -246,36 +246,48 @@ const handleClose2 = () =>{
                     errorMsg: false,
                     loading: false,
                 });
-                setUser({
+				if(res.data.type=="instructor" && res.data.verify==false){
+					
+						navigate(`/ChangePasswordInst/${response.id}`)
+
+
+				}
+
+else
+{                setUser({
                     id:res.data.id,
                     type:res.data.type,
-                    name:res.data.name
+                    name:res.data.name,
+					fName:res.data.fName,
+					lName:res.data.lName
                  })
                 auth.login({
                     id:res.data.id,
                     type:res.data.type,
                     name:res.data.name
                  })
-                navigate(redirectPath,{replace:true})
-				console.log("here")
 
-               }
+				 
+                navigate(redirectPath,{replace:true})
+				
+
+               }}
                else if(response === "Username or Password is incorrect"){
                 setFormData({
                     Email: '',
                     Password: '',
-                    successMsg: true,
+                    successMsg: false,
                     errorMsg: "Username or Password is incorrect",
                     loading: false,
                 });
                }
             
             }).catch(e=>{
-                    setFormData({
-                        successMsg: false,
-                        errorMsg: "Username or Password is incorrect",
-                        loading: false,
-                    });
+                    // setFormData({
+                    //     successMsg: false,
+                    //     errorMsg: "Username or Password is incorrect",
+                    //     loading: false,
+                    // });
                    
                 if(axios.isCancel(e)) return 
             })
@@ -318,10 +330,10 @@ const handleClose2 = () =>{
 		
 	
         {/* {loading && <p> Loading</p>} */}
-        {errorMsg==="All fields are required" && <p style={{color:"red" , marginLeft:"1rem"}}>All fields are required</p>}
-        {errorMsg==="This mail is not registered, please try again" && <p style={{color:"red" , marginLeft:"1rem"}}> This mail is not registered, please try again</p>}
-		{errorMsg==="Username or Password is incorrect" && <p style={{color:"red" , marginLeft:"1rem"}}> Username or Password is incorrect</p>}
-		{errorMsg==="An ERROR occured" && <p> An ERROR occured</p>}
+        {errorMsg==="All fields are required" && <p style={{color:"red" , margin:"0",fontSize:"0.8rem",paddingLeft:"1rem"}}>*All fields are required</p>}
+        {errorMsg==="This mail is not registered, please try again" && <p style={{color:"red" ,  margin:"0",fontSize:"0.8rem",paddingLeft:"1rem"}}> *This mail is not registered, please try again</p>}
+		{errorMsg==="Username or Password is incorrect" && <p style={{color:"red" ,  margin:"0",fontSize:"0.8rem",paddingLeft:"1rem"}}> *Username or Password is incorrect</p>}
+		{errorMsg==="An ERROR occured" && <p> *An ERROR occured</p>}
 
 		
 
@@ -359,8 +371,17 @@ const handleClose2 = () =>{
                     <i onClick={Eye} className={`fa ${eye ? "fa-eye-slash" : "fa-eye" }`}></i>{/*, left:'80px'*/}
 			</div>
 			  <div>
-	   <Button variant="text" onClick={handleClickOpen} sx={{position:'relative',fontWeight:"bold", top:'10px',color: "white",'&:hover':{color:"#cd0505"}}}>
-	   Forget Password? Click here</Button>
+				  <Stack direction={"row"} justifyContent="space-between">
+				 <div className='text-start'>
+				  <Button variant="text" onClick={() => window.location.href=`/signUp`}  sx={{position:'relative',fontSize:"0.8rem",fontWeight:"bold", top:'10px',color: "white",'&:hover':{color:"#cd0505"}}}>
+	   Don't have an account?</Button>
+	   </div>			  
+	   <div className='text-end'>
+	   <Button variant="text" onClick={handleClickOpen} sx={{position:'relative',fontSize:"0.8rem",fontWeight:"bold", top:'10px',color: "white",'&:hover':{color:"#cd0505"}}}>
+	   Forget Password?</Button>
+
+	   </div>
+	   </Stack>
        <BootstrapDialog
     onClose={handleClose2}
     aria-labelledby="customized-dialog-title"
@@ -415,8 +436,8 @@ const handleClose2 = () =>{
         </DialogActions>
 		</Dialog> */}
 			  <div className='form-group'>
-				<button type='submit' className='btn btn-primary btn-block'style={{position: "relative", left: "80%",
-    marginTop: "3%", fontSize: "1.2rem", paddingLeft: "4.5%", paddingRight: "4.5%",}}>
+				<button type='submit' className='btn btn-primary btn-block'style={{position: "relative", width:"100%",
+    marginTop: "3%", fontSize: "1.2rem", paddingLeft: "4.5%", paddingRight: "4.5%",marginTop:"2rem"}}>
 					Login
 				</button>
 			</div></div>
@@ -440,6 +461,7 @@ const handleClose2 = () =>{
         <p></p>
         {successMsg==="Mail is sent to recover your password" && <ToastMess message="Mail is sent to recover your password"  />}
         {successMsg==="Login Successful" &&<ToastMess message="Login sucessful"  />}
+		{successMsg=="" && <ToastMess message="SignUp sucessful"  />}
         </>
 	)}
 	}

@@ -3,7 +3,7 @@ import {Outlet,Navigate} from 'react-router-dom'
 import {useAuth} from '../Components/auth'
 const InstructorTraineeRoutes=()=>{
     const auth= useAuth() 
-    console.log(auth)
+    console.log(auth,"jj")
     
     return(
       auth.user ? (auth.user.type!="admin" ? <Outlet/>:<Navigate to="/login"/>):<Navigate to="/login"/>

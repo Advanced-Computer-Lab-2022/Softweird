@@ -11,6 +11,7 @@ import { Stack } from '@mui/material'
 import {Toast} from '../../Context/Toast'
 import ToastMess from '../../Components/OneComponent/ToastMess'
 import { useLocation } from 'react-router-dom'
+import { Box  } from '@mui/material'
 
 function MyCourses () {
    const [courses,setCourses] = useState([]) 
@@ -34,8 +35,11 @@ function MyCourses () {
         <>
         <FilterSearch.Provider value={{subject , setSubject ,price , setPrice ,rate , setRate}}>
         <SearchInstructor.Provider value = {{courses,setCourses,loading,setLoading}}>
+            
         <Stack  direction="row" position={"relative"} >
-        <Filter show={false}/>
+        
+        <Filter show={false} shift={true}/>
+        
         <CourseList />
         </Stack>
         </SearchInstructor.Provider> 

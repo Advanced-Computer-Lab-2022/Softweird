@@ -17,7 +17,10 @@ import {TraineeCourse} from '../../Context/TraineeCourse'
 import SaveIcon from '@mui/icons-material/Save';                              
 import axios from 'axios'
 import jsPDF from 'jspdf'
-
+import {useAuth} from '../auth'
+import paper from '../../Images/paper.jpeg'
+import {Toast} from '../../Context/Toast'
+import ToastMess from '../OneComponent/ToastMess';
 
 
 
@@ -25,8 +28,10 @@ import jsPDF from 'jspdf'
 
 
 function Notes (){
+  const auth =useAuth()
   const {course,video,notes,setMyCourse,setReload} = useContext(TraineeCourse)
   const [newNotes , setNewNotes] = useState('')
+  const {setOpenToast}= useContext(Toast)
    console.log(notes)
   React.useEffect(()=>{
     notes.map(n=>{
@@ -41,26 +46,45 @@ function Notes (){
     }
 
     function handleSave(e){
-      let cancel
+      if(auth.user.type=="individual")
+   {   let cancel
       axios({
           method:"PATCH",
-          url : "/Individual/notes/638a211fdae5256326254c29",
+          url : `/Individual/notes/${auth.user.id}`,
           data : {videoText:video,courseTitle:course.title,notes:newNotes },
           headers : {'Content-Type' : 'application/json'},
           cancelToken: new axios.CancelToken (c => cancel = c)
       }).then (res => {
           setReload(true)
           setMyCourse(res.data)
-         
+          setOpenToast(true)
       }).catch(e=>{
           if(axios.isCancel(e)) return 
       })
-      return () => cancel ()
+      return () => cancel ()}
+
+      if(auth.user.type=="corporate")
+      {   let cancel
+         axios({
+             method:"PATCH",
+             url : `/Corporate/notes/${auth.user.id}`,
+             data : {videoText:video,courseTitle:course.title,notes:newNotes },
+             headers : {'Content-Type' : 'application/json'},
+             cancelToken: new axios.CancelToken (c => cancel = c)
+         }).then (res => {
+             setReload(true)
+             setMyCourse(res.data)
+             setOpenToast(true)
+            
+         }).catch(e=>{
+             if(axios.isCancel(e)) return 
+         })
+         return () => cancel ()}
     }
 
 async function handleDownload(){
 
-  var doc = new jsPDF('portrait','px','a4','false')
+ var doc = new jsPDF('portrait','px','a4','false')
   var sub ;
   course.subtitles.map(s=>{
     s.video.map(v=>{
@@ -68,14 +92,37 @@ async function handleDownload(){
       sub=s.title
     })
   })
-  doc.setFont('Helvertica','bold')
-  doc.stroke()
-  doc.setTextColor(255,0,0)
-  doc.text(40,60,`${course.title} -> ${sub} -> ${video}`)
-  doc.setTextColor(0,0,0)
-  doc.setFont('Helvertica')
-  doc.text(40,100,newNotes)
-  doc.save(`${course.title}.${video}.notes.pdf`)
+  // doc.setFont('Helvertica','bold')
+  // doc.stroke()
+  // doc.setTextColor(255,0,0)
+  // doc.text(40,60,`${course.title} -> ${sub} -> ${video}`)
+  // doc.setTextColor(0,0,0)
+  // doc.setFont('Helvertica')
+  // doc.text(40,100,newNotes)
+  // doc.save(`${course.title}.${video}.notes.pdf`)
+
+        var width = doc.internal.pageSize.getWidth();
+        var height = doc.internal.pageSize.getHeight();
+       doc.addImage(paper,'JPG',0,0,width,height)
+        
+       doc.setFont("times","bolditalic" );
+       doc.setFontSize(25);
+     doc.stroke()
+     doc.setTextColor(255,0,0)
+        doc.text(140,33,`${course.title}`)
+
+        doc.setFont("times", "italic");
+
+        doc.setFontSize(20);
+        doc.stroke()
+     doc.setTextColor(255,0,0)
+        doc.text(110,76, `${sub} +  ${video}`)
+        doc.setFont("times", "roman");
+        var splitTitle = doc.splitTextToSize(newNotes, 480);
+        doc.setFontSize(16);
+        doc.setTextColor(0,0,0)
+        doc.text(35,122,splitTitle)
+        doc.save(`${course.title}.${video}.notes.pdf`)
     
 }
 
@@ -137,7 +184,7 @@ async function handleDownload(){
 />
   </div>
 </div>
-
+<ToastMess message="notes saved successfully" />
 
         </>
     )

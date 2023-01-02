@@ -53,7 +53,7 @@ const handleClose = () => {
       
       useEffect(() =>{
         setLoading(false)
-          if (openGrade ){
+          if (openGrade && myCourse!=null ){
           myCourse.exercises.map(g=>{
               if(g.course==course._id && g.subtitle == subtitle){
                   setGrade(g.grade);
@@ -64,7 +64,8 @@ const handleClose = () => {
 
  
 function handleModel(){
-  setLoading(true)
+  if(auth.user.type=="individual")
+{  setLoading(true)
     setViewModel(true)
     let cancel
     axios({
@@ -79,7 +80,25 @@ setLoading(false)
 }).catch(e=>{
    if(axios.isCancel(e)) return 
 })
-return () => cancel ()
+return () => cancel ()}
+
+else if(auth.user.type=="corporate")
+{  setLoading(true)
+    setViewModel(true)
+    let cancel
+    axios({
+   method:"GET",
+   url : "/Corporate/modelAns",
+   params : {Subtitle:subtitle,id : course._id , Uid :auth.user.id},
+    cancelToken: new axios.CancelToken (c => cancel = c)
+}).then (res => {
+setLoading(false)
+   setModel(res.data.modelAnswer)
+   setAns(res.data.answers)
+}).catch(e=>{
+   if(axios.isCancel(e)) return 
+})
+return () => cancel ()}
 
 }
    

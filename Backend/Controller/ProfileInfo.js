@@ -4,7 +4,7 @@ const User = require('../Modules/Users')
 const Instructor = require ('../Modules/Instructor')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
-
+const report = require('../Modules/report')
 
 let transporter =nodemailer.createTransport({
   service: 'gmail',
@@ -30,11 +30,12 @@ const UpdatePass = async (req,res)=>{
      try{
         const salt = await bcrypt.genSalt();
         const hashedPassword = await bcrypt.hash(password, salt);
-        await User.findByIdAndUpdate(userid,{$set:{password:hashedPassword}})
-        return res.status(200).json("Password Changed Successful")
+        const user = await User.findByIdAndUpdate(userid,{$set:{password:hashedPassword}})
+        res.status(200).json(user);
     }
     catch(error){res.status(404).json(error)}
 }
+
 const ForgotPassword = async (req,res)=>{
     
     const {EmailF} = req.body
@@ -72,6 +73,7 @@ const ForgotPassword = async (req,res)=>{
 
 }
 
+
 const UpdateEmail= async (req,res) =>{
     const {email} = req.body;
     const {id} = req.params
@@ -80,7 +82,7 @@ const UpdateEmail= async (req,res) =>{
              return res.status(404).json({error:"invalid id"})
     }
          var inst = mongoose.Types.ObjectId(id)
-            const user1 = await User.findByIdAndUpdate(inst,{$set:{email:email}},{returnOriginal: false});
+            const userUpdated = await User.findByIdAndUpdate(inst,{$set:{email:email}},{returnOriginal: false});
             let mailOPtions={
             from: process.env.EMAIL_USERNAME,
             to: userUpdated.email,
@@ -92,11 +94,86 @@ const UpdateEmail= async (req,res) =>{
             if(error) return res.json({error})
             res.send("tamam")
             })
-            
             res.status(200).json(userUpdated)
     }
     catch(error){ res.status(404).json(error)}
 }
 
 
-module.exports = {UpdatePass,ForgotPassword,UpdateEmail}
+
+const reportProplem = async(req,res) => {
+    const  {id ,Title,Body,Type} = req.query
+    var inst = mongoose.Types.ObjectId(id)
+try{
+  
+      await report.create({title:Title , body:Body , reporter:inst  , reporterSeen:true , type:Type })
+
+      var r =  await report.find({ reporter :inst}).sort({updatedAt:-1}) 
+      console.log(r)// reporter:inst 
+     res.status(200).send({r})
+}
+catch(e){
+    res.status(404).json(e)
+}
+     }
+
+  
+
+       const getreports = async(req,res) => {
+        const {id} = req.query
+        var inst = mongoose.Types.ObjectId(id)
+        var r = new Array();
+        try{
+        r =  await report.find({ reporter :id }).sort({updatedAt:-1}) // reporter:inst 
+  
+        res.status(200).send({r})
+        }
+        catch(e){
+            res.status(404).json(e)
+        }
+         }
+
+       const getfollow = async(req,res) => {
+
+        const {id} = req.query
+       
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(404).json({error:"invalid id"})
+   }
+
+        var inst = mongoose.Types.ObjectId(id)
+         // reporter:inst 
+       var f =  await report.findOneAndUpdate({  _id :inst  } , { $set:{reporterMessageSeen:true}} )  // reporter:inst 
+
+        var r = f.followUp
+        var s = f.solved
+    
+        res.status(200).send({r , s })
+         }
+    
+       const addFollowUp = async(req,res) => {
+        const {Rid , Uid , follow,type} = req.query
+      
+    
+        if(!mongoose.Types.ObjectId.isValid(Uid)){
+            return res.status(404).json({error:"invalid id"})
+   }
+   if(!mongoose.Types.ObjectId.isValid(Rid)){
+    return res.status(404).json({error:"invalid id"})
+}
+var UserId   =mongoose.Types.ObjectId(Uid)
+var reportId =mongoose.Types.ObjectId(Rid)
+
+        var f= await report.findOneAndUpdate({ reporter :UserId , _id :reportId  } , {$push:{followUp:{from : type,body : follow }} , $set:{adminMessageSeen:false} },{returnOriginal:false})  // reporter:inst 
+
+      
+   
+        res.status(200).send(f)
+         }
+      
+
+
+
+
+module.exports =
+ {UpdatePass,ForgotPassword,UpdateEmail,reportProplem,getreports,getfollow,addFollowUp}

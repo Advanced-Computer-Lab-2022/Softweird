@@ -30,9 +30,22 @@ import DialogPay from "../Components/Trainess/DialogPay";
 import TaskAltIcon from '@mui/icons-material/TaskAlt';
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CollectionsBookmarkIcon from '@mui/icons-material/CollectionsBookmark';
-
+import Pending from "@mui/icons-material/Pending";
+import DialogAccess from '../Components/Trainess/DialogAccess'
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ApplyDiscount from '../Components/Admin/ApplyDiscount';
+import DialogDisc from '../Components/Admin/DialogDisc'
+import DiscountIcon from '@mui/icons-material/Discount';
+import { IconButton } from "@mui/material";
+import Tooltip from '@mui/material/Tooltip';
+import ToastMess from '../Components/OneComponent/ToastMess'
+import { Toast } from  '../Context/Toast'
+import ViewInstr from './ViewInstr '
 
 function OneCourse (){
+  const [message,setMessage] =useState("")
+  const {setOpenToast} =useContext(Toast)
     const{coursetitle} = useParams(); 
     const courseTitle = (coursetitle == undefined? "" : coursetitle)
     const navigate = useNavigate();
@@ -43,15 +56,49 @@ function OneCourse (){
     const [open ,setOpen] = useState(false)
     const auth = useAuth();
     const [openPay,setOpenPay] = useState(false)
+    const [openAccess,setOpenAccess] = useState(false)
     const [myCourse,setMyCourse]=useState("")
+    const [openDisc, setOpenDisc] = React.useState(false);
+    const [openInst,setOpenInst]=useState(false)
 
+    function handleOpen(){
+      console.log("dd")
+      setOpenInst(true);
+    }
+
+    function handleRemove() {
+      if (window.confirm("Are you sure you want to remove promotion?")){
+            let cancel
+            axios({
+              method:"PATCH",
+              url : '/Admin/removePromote',
+              data : {courseTitle:course.title},
+              headers : {'Content-Type' : 'application/json'},
+              cancelToken: new axios.CancelToken (c => cancel = c)
+            }).then (res => {
+          
+                setCourse(res.data)
+                setMessage("Promotion Removed Successfully")
+                setOpenToast(true)
+            }).catch(e=>{
+                if(axios.isCancel(e)) return 
+            })
+            return () => cancel ()
+            
+         }
+    } 
 const handleRegister =() => {
     if(!auth.user){
         navigate("/login");
     }
-    if(auth.user.type=="individual"){
+   else{
         setOpenPay(true);
     }
+
+}
+
+const handleAccess = () =>{
+  setOpenAccess(true)
 
 }
     useEffect(() =>{
@@ -61,7 +108,7 @@ const handleRegister =() => {
              method:"GET",
              url : `/Courses/${courseTitle}`,
              params:{userId:(auth.user!=undefined?auth.user.id:undefined),
-                type:(auth.user ?auth.user.type:undefined)},
+                type:(auth.user!=undefined ?auth.user.type:undefined)},
              cancelToken: new axios.CancelToken (c => cancel = c)
          }).then (res => {
              
@@ -83,10 +130,12 @@ const handleRegister =() => {
          
 
      }, [])
-    
+
+     
+ 
     return (
         
-        <OneCourseResult.Provider value={{open,setOpen,course}}>
+        <OneCourseResult.Provider value={{open,setOpen,course,openDisc, setOpenDisc ,setMessage,setCourse}}>
         {!loading && course&& <Box sx={{position:"relative"}}>
         <div className="wire"></div>
         <Card className="card-course " sx={{position:"relative",left:"0",right:"0",p:"2rem",mb:"6rem"}}>
@@ -101,17 +150,45 @@ const handleRegister =() => {
     {/*  For Registered Students Corporates&individual*/}
     {(auth.user.type=="individual" || auth.user.type=="corporate") ?
     <>
-    {myCourse.courseInfo.some(c=>c.course==course._id && c.certificate =="")&&
+    {myCourse.courseInfo.some(c=>c.course==course._id && c.certificate =="")&&auth.user.type=="corporate" &&
     <Stack position="absolute" right="15%" top="13%" direction="row" gap={0.5}>
     <TaskAltIcon fontSize={"1rem"}sx={{color:"green"}}/>
     <Typography  fontSize={"0.8rem"} color={"grey"}> Registered</Typography>
     </Stack> }
+
+    {auth.user.type=="individual" &&
+    myCourse.courseInfo.some(c=>c.course==course._id && c.certificate =="" && 
+    ((c.refund.set==true && c.refund.stata=="rejected" )|| c.refund.set==false))&&
+    <Stack position="absolute" right="15%" top="13%" direction="row" gap={0.5}>
+    <TaskAltIcon fontSize={"1rem"}sx={{color:"green"}}/>
+    <Typography  fontSize={"0.8rem"} color={"grey"}> Registered</Typography>
+    </Stack> }
+
+    {auth.user.type=="individual" &&
+    myCourse.courseInfo.some(c=>c.course==course._id && c.certificate =="" && 
+    ((c.refund.set==true && c.refund.stata=="pending" ))) &&
+    <Stack position="absolute" right="15%" top="13%" direction="row" gap={0.5}>
+    <Pending fontSize={"1rem"}sx={{color:"#c50d0d"}}/>
+    <Typography  fontSize={"0.8rem"} color={"grey"}> Waiting for response</Typography>
+    </Stack> }
+
+
     {/*  For certified Students individual and Corporate*/}
     {myCourse.courseInfo.some(c=>c.course==course._id && c.certificate !="")&&
      <Stack position="absolute" right="15%" top="13%" direction="row" gap={0.5}>
     <VerifiedIcon fontSize={"1rem"}sx={{color:"#faaf00"}}/>
     <Typography  fontSize={"0.8rem"} color={"grey"}> Certified</Typography>
     </Stack> }
+
+    {auth.user.type=="corporate" &&
+   myCourse.accessRequests.some(c=>c.course==course._id && c.state =="pending") && 
+   <Stack position="absolute" right="15%" direction="row" gap={0.5}>
+   <Pending fontSize={"1rem"}sx={{color:"#c50d0d"}}/>
+ <Typography  fontSize={"0.8rem"} color={"grey"}>  Pending Access Request </Typography>
+   </Stack> }
+
+    
+
     </> 
     :<></>}
      {/* Instructor Courses*/}
@@ -150,7 +227,9 @@ const handleRegister =() => {
        <Typography variant="p" sx={{fontSize:"0.87rem"}} >Currently Enrolled Students:  </Typography>
         <Typography variant="p" sx={{fontSize:"0.87rem"}} >{course.enrolledStudents}</Typography>
         </Stack> 
-        {(course.promotionInst.set==true|| course.promotionAdmin.set==true) &&
+        
+      {auth.user && auth.user.type!="corporate"  && <> 
+        {(course.promotionInst.set==true|| course.promotionAdmin.set==true) && auth.user.type!="admin"&&
          <div className="stamp is-nope"><p style={{margin:"8% 0"}}>{(parseFloat(course.promotionInst.value.$numberDecimal)
          +parseFloat(course.promotionAdmin.value.$numberDecimal))}% Sale</p> </div>}
 
@@ -164,7 +243,8 @@ const handleRegister =() => {
 
         
         </Stack>   */}
-      {course.price!="Free" &&  <Stack direction="row" paddingTop={"2rem"} marginBottom={"2rem"} alignItems={"center"}>
+        {auth.user && auth.user!="corporate" && <>
+      {course.price!="Free" && <> <Stack direction="row" paddingTop={"2rem"} marginBottom={"2rem"} alignItems={"center"}>
         <Stack direction="row" gap={"8px"}  paddingRight={"10%"} alignItems={"center"} >
        <Typography sx={{fontSize:"0.87rem" }} variant='h6' >Price of Course: </Typography>
     
@@ -187,7 +267,32 @@ const handleRegister =() => {
   +parseFloat(course.promotionAdmin.value.$numberDecimal)))/100)*course.price*rate}{curr}</Typography>}
      </Stack>
         </Stack>
-        </Stack>}
+
+       {auth.user.type=="admin"&& <Stack direction="row" alignItems="center" gap={2}>
+        {(course.promotionInst.set || course.promotionAdmin.set )&& 
+        <Typography variant="p">
+         <DiscountIcon sx={{color:"#bbd2b1"}} />
+         </Typography>}
+        {course.promotionAdmin.set && 
+        <Typography variant="p" sx={{border: "1px solid rgb(197 13 13)", borderRadius: "12px", padding:" 0.5rem",
+    boxShadow: "-2px 3px 0px 0px rgb(197 13 13 / 24%)"}}>{course.promotionAdmin.value.$numberDecimal}% by You
+        <Tooltip title="remove discount" >
+        <IconButton onClick={handleRemove} >
+        <DeleteIcon  sx={{fontSize:"1.4rem",ml:"1rem"}} />
+        </IconButton>
+        </Tooltip></Typography>}
+       
+        {course.promotionAdmin.set && course.promotionInst.set && 
+        <Typography variant="p" sx={{fontStyle:"italic"}}>and</Typography>}
+       {course.promotionInst.set && <Typography variant="p" sx={{border: "1px solid rgb(197 13 13)", borderRadius: "12px", padding:" 0.9rem",
+    boxShadow: "-2px 3px 0px 0px rgb(197 13 13 / 24%)"}}> {course.promotionInst.value.$numberDecimal}% by Instructor
+      </Typography>
+    }
+         
+       </Stack>}
+        </Stack>
+        {course.promotionAdmin.set==false && auth.user.type=="admin" && <ApplyDiscount  sx={{mt:"3rem"}} discount={"Apply Discount"}/>}
+        {course.promotionAdmin.set==true && auth.user.type=="admin" &&<ApplyDiscount  sx={{mt:"3rem"}}  discount={"Update Discount"}/>}</>}
         {course.price=="Free" &&  <Stack direction="row" paddingTop={"2rem"} marginBottom={"2rem"} alignItems={"center"}>
         <Stack direction="row" gap={"8px"}  paddingRight={"10%"} alignItems={"center"} >
        <Typography sx={{fontSize:"0.87rem" }} variant='h6' >Price of Course: </Typography>
@@ -196,6 +301,8 @@ const handleRegister =() => {
       <Stack direction="row" alignItems={"center"} gap={2}>
       <Typography  sx={{fontSize:"0.87rem",fontWeight:"bolder",position:"relative"}} > Free</Typography>
         </Stack></Stack></Stack>}
+         </>}</>}
+
       </CardContent>
       <CardActions>
       <Stack direction="row" gap={3} paddingTop={"1rem"} alignItems="center">
@@ -204,9 +311,11 @@ const handleRegister =() => {
     
     <>
     {/*  For Registered Students Corporates&individual*/}
-    {(auth.user.type=="individual" || auth.user.type=="corporate") ?
+    {(auth.user && auth.user.type=="individual" ) ?
     <>
-    {myCourse.courseInfo.some(c=>c.course==course._id && c.certificate =="")&&
+    {
+    myCourse.courseInfo.some(c=>c.course==course._id && c.certificate =="" && 
+    (c.refund.set==false || (c.refund.set==true && c.refund.state=="rejected")))&&
   
       <>
           <HourglassTopOutlinedIcon sx={{color:"#c50d0d",position:"absolute"}} />
@@ -225,6 +334,28 @@ const handleRegister =() => {
     
       </>
     }
+
+{auth.user && auth.user.type=="individual" && 
+    myCourse.courseInfo.some(c=>c.course==course._id && c.certificate =="" && 
+     (c.refund.set==true && c.refund.state=="pending"))&&
+  
+      <>
+         
+    <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",
+    boxShadow:"none"}}
+        disabled
+        endIcon={ <MoreHorizIcon sx={{color:"#c50d0d"}} />}
+        >Pending Refund Request </Button>
+       
+    
+    
+      </>
+    }
+
+
+
+
+
     {/*  For certified Students individual and Corporate*/}
     {myCourse.courseInfo.some(c=>c.course==course._id && c.certificate !="")&&
      
@@ -259,7 +390,7 @@ const handleRegister =() => {
        </>
      }
     </> 
-    :<>  </>}
+    :<> </>}
      {/* Instructor Courses*/}
     {auth.user.type=="instructor" && course.instructor_id==auth.user.id ?
     
@@ -276,6 +407,105 @@ const handleRegister =() => {
   
       </>
     :<></>}
+
+{(auth.user && auth.user.type=="corporate" ) ?
+    <>
+    {
+    myCourse.courseInfo.some(c=>c.course==course._id && c.certificate =="")&&
+  
+      <>
+          <HourglassTopOutlinedIcon sx={{color:"#c50d0d",position:"absolute"}} />
+    <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"2rem",
+    boxShadow:"none",
+    "&:hover":{
+        cursor: "pointer",
+        color:"#bbd2b1",
+        backgroundColor:"#fff"
+
+        }}}
+        onClick={() => window.location.href=`/MyCourses/${course.title}`} >Complete My Course</Button>
+        <ArrowForwardIosIcon/>
+      <SchoolIcon />
+    
+    
+      </>
+    }
+
+
+
+
+
+    {myCourse.courseInfo.some(c=>c.course==course._id && c.certificate !="")&&
+     
+     <>
+     <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
+     boxShadow:"none",
+     "&:hover":{
+         cursor: "pointer",
+         color:"#bbd2b1",
+         backgroundColor:"#fff"
+ 
+         }}}
+         onClick={() => window.location.href=`/MyCourses/${course.title}`}>View My Course</Button>
+         <ArrowForwardIosIcon/>
+       <SchoolIcon sx={{color:"#faaf00"}}/>
+       </>
+     }
+
+
+{myCourse.accessRequests.some(c=>c.course==course._id && c.state =="pending")  ?
+   <>
+   <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",
+   boxShadow:"none"}}
+       disabled
+       endIcon={ <MoreHorizIcon sx={{color:"#c50d0d"}} />}
+       >Pending Access Request </Button>
+       </>
+     :
+    (!(myCourse.courseInfo.some(c=>c.course==course._id ))?  
+   ( myCourse.company.courses.some(c=>c.course==course._id && c.level<= myCourse.level) ?
+     
+     <>
+      <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
+    boxShadow:"none",
+    "&:hover":{
+        cursor: "pointer",
+        color:"#bbd2b1",
+        backgroundColor:"#fff"
+
+        }}}
+        onClick={handleRegister}>Study Now</Button>
+        <ArrowForwardIosIcon/>
+      <SchoolIcon />
+       </> : 
+  
+  
+     <>
+      <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
+    boxShadow:"none",
+    "&:hover":{
+        cursor: "pointer",
+        color:"#bbd2b1",
+        backgroundColor:"#fff"
+
+        }}}
+        onClick={handleAccess}>Study Now</Button>
+        <ArrowForwardIosIcon/>
+      <SchoolIcon />
+       </>
+       
+       ):<></>
+     )}
+     
+     
+     
+
+
+
+
+    </> 
+    :<> </>}
+
     </>:
     <>
     <Button variant="contained" sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
@@ -302,7 +532,7 @@ const handleRegister =() => {
       <Stack gap={7} direction={"row"} maxWidth={"60vw"} alignItems={"center"} mb={"6rem"}>
           <Stack flex ={1} gap={2} alignItems={"center"} >
           <Avatar src="/static/images/avatar/1.jpg" />
-          <Typography>{instructor.user.fName} {instructor.user.lName}</Typography>
+          <Typography onClick={handleOpen} sx={{textDecoration:"underline",'&:hover':{cursor:"pointer",color:"#c50d0d"}}}>{instructor.user.fName} {instructor.user.lName}</Typography>
           <Stack direction="row" gap={0.5} paddingTop={"1rem"}>
             <Typography svariant="p" x={{fontSize:"0.87rem"}} >{instructor.rating.rate.$numberDecimal}</Typography>
              <Rating 
@@ -319,7 +549,7 @@ const handleRegister =() => {
           <Typography variant="p"> {instructor.biography}</Typography>
           </Stack>
       </Stack>
-      <Reviews/>
+      {course.reviews && course.reviews.length!=0 && <Reviews course={course} cn={true}/>}
       <Stack direction="row" gap={1} alignItems={"center"} mb={"2rem"} mt={"6rem"}>
      < AutoStoriesIcon sx= {{color:"#bbd2b1"}}/>
       <Typography variant={"h5"}>Begin Your Study Path</Typography>
@@ -330,6 +560,11 @@ const handleRegister =() => {
      </Box>}
      {loading && <Loading />}
      <DialogPay openPay={openPay} setOpenPay={setOpenPay} course={course}/>
+     <DialogAccess openAccess={openAccess} setOpenAccess={setOpenAccess} course={course} setMyCourse={setMyCourse}/>
+     <ToastMess message={message}/>
+     <DialogDisc />
+
+     <ViewInstr openInst={openInst} setOpenInst={setOpenInst} instId={course.instructor_id} />
      </OneCourseResult.Provider>
     )
 }

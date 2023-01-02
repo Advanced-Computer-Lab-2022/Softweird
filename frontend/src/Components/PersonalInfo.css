@@ -1,0 +1,63 @@
+@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css");
+
+
+
+.personalInfo::before {
+    content:"";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:4rem;
+    left:2rem;
+    width:1rem;
+    height:1rem;
+}
+.wire2::before {
+    content: "";
+    position:absolute;
+    background-color:grey;
+    top:-15.2rem;
+    left:2.4rem;
+    width:0.2rem;
+    height:19.65rem;
+    z-index: 1;
+  
+}
+
+.personalInfo::after {
+    content:"";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:4rem;
+    right:2rem;
+    width:1rem;
+    height:1rem;
+    
+}
+.wire2::after {
+    content: "";
+    
+    position:absolute;
+    background-color:grey;
+    top:-15.2rem;
+    right:2.4rem;
+    width:0.2rem;
+    height:19.65rem;
+    z-index: 1;
+ 
+}
+
+.pin {
+    
+    
+    position:absolute;
+    
+    top:4rem;
+    left:12rem;
+   
+}
+.fa-thumb-tack{
+    transform: rotate(90%);
+
+}

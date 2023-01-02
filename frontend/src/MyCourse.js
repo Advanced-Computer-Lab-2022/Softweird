@@ -6,7 +6,7 @@ function MyCourse(){
     const auth= useAuth();
     return(
         <>
-        {auth.user.type=='individual' && <TraineeCourses/>}
+        {(auth.user.type=='individual'||auth.user.type=='corporate') && <TraineeCourses/>}
         {auth.user.type=='instructor' && <InstructorCourses/>}
         </>
     )

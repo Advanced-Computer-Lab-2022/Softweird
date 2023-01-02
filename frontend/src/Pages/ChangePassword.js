@@ -4,7 +4,8 @@ import axios from "axios"
 import validator from 'validator';
 import { Navigate } from 'react-router-dom';
 import { useNavigate,useParams } from "react-router-dom";
-import logo1 from '../Images/Logo.png'
+import logo1 from '../Images/LogoShortRed.png'
+import { Stack } from '@mui/material';
 
 function ChangePassword() {
 	const {id}=useParams();
@@ -40,7 +41,8 @@ function ChangePassword() {
 	 * EVENT HANDLERS
 	 ***************************/
 	const handleChange = evt => {
-		//console.log(evt);
+		if(evt.target.name=="Password")
+		setErrorMessage("")
 		setFormData({
 			...formData,
 			[evt.target.name]: evt.target.value,
@@ -144,17 +146,23 @@ function ChangePassword() {
 		<div className="form-holder">
                 <div className="form-content" >
                     <div className="form-items" style={{minWidth: "550px"}}>
-						
+					<Stack direction="row" justifyContent={"space-between"}>
+						<Stack>
                         <h3>Change Password</h3>
-                        <p style={{color:"grey"}}>Fill in the data below.</p>
+                        <p style={{color:"grey",paddingTop:"0.5rem"}}>Fill in the data below.</p>
+						</Stack>
+						<div className='text-end' style={{width:"13%"}}>
+						<img src={logo1} style={{width:"100%"}}/>
+                        </div>
+						</Stack>
 
 
-		{successMsg && <p> Password Changed Successful</p>}
-        {loading && <p> Loading</p>}
-        {errorMsg==="All fields are required" && <p style={{color:"red"}}>*All fields are required</p>}
+		{successMsg && <p  style={{color:"red" , margin:"0",fontSize:"0.8rem",paddingLeft:"1rem"}}> Password Changed Successful</p>}
+        {loading && <p  style={{color:"red" , margin:"0",fontSize:"0.8rem",paddingLeft:"1rem"}}> Loading</p>}
+        {errorMsg==="All fields are required" && <p  style={{color:"red" , margin:"0",fontSize:"0.8rem",paddingLeft:"1rem"}}>*All fields are required</p>}
         {/* {errorMsg==="invalid id" && <p> *invalid id</p>} */}
-        {errorMsg==="An Error occured try again" && <p> *An Error occured try again</p>}
-        {errorMsg==="Password Mismatch" && <p style={{color:"red"}}> *Password Mismatch</p>}
+        {errorMsg==="An Error occured try again" && <p  style={{color:"red" , margin:"0",fontSize:"0.8rem",paddingLeft:"1rem"}}> *An Error occured try again</p>}
+        {errorMsg==="Password Mismatch" && <p  style={{color:"red" , margin:"0",fontSize:"0.8rem",paddingLeft:"1rem"}}> *Password Mismatch</p>}
 
 
 			{/* password */}
@@ -202,8 +210,8 @@ function ChangePassword() {
             <p>
 
             </p>
-			  <div className='form-group'>
-				<button type='submit' className='btn btn-primary btn-block'style={{position:'relative', left:'300px'}}>
+			  <div className='form-group text-end'>
+				<button type='submit' className='btn btn-primary btn-block'style={{position:'relative'}}>
 					Change Password
 				</button>
 			</div></div>

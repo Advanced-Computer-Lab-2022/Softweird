@@ -23,7 +23,7 @@ function AddAdmin() {
 		  minLength: 8, minLowercase: 1,
 		  minUppercase: 1, minNumbers: 1, minSymbols: 1
 		})) {
-		  setErrorMessage('Strong Password')
+		  setErrorMessage('')
 		} else {
 		  setErrorMessage('Password is weak, Use 8 or more characters with a mix of letters, numbers & symbols')
 		}
@@ -31,7 +31,8 @@ function AddAdmin() {
 	//const [gender, setGender]=useState();
 	const onChange= (e) =>{
 		const {name, value, type, checked }=e.target;
-
+		
+		
 		setFormData((state) => ({
 			...state,
 			[name]:type === "checkbox" ? checked :value
@@ -66,7 +67,7 @@ function AddAdmin() {
 	 * EVENT HANDLERS
 	 ***************************/
 	const handleChange = evt => {
-		//console.log(evt);
+		if(evt.target.name=="Password") setErrorMessage("")
 		setFormData({
 			...formData,
 			[evt.target.name]: evt.target.value,
@@ -80,7 +81,8 @@ function AddAdmin() {
 	const[type,settype]=useState(false);
 
 	const handleSubmit = evt => {
-        evt.preventDefault();
+		if(window.confirm("Are you sure you want to add this admin"))
+      {  evt.preventDefault();
         console.log("form")
         console.log(FirstName)
         console.log(Username)
@@ -117,9 +119,9 @@ function AddAdmin() {
 		else {
 			const { FirstName,LastName,Gender,Username, Password,ConfrimPassword,Email } = formData;
 			const data = { FirstName,LastName,Gender,Username, Password,Email };
-            console.log("dfghg")
+           
 
-			setFormData({ ...formData, loading: true });
+			setFormData({ ...formData, loading: false });
 
             let cancel
             axios({
@@ -149,13 +151,47 @@ function AddAdmin() {
                     errorMsg: false,
                     loading: false,
                 });
-                console.log(successMsg)
-                console.log(successMsg)
+               
+               }
+			   else if(response === "This email is already signed in"){
+				setpassword("password");
+			seteye(true);
+			settype(false);
+                setFormData({
+					FirstName: FirstName,
+                    LastName: LastName,
+                    Username: Username,
+                    Email: '',
+                    Password: '',
+                    ConfrimPassword:'',
+                    Gender: Gender,
+                    successMsg: false,
+                    errorMsg: "This email is already signed in",
+                    loading: false,
+                });
+               }
+			   else if(response === "username already taken"){
+				setpassword("password");
+			seteye(true);
+			settype(false);
+                setFormData({
+					FirstName: FirstName,
+                    LastName: LastName,
+                    Username: "",
+                    Email: Email,
+                    Password: '',
+                    ConfrimPassword:'',
+                    Gender: Gender,
+                    successMsg: false,
+                    errorMsg: "username taken",
+                    loading: false,
+                });
                }
             
             }).catch(e=>{
             
                     setFormData({
+						
                         successMsg: false,
                         errorMsg: "username taken",
                         loading: false,
@@ -167,6 +203,7 @@ function AddAdmin() {
             return () => cancel ()
 			
 		}}
+	}
 
     function handleAdmin(){
         setPage("/adminAdd/admin")
@@ -199,10 +236,10 @@ function AddAdmin() {
                        
 						
         {loading && <p> Loading</p>}
-        {errorMsg==="username taken" && <p style={{color:"red"}}>*This Username is already taken</p>}
-        {errorMsg==="All fields are required" && <p style={{color:"red"}}>*All fields are required</p>}
-        {errorMsg==="This email is already signed in" && <p style={{color:"red"}}>*This email is already signed in</p>}
-		{ errorMsg==="Password Mismatch" && <p style={{color:"red"}}>*Passwords Mismatch, Please try again!</p>}
+        {errorMsg==="username taken" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*This Username is already taken</p>}
+        {errorMsg==="All fields are required" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*All fields are required</p>}
+        {errorMsg==="This email is already signed in" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*This email is already signed in</p>}
+		{ errorMsg==="Password Mismatch" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*Passwords Mismatch, Please try again!</p>}
             {/* firstName */}
 			<div className='form-group input-group'>
 				<div className='input-group-prepend'>
@@ -280,6 +317,7 @@ function AddAdmin() {
 					name='Password'
 					value={Password || ''}
 					className='form-control'
+					autoComplete='new-password'
 					placeholder='Create password'
 					type={paswo}
 					onChange={handleChange}
@@ -290,11 +328,11 @@ function AddAdmin() {
 					
 				
 			</div>
-			<div className='form-group input-group'>
+			{errorMessage!=''&&<div className='form-group input-group'>
 			{errorMessage === '' ? null :
                     <div style={{fontSize:12,
                       color: 'red',marginLeft:"4%"
-                    }}> *{errorMessage}</div>}</div>
+                    }}> *{errorMessage}</div>}</div>}
 			{/* confirm password */}
 			<div className='form-group input-group'>
 			<div className='input-group-prepend'>
@@ -334,7 +372,7 @@ function AddAdmin() {
         
         </div></div></form>
         <p></p>
-		{successMsg && <ToastMess message="User Created successfully" />}
+		{successMsg && <ToastMess message="Admin Created successfully" />}
         </>
 	);
 

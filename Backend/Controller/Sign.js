@@ -20,6 +20,7 @@ const createToken = (name) => {
 
 const signUp = async (req, res) => {
     const {FirstName, LastName, Gender, Username, Password, Email } = req.body
+   
      try {
         const salt = await bcrypt.genSalt();
         console.log(Password)
@@ -27,17 +28,14 @@ const signUp = async (req, res) => {
     const users = await User.find({username:Username})
     const emailll = await User.find({email:Email})
     if (emailll.length){
-        return res.status(404).json("This email is already signed in")
+        return res.status(200).json("This email is already signed in")
     }
     if (users.length){
-        return res.status(404).json("username already taken")
+        return res.status(200).json("username already taken")
     }
      const uuu= await User.create({fName :FirstName, lName: LastName,gender: Gender,username: Username, password: hashedPassword, type: "individual", email:Email})
      await individualTrainee.create({user: uuu})
-     const token = createToken(uuu.email);
-
-     res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-     res.status(201).json(uuu);
+     res.status(201).json("Sign up Successful");
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
@@ -64,14 +62,27 @@ const login3= async(req,res)=>{
     try{
      const curr= await User.findOne({email:Email})
     const yes = await bcrypt.compare(Password,curr.password)
-   
+   var verify =false
     if (yes){
+        if(curr.type==="instructor"){
+            const inst =await Instructor.findOne({user:curr._id})
+            verify = inst.verify || false
+           console.log(inst)
+            if (inst.verify===false){
+                res.status(200).json({message :'success' ,type:curr.type, id:curr._id,name:curr.username,verify:verify})
+                return
+            }
+            
+        }
         const accessToken = generateAccessToken(curr.email);
         res.cookie('jwt', accessToken, { httpOnly: false, maxAge: maxAge * 1000 });
         res.cookie('id',curr._id,{ httpOnly: false, maxAge: maxAge * 1000 });
         res.cookie('type',curr.type,{ httpOnly: false, maxAge: maxAge * 1000 });
         res.cookie('name',curr.username,{ httpOnly: false, maxAge: maxAge * 1000 });
-        res.json({ accessToken: accessToken,message :'success' ,type:curr.type, id:curr._id,name:curr.username})
+        res.cookie('fname',curr.fName,{ httpOnly: false, maxAge: maxAge * 1000 });
+        res.cookie('lname',curr.lName,{ httpOnly: false, maxAge: maxAge * 1000 });
+        res.json({ accessToken: accessToken,message :'success' ,type:curr.type, id:curr._id,name:curr.username,
+    fName:curr.fName,lName:curr.lName,verify:verify})
          console.log({ accessToken: accessToken})
         }
     else {
@@ -139,6 +150,8 @@ const logout = async(req,res)=> {
     res.cookie('jwt', '', { httpOnly: true, maxAge: maxAge * 1 });
     res.cookie('id', '', { httpOnly: true, maxAge: maxAge * 1 });
     res.cookie('type', '', { httpOnly: true, maxAge: maxAge * 1 });
+    res.cookie('fName', '', { httpOnly: true, maxAge: maxAge * 1 });
+    res.cookie('lName', '', { httpOnly: true, maxAge: maxAge * 1 });
     refreshTokens = refreshTokens.filter(token => token !== req.body.token);
     res.status(200).json("Logout Successfull")
 }

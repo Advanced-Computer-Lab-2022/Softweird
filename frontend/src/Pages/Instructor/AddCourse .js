@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useContext } from 'react';
 import isEmpty from 'validator/lib/isEmpty';
 import axios from "axios"
 import { useParams } from 'react-router-dom';
@@ -6,17 +6,18 @@ import TitleIcon from '@mui/icons-material/Title';
 import SubjectIcon from '@mui/icons-material/Subject';
 import ListIcon from '@mui/icons-material/List';
 import { useAuth } from '../../Components/auth';
-//import { showErrorMsg, showSuccessMsg } from '../helpers/alert';
-//import { showLoading } from '../helpers/loading';
-//import { isAuthenticated } from '../helpers/auth';
-//import './AddCourse.css'
-//import { addAdmin,addCorporate,addInstructor } from '../../../../../Backend/Controller/AdminAdd';
-
+import ToastMess from '../../Components/OneComponent/ToastMess';
+import { Toast } from '../../Context/Toast';
+import Select from 'react-select';
+import EuroIcon from '@mui/icons-material/Euro';
+import { useNavigate, useLocation,Navigate } from 'react-router-dom';
 
 function AddCourse() {
-
+	const navigate= useNavigate()
+	const {openToast,setOpenToast} = useContext(Toast)
 	const {inst} = useParams()
 	const auth = useAuth()
+	const [Loading,setLoading] =useState(true)
 	const onChange= (e) =>{
 		const {name, value, type, checked }=e.target;
 		setDisabled(true)
@@ -67,8 +68,10 @@ function AddCourse() {
 	};
 
 	const handleSubmit = evt => {
+		if(window.confirm("Are you sure you want to add this Course"))
+		{
         evt.preventDefault();
-	
+		console.log(Subject)
 
 		// client-side validation
 		if (
@@ -81,11 +84,21 @@ function AddCourse() {
 				...formData,
 				errorMsg: 'All fields are required',
 			});
-		} else {
+		
+		} 
+
+		else if (Price<0 || Price>2000){
+			setFormData({
+				...formData,
+				errorMsg: 'Price',
+			});
+
+		}
+		else {
 			const { Title ,Subject , Price , Summary  } = formData;
 			const data = { Title ,Subject , Price , Summary  };
 
-			setFormData({ ...formData, loading: true });
+			setFormData({ ...formData, loading: false });
 
             let cancel
             axios({
@@ -95,9 +108,9 @@ function AddCourse() {
                 headers : {'Content-Type' : 'application/json'},
                 cancelToken: new axios.CancelToken (c => cancel = c)
             }).then (res => {
-               
+             
                const response = res.data
-                console.log(response,"hhhhhhhh")
+               
                if (response==="Sucess"){
                  setFormData({
                     Title: '' ,
@@ -108,11 +121,16 @@ function AddCourse() {
 		            errorMsg: false,
 		            loading: false,
                 });
+				navigate(`/MyCourse/${Title}`)
                }
             
             }).catch(e=>{
                 {
                     setFormData({
+						Title: Title ,
+                    Subject:Subject ,
+                    Price:Price ,
+                    Summary:Summary, 
                         successMsg: false,
                         errorMsg: "title taken",
                         loading: false,
@@ -124,12 +142,32 @@ function AddCourse() {
             })
 
             return () => cancel ()
-		}}
+		}}}
         
 
     function handleCourse(){
         setPage("/addcourse/:id")
     }
+
+	const [values, setValue] = useState("Select Company")
+	const Subjects = [{ value: 'Data Science', label: 'Data Science' },
+	{ value: 'Computer Science', label: 'Computer Science' },
+	{ value: 'Artificial Intelligence', label: 'Artificial Intelligence' },
+	{ value: 'Mathematics', label: 'Mathematics' },
+	{ value: 'Sciences', label: 'Sciences' },
+	{ value: 'Cloud Computing', label: 'Cloud Computing' },{ value: "Cyber Security", label:"Cyber Security" },
+	{ value: "Business", label:"Business" }];
+
+	const changeHandler = value => {
+        setValue(value.value)
+		
+		setFormData({
+			...formData,
+			Subject: value.value,
+			successMsg: '',
+			errorMsg: '',
+		});
+	}
 
 	/****************************
 	 * VIEWS
@@ -141,12 +179,12 @@ function AddCourse() {
                 <div className="form-content">
                     <div className="form-items">
                         <h3>Add a New Course</h3>
-                        <p>Fill in the data below.</p>
-
-		{successMsg && <p> Course Added successfully</p>}
-        {loading && <p> Loading</p>}
-        {errorMsg==="title taken" && <p>This Course is already made</p>}
-        {errorMsg==="All fields are required" && <p>All fields are required</p>}
+						<p style={{color:"grey",paddingTop:"0.5rem"}}>Fill in the data below.</p>
+		
+        
+        {errorMsg==="title taken" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*This Course title is already taken</p>}
+        {errorMsg==="All fields are required" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*All fields are required</p>}
+		{errorMsg==="Price" && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.9rem",margin:0}}>*Price is should be between 0 and 2000 </p>}
 
             {/* title */}
 			<div className='form-group input-group'>
@@ -166,47 +204,51 @@ function AddCourse() {
 				/>
 			</div>
 			{/* subject */}
-			<div className='form-group input-group'>
+			<div className='form-group input-group' style={{paddingTop:"2rem"}}>
 			<div className='input-group-prepend'>
 					<span  style={{padding: "0.5rem 0.5rem"}} className='input-group-text'>
 						<ListIcon/>
 					</span>
 					
 			</div>
-				<input
-					name='Subject'
-					value={Subject || ''}
-					className='form-control'
-					placeholder='Subject'
-					type='text'
-					onChange={handleChange}
-				/>
+			
+			<Select  style={{width:"2rem"}} 
+			options={Subjects} value={Subject} onChange={changeHandler} placeholder={values}  />
 			</div>
 			
 			{/* price */}
 			<div className='form-group input-group'>
-				<div style={{display:"flex" , alignItems:"center",margin:"1rem 0"}}>
-				<span  style={{padding: "0.5rem 0.5rem"}} className='input-group-text'>
+				<div style={{display:"flex" , alignItems:"center",margin:"2rem 0"}}>
+				{/* <span  style={{padding: "0.5rem 0.5rem"}} className='input-group-text'>
 				<i class="fa fa-money" aria-hidden="true"></i>
-					</span>
+					</span> */}
 				   <h6 style={{marginRight:"1rem", marginLeft: '1rem'}}> Price: </h6>
 			<div style={{display:"block" }}>
-			<div style= {{display:"flex" }}>
+			<div style= {{display:"flex" ,gap: "0.5rem"}}>
 			<input
            name='Price'  type="radio"value="Free" onChange={onChange}/>   Free
 		   </div>
 		  <div style= {{display:"flex" , alignItems:"center"}}>
+		  <div style= {{display:"flex" ,gap: "0.5rem",width:"100%"}}>
+		  <EuroIcon sx={{position: "absolute",
+    right: "96px"}}/>
 		  <input
           name='Price'  type="radio" value="Price" onChange={priceEn}/>   Enter Price
+		  </div>
 				<input
 					name='Price'
 					value={Price || ''}
 					className='form-control'
 					placeholder='Price'
 					type='number'
+					min={0}
+					max={2000}
 					onChange={handleChange}
 					disabled={disabled}
-					style={{marginLeft:"1rem"}}
+					style={{    paddingRight: "2rem",
+						width: "9rem",
+						marginLeft: "1rem",
+					}}
 					/>
 			</div>
 			</div>
@@ -214,18 +256,20 @@ function AddCourse() {
 			</div>
 			{/* Summary */}
 			<div className='form-group input-group'>
-			<div className='input-group-prepend'>
+			{/* <div className='input-group-prepend'>
 					<span  style={{padding: "0.5rem 0.5rem"}} className='input-group-text'>
 					<SubjectIcon/>
 					</span>
 					
-			</div>
-				<input
+			</div> */}
+				<textarea
 					name='Summary'
 					value={Summary || ''}
 					className='form-control'
 					placeholder='Short Summary'
 					type='text'
+					aria-multiline
+					
 					onChange={handleChange}
 				/>
 			</div>
@@ -240,6 +284,7 @@ function AddCourse() {
         </div>
 		</div></form>
         <p></p>
+		{successMsg && <ToastMess message={"Course Added successfully"} /> }
         </>
 		)};
 

@@ -92,14 +92,16 @@ function handleExam (event,params) {
    }
 
   }
-  function handleDeleteVideo(event,params){
-    const videoTitle = event.target.id
+  function handleDeleteVideo(event,params,params2){
+    
+   
+  
     if (window.confirm("Are you sure you want to delete this video?")){
       let cancel
       axios({
         method:"patch",
         url : '/Instructor/deleteVideo',
-        data : {subtitleTitle:params,courseTitle:courses.title,videoText:videoTitle},
+        data : {subtitleTitle:params,courseTitle:courses.title,videoText:params2},
         headers : {'Content-Type' : 'application/json'},
         cancelToken: new axios.CancelToken (c => cancel = c)
       }).then (res => {
@@ -112,13 +114,14 @@ function handleExam (event,params) {
       return () => cancel ()
       
     }
+  
   }
     
       return ( 
           <OneCourseResult.Provider value={{open,setOpen}}>
           <Box position={"relative"}>
     {courses.subtitles && courses.subtitles.map ((subtitle,subtitleInd) => {
-        return  <Stack direction="row">
+        return  <Stack direction="row" sx={{width:"96%"}}>
            
         <Accordion key={subtitle._id} position="relative" sx = {{mb:"0.3rem",boxShadow:"0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px #bbd2b1, 0px 1px 3px 0px rgb(0 0 0 / 12%)",flex:1}}> 
 
@@ -138,18 +141,19 @@ function handleExam (event,params) {
             </svg>
           <Typography sx={{ width: '42%', flexShrink: 0,pl:"3rem" }}>{subtitle.title}</Typography>
               <Typography sx={{ color: 'text.secondary',width:"56%" }}>
-                {subtitle.video.length} Lectures . {subtitle.totalHours}hours
+        {subtitle.video.length} Lectures . {subtitle.totalHours<60?subtitle.totalHours+ " min" :
+                Math.round(subtitle.totalHours*10)/10+ " hrs"} 
               </Typography>
             
              
         </AccordionSummary>
-        <AccordionDetails positio="relative">
-        <Stack  gap={3} marginTop={"2%"} marginLeft={"15%"} maxWidth={"65%"}>
+        <AccordionDetails>
+        <Stack  gap={3} marginTop={"2%"} marginLeft={"15%"} maxWidth={"65%"}  positio="relative" width={"96%"}>
           {subtitle.video.map((video,videoInd)=>{
           return <>
           
           <Stack key={video.text} direction="row" justifyContent={"space-between"} marginLeft={"1rem"} position="relative">
-          <Typography position="relative" sx={{"&:hover":{cursor:"pointer"}}}>
+          <Typography sx={{"&:hover":{cursor:"pointer"}}}>
          {!courses.Finished && 
          <Tooltip title="edit video">
          <IconButton color="primary" component="label" 
@@ -160,24 +164,29 @@ function handleExam (event,params) {
         </IconButton>
         </Tooltip>}
         <YouTubeIcon sx={{color:"#bbd2b1",mr:"0.2rem"}} id={videoInd} />
-        <Button sx={{textDecoration:"underline",textTransform:"none"}}variant="text" position="relative" id={videoInd} 
+        <Button sx={{textDecoration:"underline",textTransform:"none",maxWidth:"20rem"}}variant="text"  id={videoInd} 
         
         onClick={(event)=>handelVideo(event,subtitleInd)} >
-           {video.text}
+           {video.text} {video.preview&& <span style={{
+    marginLeft:" 1rem",
+    color: "black",
+    fontSize: "0.8rem"
+}}>(Preview)</span>}
           </Button>
            
           </Typography>
-          <Typography position="relative">
-            {video.length} hours 
+          <Typography  id={video.text}>
+          {video.length<60?video.length+ " min" :
+                Math.round(video.length*10)/10+ " hrs"} </Typography>
             {!courses.Finished && 
-            <Tooltip title="delete Video">
+            <Tooltip id={video.text} title="delete Video">
             <IconButton id={video.text}color="primary" aria-label="upload picture" component="label" 
-          sx={{position:"absolute" , right:"-120%" ,top:"-0.5rem" }} onClick={event=>handleDeleteVideo(event,subtitle.title)}>
+          sx={{position:"absolute" , right:"-4rem" ,top:"-0.5rem" }} onClick={event=>handleDeleteVideo(event,subtitle.title,video.text)}>
           <input hidden  />
-          <DeleteIcon id={video.text} sx={{color:"black"}} />
+          <DeleteIcon id={video.text}  sx={{color:"black"}} />
           </IconButton>
           </Tooltip>}
-          </Typography>
+          
           </Stack>
           <Divider  component="Typography" />
 
@@ -189,7 +198,7 @@ function handleExam (event,params) {
            <Typography position="relative" sx={{"&:hover":{cursor:"pointer"}}}>
           {!courses.Finished && 
           <IconButton color="primary" aria-label="upload picture" component="label" 
-           sx={{position:"relative",left:"-2rem"}}
+           sx={{position:"relative",left:"-2rem",right:"-4rem"}}
           >
            <input hidden  />
            <EditIcon sx={{color:"black"}} />
@@ -205,7 +214,9 @@ function handleExam (event,params) {
            
              {!courses.Finished && 
              <IconButton color="primary" aria-label="upload picture" component="label" 
-           sx={{position:"relative" ,right:"-9%",top:"-0.5rem" }} onClick={event=>handleDeleteVideo(event,subtitle.title)}>
+           sx={{position:"relative" ,right:"-9%",top:"-0.5rem" }}
+            // onClick={event=>handleDeleteVideo(event,subtitle.title)}
+            >
            <input hidden  />
            <DeleteIcon sx={{color:"black"}} />
            </IconButton>}
@@ -254,7 +265,7 @@ function handleExam (event,params) {
       {!courses.Finished && 
           <Tooltip title="Delete subtitle" flex={0.5} sx={{mr:"1rem"}}>
           <IconButton color="primary" component="label" 
-           sx={{position:"relative"}} onClick={event => handleDeleteSubtitle(event,subtitle.title)}
+           sx={{position:"absolute",right:"0rem"}} onClick={event => handleDeleteSubtitle(event,subtitle.title)}
           >
            <input hidden  />
            <DeleteIcon sx={{color:"rgba(0, 0, 0, 0.54)"}} />

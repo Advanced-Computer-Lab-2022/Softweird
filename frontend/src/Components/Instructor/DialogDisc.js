@@ -71,6 +71,7 @@ const [dateerror,setDateError] =useState(false)
 const [numberError , setNumberError] = useState(false)
 const [numberMax , setNumberMax] = useState(false)
 const {setOpenToast} = useContext(Toast)
+const [over75,setOver75] =useState(false)
 
 const handleClose = () => {
   const singleSpaces = promotion.replace(/  +/g, " ");
@@ -95,6 +96,12 @@ const handleClose = () => {
     setNumberMax(true)
 
   }
+  else if (promotion > 75 ){
+    setSucess(false)
+    setError(true)
+    setOver75(true)
+
+  }
   else if (window.confirm("Are you sure you want to set promotion?")){
     setDateError(false)
     setDateSucess(true)
@@ -102,6 +109,7 @@ const handleClose = () => {
         setError(false)
         setSucess(true)
         setSucess(true)
+        setOver75(false)
     setError(false)
     setNumberMax(false)
     setNumberError(false)
@@ -137,6 +145,7 @@ function handleCloseAll () {
     setNumberError(false)
     setNumberMax(false)
     setOpenDisc(false)
+    setOver75(false)
 }
 function changeProm (e){
     setPromotion(e.target.value)
@@ -144,12 +153,14 @@ function changeProm (e){
     setSucess(true)
     setNumberError(false)
     setNumberMax(false)
+    setOver75(false)
     
 }
 function changeDate(e){
   setDate(e.target.value)
   setDateError(false)
   setDateSucess(true)
+  setOver75(false)
    
 }
 
@@ -163,7 +174,7 @@ return (
     sx={{maxHeight:"100%"}}>
     
     <BootstrapDialogTitle id="customized-dialog-title" onClose={handleCloseAll}>
-      Apply a Promotion
+      Apply a Promotion (% from total money)
     </BootstrapDialogTitle>
     <DialogContent dividers sx={{width:"30rem"}}>
    
@@ -171,7 +182,7 @@ return (
       required = {success}
       error = {error}
       label="Promotion of course"
-      placeholder="Promotion of course"
+      placeholder="Promotion of course (max 75%)"
       sx={{width:"70%",textAlign:"center",fontStyle:"italic"}}
       InputProps={{ endAdornment:<InputAdornment position="end">%</InputAdornment>}}
       multiline={true}
@@ -183,6 +194,7 @@ return (
       onChange={changeProm}/>
        {numberError && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.8rem",marginBottom:0}}>*Should be a number</p>}
        {numberMax && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.8rem",marginBottom:0}}>*Maximum promotion is 100%</p>}
+       {over75 && <p style={{color:"red" , marginLeft:"1rem",fontSize:"0.8rem",marginBottom:0}}>*Maximum promotion you can add is 75%</p>}
       <TextField
       required = {datesuccess}
       error = {dateerror}

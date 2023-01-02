@@ -10,12 +10,11 @@ const {getCourses , getOneCourse,getMostViewed} = require('../Controller/Courses
 router.get('/',getCourses)
 
 
-
-//get one course 
+router.get('/mostViewed',getMostViewed)
 
 router.get('/:id',getOneCourse)
 
-router.get('/mostViewed',getMostViewed)
+
 
 
 

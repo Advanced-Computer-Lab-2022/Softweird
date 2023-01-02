@@ -61,6 +61,20 @@ const auth = useAuth()
     })
     return () => cancel ()
 }
+else if(auth.user.type==="corporate"){
+  let cancel
+  axios({
+      method:"PATCH",
+      url : `/Corporate/registerCourse/${auth.user.id}`,
+      data:{courseTitle: course.title},
+      cancelToken: new axios.CancelToken (c => cancel = c)
+  }).then (res => {
+      navigate(`/MyCourses/${course.title}`)
+  }).catch(e=>{
+      if(axios.isCancel(e)) return 
+  })
+  return () => cancel ()
+}
   }
 
 
@@ -93,7 +107,8 @@ const auth = useAuth()
             
           </Toolbar>
         </AppBar>
-        <Box sx={{    width:" 70%",
+     { auth.user && auth.user.type=="individual" &&
+       <Box sx={{    width:" 70%",
     position: "relative",
     left: "15%",
     marginTop: "6%"}}>
@@ -116,7 +131,7 @@ const auth = useAuth()
         <br/>
         <Typography variant="p">
             By registering in <b>{course.title} Course</b> you are going to start your learning path  on<b> {new Date().getDate() + '/' +new Date().getMonth() + '/'+new Date().getFullYear()}</b>.
-            You will have to watch all the videos provided and solve all the exams in the course with a grade of at least <b>40%</b>. This is all
+            You will have to watch all the videos provided and solve all the exams in the course with a grade of at least <b>35%</b>. This is all
             to ensure your eligibility to recieve our certificate.
         </Typography>
         <br/>
@@ -133,7 +148,7 @@ const auth = useAuth()
   </>
         <div class="text-center" style={{paddingBottom:"2rem",paddingLeft:"3%",}}>
       <br />
-     {course.price=="Free" && <Button variant="contained"  sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
+     {course.price=="Free"  && <Button variant="contained"  sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
                 boxShadow:"none",
                 "&:hover":{
                     cursor: "pointer",
@@ -164,7 +179,71 @@ const auth = useAuth()
         
             {paying && <Pay course={course} setPaying={setPaying} setOpenPay={setOpenPay} /> }
      
+  </Box>}
+
+
+  { auth.user && auth.user.type=="corporate" && 
+       <Box sx={{    width:" 70%",
+    position: "relative",
+    left: "15%",
+    marginTop: "6%"}}>
+
+      
+        <Box >
+        <Box sx={{ width:"62%",position:"relative",left:"19%",zIndex:2,marginBottom:"15%"}}>
+        <div className="wire1"></div>
+   <div class= 'row'>
+     <Card style={{ width: '80rem',paddingTop:"3rem" }} className="solve">
+   
+       
+    <>
+    <Card.Body>
+        <>
+        <Stack direction="row" alignItems="center" justifyContent={"center"}>
+        
+        <Typography variant="p" sx={{textDecoration:"underline",color:"#c50d0d",fontSize:"1.2rem"}}>Important Note</Typography>
+        </Stack>
+        <br/>
+        <Typography variant="p">
+            By registering in <b>{course.title} Course</b> you are going to start your learning path  on<b> {new Date().getDate() + '/' +new Date().getMonth() + '/'+new Date().getFullYear()}</b>.
+            You will have to watch all the videos provided and solve all the exams in the course with a grade of at least <b>35%</b>. This is all
+            to ensure your eligibility to recieve our certificate.
+        </Typography>
+        <br/>
+        <Stack direction="row" marginTop={"5%"} gap={1}>
+            <AutoGraphIcon sx={{color:"#faaf00"}}/>
+        <Typography variant="p" sx={{fontStyle:"italic"}}>
+          Let the fun begin
+        </Typography>
+        </Stack>
+        </>
+    </Card.Body>
+   
+   
+  </>
+        <div class="text-center" style={{paddingBottom:"2rem",paddingLeft:"3%",}}>
+      <br />
+     <Button variant="contained"  sx={{backgroundColor:"#bbd2b1" ,fontWeight:"bold",ml:"0.8rem",
+                boxShadow:"none",
+                "&:hover":{
+                    cursor: "pointer",
+                    color:"#bbd2b1",
+                    backgroundColor:"#fff"
+                    }}}
+                    onClick={handleRegister}>Start Now</Button>
+    
+    </div>
+      </Card>
+     
+      
+    
+        <br />  
+  </div>
   </Box>
+  </Box>
+    
+     
+  </Box>}
       </Dialog>
     </div>
   );

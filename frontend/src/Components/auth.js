@@ -15,8 +15,10 @@ export const AuthProvider = ({children})=> {
         const id=(idtemp!=undefined)?idtemp.slice(3,idtemp.length-1):idtemp
         const type = Cookies.get("type");
         const name = Cookies.get("name")
+        const fName = Cookies.get("fname")
+        const lName = Cookies.get("lname")
         if(u){
-            setUser({id:id , type:type,name:name})
+            setUser({id:id , type:type,name:name,fName:fName,lName:lName})
         }
         
     }
