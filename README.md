@@ -51,8 +51,11 @@ In order to run our project, you should have the following installed in your mac
 ## Samples
 ### Login
 ![login](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/Login.png)
-### Applying for a Course
 
+### Applying for a Course
+![view](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/9.png)
+![apply](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/8.png)
+![pay](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/7.png)
 
 ## Features
 
