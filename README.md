@@ -52,9 +52,10 @@ In order to run our project, you should have the following installed in your mac
 ### Login
 ![login](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/Login.png)
 ### Applying for a Course
-![view](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/Login.png)
-![apply](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/Login.png)
-![pay](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/Login.png)
+![view](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/9.png)
+![apply](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/8.png)
+![pay](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/7.png)
+
 ## Features
 
 Mainly this website provides an easy way to apply and attend pre-recorded courses online. Also, allows admins to perform CRUD operations on courses in a flexible way. Moreover, our website allows user to pay in order to reserve in a course and after the completion of any course, users receive a certificate of completion.
