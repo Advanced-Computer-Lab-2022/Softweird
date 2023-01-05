@@ -64,6 +64,9 @@ const handleClose = () => {
 };
 const handleDelete= () => {
   let cancel
+  if(courses.Finished){
+    if( window.confirm("Are you sure you want to delete this course"))
+ {
   axios({
     method:"PATCH",
     url : '/Instructor/deleteCourse',
@@ -77,7 +80,25 @@ const handleDelete= () => {
       if(axios.isCancel(e)) return 
   })
   return () => cancel ()
+}}
+  else if(!courses.Finished ){
+    if( window.confirm("Are you sure you want to delete this course"))
+    {
+    axios({
+      method:"PATCH",
+      url : '/Instructor/deleteCourse2',
+      data : {courseTitle:courses.title},
+      headers : {'Content-Type' : 'application/json'},
+      cancelToken: new axios.CancelToken (c => cancel = c)
+    }).then (res => {
+      navigate('/MyCourses',{state: {message:"course deleted",course:courses.title}})
   
+    }).catch(e=>{
+        if(axios.isCancel(e)) return 
+    })
+    return () => cancel ()
+}
+  }
 }
 
 
@@ -95,12 +116,15 @@ return (
     </BootstrapDialogTitle>
     <DialogContent dividers sx={{width:"30rem"}}>
     <DialogContentText>
-        Are You sure you want to remove this course from system
+     {!courses.Finished && "Are You sure you want to remove this course from system" }
+     {courses.Finished && "By removing this course, no new students will register, however old students will continue their learning path"}
+    
+
     </DialogContentText>
     </DialogContent>
     <DialogActions>
       <Button autoFocus onClick={handleDelete} sx={{color:"#c50d0d"}}>
-        Sure
+        Delete
       </Button>
       <Button autoFocus onClick={handleClose} sx={{color:"#c50d0d"}}>
         Cancel

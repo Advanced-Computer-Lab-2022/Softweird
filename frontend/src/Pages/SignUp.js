@@ -97,9 +97,7 @@ function SignUp() {
 	 * EVENT HANDLERS
 	 ***************************/
 	const handleChange = evt => {
-		if(evt.target.name=="Password")
-		setErrorMessage("")
-		//console.log(evt);
+		
 		setFormData({
 			...formData,
 			[evt.target.name]: evt.target.value,

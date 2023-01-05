@@ -16,6 +16,35 @@ import ProgressBar from "./ProgreeBar";
 import { TbMinimize } from "react-icons/tb";
 import { Divider } from "@mui/material";
 
+import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
+import PropTypes from 'prop-types';
+import { styled } from '@mui/material/styles';
+import { Box ,Stack} from "@mui/material";
+import PendingIcon from '@mui/icons-material/Pending';
+import Mathematics from '../../Images/Mathematics.jpeg'
+import DataScience from '../../Images/DataScience.png'
+import ComputerScience from '../../Images/Computer Science.jpg'
+import CloudComputing from '../../Images/Cloud Computing.jpeg'
+import ArtificialIntelligence from '../../Images/Artificial Intelligence.jpg'
+import CyberSecurity from '../../Images/Cyber Security.jpeg'
+import Sciences from '../../Images/Sciences.jpeg'
+import Business from '../../Images/Business.jpg'
+import VerifiedIcon from '@mui/icons-material/Verified';
+
+
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+  height: 10,
+  borderRadius: 5,
+
+  [`&.${linearProgressClasses.colorPrimary}`]: {
+    backgroundColor: "lightgrey",
+  },
+  [`& .${linearProgressClasses.bar}`]: {
+    borderRadius: 5,
+    backgroundColor: theme.palette.mode === 'light' ? '#bbd2b1' : '#308fe8',
+  },
+}));
+
 function CorporateCourses (){
     const [myCourse,setMyCourse]=useState([])
     const [myProgress,setMyProgress]=useState([])
@@ -101,6 +130,23 @@ function CorporateCourses (){
                  title={x}
                  position="below"
                />
+
+<Stack direction="row" gap={2} alignItems={"center"} sx={{position: "relative",
+    left: "9%"}}>
+     
+    
+   <Box sx={{width:"100%"}}>
+    <BorderLinearProgress variant="determinate" value={Math.round(((myProgress[i].percentage.progress/myProgress[i].percentage.total)*100)*10)/10 || 0} />
+    </Box>
+    <Typography variant="p" component="div" sx={{fontSize:"0.7rem"}}><b> {Math.round(((myProgress[i].percentage.progress/myProgress[i].percentage.total)*100)*10)/10 || 0}%</b></Typography>
+    </Stack>
+    
+    {x.certificate!="" && <Stack  direction="row" gap={0.5}   justifyContent={"center"} marginTop={"1rem"} alignItems={"center"}>
+    <VerifiedIcon fontSize={"1rem"}sx={{color:"#faaf00" }}/>
+    <Typography  fontSize={"0.8rem"} color={"grey"}> Certified</Typography>
+    
+    </Stack> }
+
     {/* <BorderLinearProgress variant="determinate" value={Math.round(((myCourse.percentage.progress/myCourse.percentage.total)*100)*10)/10 || 0} /> */}
     
                <ProgressBar bgcolor="green" progress={(((myProgress[i].percentage.progress/myProgress[i].percentage.total)*100)*10)/10 || 0}  height={15} />

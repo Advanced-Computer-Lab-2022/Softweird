@@ -284,12 +284,10 @@ function ChangePassword() {
           </DialogContentText>
           <p>
 
-		   Acceptance of Terms and Conditions. By selecting "I accept the eStatement Service Agreement and Disclosure provided"
-		   and submitting this registration, you agree that you have read and understood the terms and conditions set forth in this
-		   agreement and you accept this agreement without modification. By accepting this agreement, you consent to the electronic
-		   delivery of statements and other bank- related documents. You understand that this agreement is effective at the date and
-		   time of the bank's receipt of your accepted electronic agreement. If you do not agree to the terms and conditions of this
-		   agreement, you should not submit this registration and you will not be enrolled in the Service. 
+		  Acceptance of Terms and Conditions. By selecting "I accept the Payments Terms and Conditions"
+		   and submitting this registration, you agree that you have read and understood the terms and conditions 
+		   which are 25% of the money for each video is taken by the company per registered student and 75% to you. All post videos and materials Copyrights are Protected.
+		    If you do not agree to the terms and conditions of this agreement, you should not submit this registration and you will not be enrolled in the Service.
           </p>
         </DialogContent>
         <DialogActions>

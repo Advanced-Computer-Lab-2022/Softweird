@@ -140,7 +140,7 @@ function MyProfile (){
                 let cancel
                  axios({
                      method:"GET",
-                     url : `Corporate/getMyProfile/${auth.user.id}`,
+                     url : `/Corporate/getMyProfile/${auth.user.id}`,
                      cancelToken: new axios.CancelToken (c => cancel = c)
                  }).then (res => {
                 

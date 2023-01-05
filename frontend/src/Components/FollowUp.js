@@ -74,12 +74,13 @@ console.log(report)
          axios({
         method:"POST",
         url : "/addFollowUp",
-        params :{Rid : report._id , Uid :"6387cd0c3420cccd5c92f4c0", follow :body,type:auth.user.type },
+        params :{Rid : report._id , Uid :auth.user.id, follow :body,type:auth.user.type },
         cancelToken: new axios.CancelToken (c => cancel = c)
      }).then (res => {
-       
+      console.log(res.data)
       setArr(res.data.followUp)
       setSolved(res.data.solved)
+      setReport(res.data)
       setMessSeen(res.data.reporterMessageSeen)
      
       setBody('')
@@ -94,7 +95,7 @@ console.log(report)
     let cancel
     axios({
    method:"POST",
-   url : "Admin/addFollowUp",
+   url : "/Admin/addFollowUp",
    params :{Rid : report._id , Aid :auth.user.id, follow :body},
    cancelToken: new axios.CancelToken (c => cancel = c)
 }).then (res => {
@@ -142,7 +143,7 @@ return () => cancel ()
      {   setLoading(true)
          axios({
         method:"GET",
-        url : "Admin/getfollow",
+        url : "/Admin/getfollow",
         params : {id : report._id},
          cancelToken: new axios.CancelToken (c => cancel = c)
      }).then (res => {
@@ -300,6 +301,8 @@ backgroundColor:"#bbd2b1"}}>
          style={{ height: '50px' ,width:'50%'}}
          onChange={getbody}
          value = {body}
+         multiple={false}
+
            />
             
       <div >

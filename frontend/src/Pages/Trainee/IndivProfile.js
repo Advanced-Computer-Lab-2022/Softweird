@@ -166,7 +166,7 @@ function MyProfile (){
                   let cancel
                   axios({
                       method:"PATCH",
-                      url : `Individual/updateMyPass/${auth.user.id}`,
+                      url : `/Individual/updateMyPass/${auth.user.id}`,
                       data : {password:data},
                       headers : {'Content-Type' : 'application/json'},
                       cancelToken: new axios.CancelToken (c => cancel = c)
@@ -200,7 +200,7 @@ function MyProfile (){
                 let cancel
                  axios({
                      method:"GET",
-                     url : `Individual/getProfile/${auth.user.id}`,
+                     url : `/Individual/getProfile/${auth.user.id}`,
                      cancelToken: new axios.CancelToken (c => cancel = c)
                  }).then (res => {
                 

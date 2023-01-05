@@ -49,8 +49,8 @@ function InstructorCourse ({Onecourse}) {
     boxShadow: "0 3px 4px rgba(0,0,0,.12), 0 3px 4px rgba(0,0,0,.06)",
 
 } }} onClick={() => window.location.href=`/MyCourses/${Onecourse.title}`} >
-<Stack>
-  <Stack direction="row">
+<Stack sx={{width:"100%"}}>
+  <Stack direction="row" >
 <CardMedia
   component="img"
   sx={{ width: "35%",borderRadius:"15px",padding:"1.5%" }}

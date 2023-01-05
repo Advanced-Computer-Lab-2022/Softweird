@@ -16,25 +16,32 @@ const instructorSchema = new Schema ({
     amountOwed:{
         type:mongoose.Types.Decimal128
     },
-    //wallet:[{
-    //     Year:{type:Number},
-    //     months:[{
-    //         month:{type:Number},
-    //         amounts:[{
-    //             course:{ type :mongoose.Types.ObjectId , ref : 'Course'},
-    //             moneyPaid:[{type:mongoose.Types.Decimal128},],
-    //             promotionAdded : {admin:{type:mongoose.Types.Decimal128},
-    //             inst:{type:mongoose.Types.Decimal128}}
-    //         }]
-    //     }]
-    // }],
+
+    wallet:[{
+        year:{type:String},
+        months:[{
+            month:{type:String},
+            amounts:[{
+                course:{ type :String},
+                moneyPaid:[
+                { money:{type:mongoose.Types.Decimal128},
+                promotionAdded : {admin:{type:mongoose.Types.Decimal128},
+                inst:{type:mongoose.Types.Decimal128}},
+                totalStudents:Number}],
+                totalRefunds:{type:Number ,default:0},
+                totalRefundStudents:{type:Number,default:0},
+                total: {type:Number ,default:0},
+                totalStudents:{type:Number ,default:0}
+            }],
+           
+        }]
+    }],
+
     reviews :[{
         trainee: String,
         traineeId :{type:mongoose.Types.ObjectId , ref : 'Users'},
         review : String,
         date :Date
-
-
     }],
     verify:{
         type: Boolean,default:false

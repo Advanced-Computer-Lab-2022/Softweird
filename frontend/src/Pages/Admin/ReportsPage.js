@@ -35,6 +35,7 @@ import { Toast } from '../../Context/Toast';
 import Switch from '@mui/material/Switch';
 
 import Loading from '../../Components/OneComponent/Loading';
+import NoReports from '../../Components/OneComponent/NoReports'
 
 
 
@@ -174,7 +175,7 @@ setLoading(true)
       let cancel
       axios({
      method:"GET",
-     url : "Admin/getreports",
+     url : "/Admin/getreports",
       cancelToken: new axios.CancelToken (c => cancel = c)
   }).then (res => {
      setArr(res.data.r)
@@ -235,32 +236,32 @@ return () => cancel ()
        <>
        <TabPanel value={value} index={0} sx={{backgroundColor:"white"}} >
        <Stack gap={4} sx={{mt:"4rem"}}>
-         {Arr.map(r=>{
+         {Arr.length!=0?Arr.map(r=>{
            return  <OneReport rep={r} checked2={checked2} setMessage={setMessage} setArr={setArr}/>
           
           
-         })}
+         }):<NoReports message={"You have no pending reports"}/>}
           <OneReport />
           </Stack>
           </TabPanel>
           <TabPanel value={value} index={2} sx={{backgroundColor:"white"}} >
        <Stack gap={4} sx={{mt:"4rem"}}>
-         {Arr.map(r=>{
+         {Arr.some(r=>r.solved=="pending") ?Arr.map(r=>{
            return  r.solved=="pending" &&
            <OneReport rep={r} checked2={checked2} setMessage={setMessage} setArr={setArr}/>
           
           
-         })}
+         }):<NoReports message={"You have no pending reports"}/>}
           <OneReport/>
           </Stack>
           </TabPanel>
 
           <TabPanel value={value} index={3} sx={{backgroundColor:"white"}}>
           <Stack gap={4} sx={{mt:"4rem"}}>
-          {Arr.map(r=>{
+          {Arr.some(r=>r.solved=="resolved" )?Arr.map(r=>{
           return  r.solved=="resolved" &&
           <OneReport rep={r} checked2={checked2} setMessage={setMessage} setArr={setArr}/>
-         })}
+         }): <NoReports message={"You have no resolved reports"}/>}
 
 <OneReport />
          </Stack>
@@ -268,10 +269,10 @@ return () => cancel ()
 
           <TabPanel value={value} index={1} sx={{backgroundColor:"white"}}>
           <Stack gap={4} sx={{mt:"4rem"}}>
-          {Arr.map(r=>{
+          {Arr.some(r=>r.solved=="noStatus") ?Arr.map(r=>{
            return  r.solved=="noStatus" &&
            <OneReport rep={r} checked2={checked2} setMessage={setMessage} setArr={setArr}/>
-         })}
+         }):<NoReports message={"You have no NoStatus reports"}/>}
           <OneReport />
          </Stack>
          </TabPanel>

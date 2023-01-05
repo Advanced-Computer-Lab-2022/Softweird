@@ -67,7 +67,7 @@ function AddAdmin() {
 	 * EVENT HANDLERS
 	 ***************************/
 	const handleChange = evt => {
-		if(evt.target.name=="Password") setErrorMessage("")
+		
 		setFormData({
 			...formData,
 			[evt.target.name]: evt.target.value,
@@ -193,7 +193,7 @@ function AddAdmin() {
                     setFormData({
 						
                         successMsg: false,
-                        errorMsg: "username taken",
+                        errorMsg: e,
                         loading: false,
                     });
                 

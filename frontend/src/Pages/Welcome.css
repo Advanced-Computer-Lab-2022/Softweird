@@ -1,0 +1,41 @@
+.easy::before {
+    content: "";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:1rem;
+    left:45%;
+    width:1rem;
+    height:1rem;
+}
+
+.wireEasy::before {
+    content: "";
+    position: absolute;
+    background-color: grey;
+    top: 0rem;
+    left: 12.45rem;
+    width: 0.2rem;
+    height: 11.65rem;
+    z-index: -1;
+}
+.wireEasy1::before {
+    content: "";
+    position: absolute;
+    background-color: grey;
+    top: 0rem;
+    left: 38.2rem;
+    width: 0.2rem;
+    height: 16.65rem;
+    z-index: -1;
+}
+.wireEasy2::before {
+    content: "";
+    position: absolute;
+    background-color: grey;
+    top: 0rem;
+    right: 8.1rem;
+    width: 0.2rem;
+    height: 11.65rem;
+    z-index: -1;
+}

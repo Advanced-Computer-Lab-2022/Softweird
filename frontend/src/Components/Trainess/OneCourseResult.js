@@ -311,7 +311,7 @@ function OneCourseResult ({myCourse}) {
 
     <Stack direction="row" gap={2} alignItems={"center"}>
     <img src={CorrectedExams} />
-    <Typography variant="p" component="div" sx={{fontSize:"0.9rem"}}><b>Average exam grades</b> : {!noExams?`${avgGrade} % `: "NAN %"}</Typography>
+    <Typography variant="p" component="div" sx={{fontSize:"0.9rem"}}><b>Average exam grades</b> : {!noExams?`${avgGrade} % `: "no exams solved yet"}</Typography>
     </Stack>
     <Stack direction="row" gap={2}>
       <RedoIcon sx={{color:"#c50d0d"}}/>

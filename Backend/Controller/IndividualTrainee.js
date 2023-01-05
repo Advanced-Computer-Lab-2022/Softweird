@@ -68,7 +68,7 @@ const RateCourse = async(req,res)=>{
     try{  
    let myTitles=[];
    const MyCourse =await individual.find({user:userid}).populate('courseInfo.course')
-   for (var i=0; i<=MyCourse.length; i++){
+   for (var i=0; i<MyCourse.length; i++){
    ccc= MyCourse[0].courseInfo[i].course
    const titles = await Course.findById(ccc)
    console.log(titles)
@@ -271,6 +271,52 @@ catch (error){
  }
 
 //register course
+//  const RegisterCourse = async (req,res) =>{
+//      const {courseTitle} = req.body;
+//      const {id} = req.params;
+   
+//      if(!mongoose.Types.ObjectId.isValid(id)){
+//         return res.status(404).json({error:"error"})
+// }
+// try{
+//        var userID = mongoose.Types.ObjectId(id)
+
+//      const c = await Course.findOne({title:courseTitle})
+//      if(c==null){
+//          res.status(404).json({error:"no such course"})
+//      }
+//      var count=0
+//     var subtitle=0
+//     var exercise = 0
+//     var sub =[]
+//     var totExercise = 0 
+//      c.subtitles.forEach(s=>{
+//          subtitle=0
+//          exercise = 0 
+//          count+=s.totalHours;
+         
+//         s.video.forEach(v=>{
+            
+//             subtitle+=1
+           
+//         })
+//         if(s.exercise.length!=0){ exercise+=1,totExercise+=1}
+
+//         sub.push({exercises:exercise,videos:subtitle})
+//     })
+//       var exPerc = count*0.05
+//       count+=exPerc*totExercise
+//      const courses = {course:c._id,percentage:{progress:0,total:count,exer:exPerc},subtitlesTotal:sub,
+//      registeredAt:new Date()};
+//      const ind = await individual.findOneAndUpdate({user:userID},{$push:{courseInfo:courses}});
+//      await Course.findOneAndUpdate({title:courseTitle},{$inc:{enrolledStudents:1}})
+//      res.status(200).json(ind);
+//     }
+//     catch(error){res.status(404).json(error)};
+//  }
+
+
+
  const RegisterCourse = async (req,res) =>{
      const {courseTitle} = req.body;
      const {id} = req.params;
@@ -314,6 +360,7 @@ try{
     }
     catch(error){res.status(404).json(error)};
  }
+
 
     
 
@@ -441,7 +488,7 @@ await individual.findOneAndUpdate({user:userId,exercises:{$elemMatch:{subtitle:S
 
  if(cer=="true"){
    user = await individual.findOneAndUpdate({user:userId,courseInfo:{$elemMatch:{course:cId}}},{$set:{"courseInfo.$.certificate":"true"}},{returnOriginal:false}).populate("user")
-   user = await individual.findOneAndUpdate({user:userID,courseInfo:{$elemMatch:{course:courseCon._id}}},{$set:{"courseInfo.$.certDate":new Date()}},{returnOriginal:false}).populate("user")
+   user = await individual.findOneAndUpdate({user:userId,courseInfo:{$elemMatch:{course:cId}}},{$set:{"courseInfo.$.certDate":new Date()}},{returnOriginal:false}).populate("user")
  }
 
   res.status(200).json({user,p,cer})
@@ -683,6 +730,7 @@ registeredAt:new Date()};
     const ind = await individual.findOneAndUpdate({user:userID},{$push:{courseInfo:courses}});
     await Course.findOneAndUpdate({title:courseTitle},{$inc:{enrolledStudents:1}})
     await Instructor.findOneAndUpdate({user:c.instructor_id},{$inc:{amountOwed:InstructorPriceDefault}})
+    await money(c.instructor_id,c.title,InstructorPriceDefault,parseFloat(c.promotionAdmin.value),parseFloat(c.promotionInst.value))
     res.status(200)
 }
 catch(error){
@@ -759,8 +807,307 @@ console.log(email)
         
         
  }
+
+ const money = async (id,course,moneyPaid,promAdmin,promInst) =>{
+  
+     try {
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(404).json({error})
+   }
+   var ind = mongoose.Types.ObjectId(id)
+   var date = new Date()
+   var month = date.getMonth()+1
+   var year = date.getFullYear()
+
+   var wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year}}})
+   if(wallet==null){
+       const years = {
+           year:year,
+           months:[{
+               month:month,
+               amounts:[{
+                   course:course,
+                   moneyPaid:[{
+                       money:moneyPaid,
+                       promotionAdded:{
+                           admin:promAdmin,
+                           inst:promInst
+                       },
+                       totalStudents:1
+                   }],
+                   total:moneyPaid,
+                   totalStudents:1
+               }],
+              
+           }]
+       }
+       wallet=await Instructor.findOneAndUpdate({user:ind},{$push:{wallet:years}},{returnOriginal:false})
+      
+   }
+   else {
+       wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year}}
+        ,wallet:{$elemMatch:{months:{$elemMatch:{month:month}}}}})
+
+        if(wallet==null){
+            
+            const months = {
+                    month:month,
+                    amounts:[{
+                        course:course,
+                        moneyPaid:[{
+                            money:moneyPaid,
+                            promotionAdded:{
+                                admin:promAdmin,
+                                inst:promInst
+                            },
+                            totalStudents:1
+                        }],
+                        total:moneyPaid,
+                        totalStudents:1
+                    }],
+                    
+                
+            }
+            wallet=await Instructor.findOneAndUpdate({user:ind,wallet:{$elemMatch:{year:year}}}
+                ,{$push:{"wallet.$.months":months}},{returnOriginal:false})
+
+        }
+        else {
+           
+            wallet = await Instructor.findOne({user:ind, wallet:{$elemMatch:{year:year}},
+            wallet:{$elemMatch:{months:{$elemMatch:{month:month,amounts:{$elemMatch:{course:course}}}}}}})
+
+            if(wallet==null){
+                const courses = {
+                        course:course,
+                        moneyPaid:[{
+                            money:moneyPaid,
+                            promotionAdded:{
+                                admin:promAdmin,
+                                inst:promInst
+                            },
+                            totalStudents:1
+                            
+                        }],
+                        total:moneyPaid,
+                        totalStudents:1
+                 
+                   
+                
+            }
+            wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year,months:{$elemMatch:{month,month}}}}})
+            var sub =wallet.wallet
+            sub.forEach(w=>{
+               
+               if (w.year==year){
+              
+                   w.months.forEach(m=>{
+                       if(m.month==month){
+                           m.amounts.push(courses)
+                       }
+                   })
+                   
+               }
+            })
+         
+            
+                wallet = await Instructor.findOneAndUpdate({user:ind},
+                    {$set:{wallet:sub}}
+                    ,{returnOriginal:false})
+            }
+            else{
+                
+                const money = {
+                        money:moneyPaid,
+                        promotionAdded:{
+                            admin:promAdmin,
+                            inst:promInst
+                        },
+                        totalStudents:1
+            
+        }
+        wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year,months:{$elemMatch:{month,month}}}}})
+        var temp =wallet.wallet
+      
+        temp.forEach(w=>{
+           
+           if (w.year==year){
+               w.months.forEach(m=>{
+                   if(m.month==month){
+                       m.amounts.forEach(a=>{
+                          if( a.course==course){
+                              var f =false
+                             a.moneyPaid.forEach(m=>{
+                                
+                                if (m.promotionAdded.admin==promAdmin && m.promotionAdded.inst==promInst){
+                                    m.totalStudents+=1
+                                    a.total+=moneyPaid
+                                     a.totalStudents+=1
+                                   
+                                    
+                                    f=true
+                                }
+                             })
+                             
+                              
+                          }
+                          if(f==false){
+                            a.moneyPaid.push(money)
+                            a.total+=moneyPaid
+                            a.totalStudents+=1
+                            
+                        }
+                          
+                       })
+                   }
+               })
+               
+           }
+        })
+     
+        
+            wallet = await Instructor.findOneAndUpdate({user:ind},
+                {$set:{wallet:temp}}
+                ,{returnOriginal:false})
+            }
+
+
+        }
+   }
+   
+}
+   catch(e){
+       
+   }
+ }
+
+ const refunds = async (id,course,refunds) =>{
+   
+
+    try {
+       if(!mongoose.Types.ObjectId.isValid(id)){
+           return res.status(404).json({error})
+  }
+  var ind = mongoose.Types.ObjectId(id)
+  var date = new Date()
+  var month = date.getMonth()+1
+  var year = date.getFullYear()
+
+  var wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year}}})
+  if(wallet==null){
+      const years = {
+          year:year,
+          months:[{
+              month:month,
+              amounts:[{
+                  course:course,
+                  totalRefunds:refunds,
+                  totalRefundStudents:1
+
+              }],
+             
+          }]
+      }
+      wallet=await Instructor.findOneAndUpdate({user:ind},{$push:{wallet:years}},{returnOriginal:false})
+     
+  }
+  else {
+      wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year}}
+       ,wallet:{$elemMatch:{months:{$elemMatch:{month:month}}}}})
+
+       if(wallet==null){
+           
+           const months = {
+                   month:month,
+                   amounts:[{
+                       course:course,
+                       totalRefunds:refunds,
+                       totalRefundStudents:1
+                   }],
+                   
+               
+           }
+           wallet=await Instructor.findOneAndUpdate({user:ind,wallet:{$elemMatch:{year:year}}}
+               ,{$push:{"wallet.$.months":months}},{returnOriginal:false})
+
+       }
+       else {
+          
+           wallet = await Instructor.findOne({user:ind, wallet:{$elemMatch:{year:year}},
+           wallet:{$elemMatch:{months:{$elemMatch:{month:month,amounts:{$elemMatch:{course:course}}}}}}})
+
+           if(wallet==null){
+               const courses = {
+                       course:course,
+                       totalRefunds:refunds,
+                       totalRefundStudents:1
+                
+                  
+               
+           }
+           wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year,months:{$elemMatch:{month,month}}}}})
+           var sub =wallet.wallet
+           sub.forEach(w=>{
+              
+              if (w.year==year){
+             
+                  w.months.forEach(m=>{
+                      if(m.month==month){
+                          m.amounts.push(courses)
+                      }
+                  })
+                  
+              }
+           })
+        
+           
+               wallet = await Instructor.findOneAndUpdate({user:ind},
+                   {$set:{wallet:sub}}
+                   ,{returnOriginal:false})
+           }
+           else{
+               
+    
+       wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year,months:{$elemMatch:{month,month}}}}})
+       var temp =wallet.wallet
+     
+       temp.forEach(w=>{
+          
+          if (w.year==year){
+              w.months.forEach(m=>{
+                  if(m.month==month){
+                      m.amounts.forEach(a=>{
+                         if( a.course==course){
+                            a.totalRefunds+=refunds,
+                            a.totalRefundStudents+=1
+                            
+                             
+                         }   
+                      })
+                  }
+              })
+              
+          }
+       })
+    
+       
+           wallet = await Instructor.findOneAndUpdate({user:ind},
+               {$set:{wallet:temp}}
+               ,{returnOriginal:false})
+           }
+
+
+       }
+  }
+  
+}
+  catch(e){
+      
+  }
+}
+
 module.exports = {
     RateCourse, AllCourses, RateInstructor, MyCourse ,VideoWatched,RegisterCourse , Notes ,solve,modelAns,getQusetions,
     payForCourse,paymentIntent,MyCourses,reviewPost ,DeletereviewPost ,reviewPostInst ,DeletereviewPostInst ,RefundRequests,
-    getMyProfile ,sendCert
+    getMyProfile ,sendCert ,money ,refunds
 }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React,{ useState, useEffect, useParams, useRef } from 'react';
+import React,{ useState, useEffect, useContext, useRef } from 'react';
 import Box from '@mui/material/Box';
 import { Stack } from '@mui/material';
 import CardActions from '@mui/material/CardActions';
@@ -31,7 +31,7 @@ import List from '@mui/material/List';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-
+import {OneCourseResult} from '../Context/OneCourseResult'
 //Orange ==> #EC6A37
 //Greeen ==> #BBD2B1
 
@@ -39,9 +39,11 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function ViewInstr ({openInst,setOpenInst,instId}){
- 
+function ViewInstr ({instId}){
 
+
+ 
+  const {openInst,setOpenInst} = useContext(OneCourseResult)
 const[loading,setLoading]=useState(true)
       const [inst,setProfile] = useState([]);  
       const [user, setUser] = useState([]);
@@ -51,7 +53,7 @@ const[loading,setLoading]=useState(true)
   
       useEffect(() =>{
         setLoading(true)
-       
+       if(instId!=undefined){
         let cancel
          axios({
              method:"GET",
@@ -84,6 +86,7 @@ const[loading,setLoading]=useState(true)
              if(axios.isCancel(e)) return 
          })
          return () => cancel ()
+        }
      }, []);
 
     

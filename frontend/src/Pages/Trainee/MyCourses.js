@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { AppBar } from "@mui/material"
-
+import NoCourse from '../../Components/OneComponent/NoCourse'
 import { styled } from "@mui/material"
 
 const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
@@ -198,7 +198,7 @@ function MyCourses(){
       <TabPanel value={value} index={2}>
       <Stack direction="column" gap={10} marginTop={"4em"}>
         
-        {cert.length==0 ?  <></> : cert.map(c=>{
+        {cert.length==0 ?  <NoCourse message={"You have no Certified Courses"}/> : cert.map(c=>{
             return <OneCourseResult myCourse={c} courses={courses} />
         })}
           </Stack>
@@ -208,7 +208,7 @@ function MyCourses(){
       <TabPanel value={value} index={1}>
       <Stack direction="column" gap={10} marginTop={"4em"}>
         
-        {ongoing.length==0 ?  <></> : ongoing.map(c=>{
+        {ongoing.length==0 ?  <NoCourse message={"You have no Ongoing Courses"}/> : ongoing.map(c=>{
             return <OneCourseResult myCourse={c} courses={courses} />
         })}
           </Stack>
@@ -218,7 +218,7 @@ function MyCourses(){
       <TabPanel value={value} index={3}>
       <Stack direction="column" gap={10} marginTop={"4em"}>
         
-        {ref.length==0 ? <></> : ref.map(c=>{
+        {ref.length==0 ? <NoCourse message={"You have no Refund Requests"}/> : ref.map(c=>{
             return <OneCourseResult myCourse={c} courses={courses} />
         })}
           </Stack>

@@ -48,12 +48,14 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   }));
 
 export default function OneAccess({acce,indiv,setMessage,checked2,setAcc}){
+  
 
     const auth = useAuth()
 const {rate,curr} = useContext(Currency)
 const [access,setAccess] =useState(acce)
 const [openAccp,setOpenAccp] = useState(false)
 const [openRej,setOpenRej] =useState(false)
+console.log(access)
 var mon =0
 var prog = 0
 
@@ -68,7 +70,7 @@ else if(e.target.id=="reject"){
 
 }
 useEffect(()=>{
-  if(access && (acce._id == access._id && acce.state!=access.state )) acce=access
+  if(acce._id == access._id && acce.state!=access.state ) acce=access
   if(checked2){
 
   setAccess(acce.state=="pending" || ((acce.state=="accepted" || acce.state=="rejected")
@@ -81,7 +83,7 @@ useEffect(()=>{
     return(
      
 <>
-{access!="" &&
+{access!="" && access &&
 <Container sx={{position:"relative" ,m:"0",p:"0"}}>
 <Card variant="outlined" className="stack1" sx={{
  }} >

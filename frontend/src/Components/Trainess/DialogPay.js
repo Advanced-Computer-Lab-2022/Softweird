@@ -130,7 +130,7 @@ else if(auth.user.type==="corporate"){
         </Stack>
         <br/>
         <Typography variant="p">
-            By registering in <b>{course.title} Course</b> you are going to start your learning path  on<b> {new Date().getDate() + '/' +new Date().getMonth() + '/'+new Date().getFullYear()}</b>.
+            By registering in <b>{course.title} Course</b> you are going to start your learning path  on<b> {new Date().getDate() + '/' +new Date().getMonth()+1 + '/'+new Date().getFullYear()}</b>.
             You will have to watch all the videos provided and solve all the exams in the course with a grade of at least <b>35%</b>. This is all
             to ensure your eligibility to recieve our certificate.
         </Typography>

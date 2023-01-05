@@ -278,6 +278,19 @@ const deleteCourse = async (req,res) =>{
         res.status(404).json(error)
     }
 } 
+const deleteCourse2 = async (req,res) =>{
+
+    const {courseTitle}=req.body
+    try{
+      
+       await Course.findOneAndDelte({title:courseTitle})
+       
+        res.status(200).json({success:"tamam"})
+    }
+    catch(error){
+        res.status(404).json(error)
+    }
+} 
 
 const FinishCourse = async (req,res) =>{
     const {courseTitle} =req.body
@@ -381,10 +394,21 @@ const InstructorCourses =  async (req,res) => {
 
   const editPrice = async (req,res) =>{
       const {courseTitle,price} = req.body
-      const c = await Course.findOneAndUpdate({title:courseTitle},{$set:{price:price}})
+      const c = await Course.findOneAndUpdate({title:courseTitle},{$set:{price:price}},{returnOriginal:false})
       res.status(200).json(c)
 
   }
+
+  const editSummary= async (req,res) =>{
+    const {courseTitle,summary} = req.body
+    try{
+    const c = await Course.findOneAndUpdate({title:courseTitle},{$set:{summary:summary}},{returnOriginal:false})
+    res.status(200).json(c)}
+    catch(e){
+        res.status(404).json(e)
+    }
+
+}
 
   const editSubtitle = async (req,res) =>{
     const {courseTitle,subtitle,newSub} = req.body
@@ -444,9 +468,15 @@ const UpdateVerify =async(req,res)=>{
     }
     catch(error){ res.status(404).json(error)}
 }
+const deleteExam = async (req,res)=>{
+    const {courseTitle,subtitleTitle} =req.body
+    await Course.findOneAndUpdate({title:courseTitle,subtitles:{$elemMatch:{title:subtitleTitle}}},
+        {$set:{'subtitles.$.exercises':[]}})
+
+}
 
 module.exports = {
     getInstructorCourses,addOneCourse,getMyProfile,UpdateBiography, addVideo,deleteCourse, 
      deleteVideo, deleteSubtitle, addSubtitle , getOneCourse ,FinishCourse,PromoteCourse,makeExam,RemovePromote,InstructorCourses,
-     editPrice , editSubtitle , editVideo ,UpdateVerify
+     editPrice , editSubtitle , editVideo ,UpdateVerify , editSummary ,deleteCourse2,deleteExam
 }    

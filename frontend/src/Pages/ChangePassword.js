@@ -77,7 +77,7 @@ function ChangePassword() {
             else {
 			const {Password, ConfirmPassword } = formData;
 			const data = {Password, ConfirmPassword };
-			setFormData({ ...formData, loading: true });
+			setFormData({ ...formData, loading: false });
 
             let cancel
             axios({
@@ -89,7 +89,7 @@ function ChangePassword() {
             }).then (res => {
                
                const response = res.data
-               if (response==="Password Changed Successful"){
+             
                  setFormData({
                     Email: '',
                     Password: '',
@@ -98,17 +98,8 @@ function ChangePassword() {
                     loading: false,
                 });
 				navigate('/login')
-               }
-               else if(response.message === "invalid id"){
-                setFormData({
-                    Email: '',
-                    Password: '',
-                    successMsg: true,
-                    errorMsg: "invalid id",
-                    loading: false,
-                });
-				navigate('/*')
-               }
+              
+               
             
             }).catch(e=>{
                     setFormData({

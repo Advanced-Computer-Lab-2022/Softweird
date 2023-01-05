@@ -14,6 +14,7 @@ import { AppBar,Typography } from "@mui/material"
 
 import { styled } from "@mui/material"
 import DialogAllDiscs from './DialogAllDiscs'
+import NoCourse from '../OneComponent/NoCourseInst'
 
 const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
     ({ theme }) => ({
@@ -59,6 +60,7 @@ const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
+
   
     return (
       <div
@@ -108,6 +110,16 @@ function CourseList () {
     setInProgress(courses.filter((c => !(c.Finished ))))
 
   },[courses])
+
+  var length = subject.length!==0  ?(courses.filter((course => (subject.includes(course.subject)) &&
+  (course.price==price[0]||(parseInt(((100-(parseFloat(course.promotionInst.value.$numberDecimal)
+  +parseFloat(course.promotionAdmin.value.$numberDecimal)))/100)*course.price) >= price[1]&&parseInt(((100-(parseFloat(course.promotionInst.value.$numberDecimal)
+  +parseFloat(course.promotionAdmin.value.$numberDecimal)))/100)*course.price) <= price[2]))
+  ))).length: (courses.filter((course =>
+  (course.price==price[0]||(parseInt(((100-(parseFloat(course.promotionInst.value.$numberDecimal)
+  +parseFloat(course.promotionAdmin.value.$numberDecimal)))/100)*course.price) >= price[1]&&parseInt(((100-(parseFloat(course.promotionInst.value.$numberDecimal)
+  +parseFloat(course.promotionAdmin.value.$numberDecimal)))/100)*course.price) <= price[2]))
+  ))).length
     
 return (
   <>
@@ -129,7 +141,7 @@ return (
   
          <Box flex={3}  position={"relative"} marginTop={"5rem"} width={"90%"}>
         
-         {courses.length===0  && !loading ? <h2 style={{padding:"0rem 2rem 3rem",fontWeight:"bold"}}>No Courses in the System</h2>:
+         {courses.length===0  && !loading ? <NoCourse message={"There are no courses"}/>:
         <></> }
     
         <ul style={{display:"flex" , flexDirection:"column" , gap:"4rem",width:"98%" }} >
@@ -180,7 +192,9 @@ return (
         return <div key= {course._id}> 
           <InstructorCourse Onecourse={course} />
           </div> })}
+        
           </Stack>
+          {published.length==0 && <NoCourse message={"You have no Published Course"}/>}
      </TabPanel> 
 
      
@@ -207,6 +221,7 @@ return (
           <InstructorCourse Onecourse={course} />
           </div> })}
           </Stack>
+          {inProgress.length==0 && <NoCourse message={"You have no Inprogress Course"}/>}
      </TabPanel> 
 
      <TabPanel value={value} index={3}>
@@ -230,6 +245,7 @@ return (
           <InstructorCourse Onecourse={course} />
           </div> })}
           </Stack>
+          {deleted.length==0 && <NoCourse message={"You have no deleted Course"}/>}
      </TabPanel> 
 </ul> 
 </Box> 

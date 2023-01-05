@@ -149,7 +149,7 @@ function AddCourse() {
         setPage("/addcourse/:id")
     }
 
-	const [values, setValue] = useState("Select Company")
+	const [values, setValue] = useState("Select Subject")
 	const Subjects = [{ value: 'Data Science', label: 'Data Science' },
 	{ value: 'Computer Science', label: 'Computer Science' },
 	{ value: 'Artificial Intelligence', label: 'Artificial Intelligence' },

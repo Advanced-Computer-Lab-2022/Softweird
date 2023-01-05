@@ -28,6 +28,7 @@ import SubdirectoryArrowRightIcon from '@mui/icons-material/SubdirectoryArrowRig
 import ViewStreamIcon from '@mui/icons-material/ViewStream';
 import CancelPresentationIcon from '@mui/icons-material/CancelPresentation';
 import DialogViewProblem from './DialogViewProblem'
+import NoReports from '../OneComponent/NoReports';
 const ViewProblem = ({ children }) => {
  
   const text = children;
@@ -85,7 +86,7 @@ useEffect(()=>{
 
     return(
 <>
-{report && 
+{report &&
 <Container sx={{position:"relative" ,m:"0",p:"0"}}>
 <Card variant="outlined" className="stack1" sx={{
  }} >
@@ -368,6 +369,7 @@ report.adminMessageSeen==false &&
   </Box>
   </Card>
   </Container>}
+  {report && report.length==0 && <NoReports message={"You have no reports"}/>}
 <FollowUp openFollow={openFollow} setOpenFollow={setOpenFollow} report={report} setReport={setReport}/>
 </>
     )

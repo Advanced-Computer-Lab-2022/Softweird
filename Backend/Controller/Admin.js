@@ -7,6 +7,7 @@ const Refund = require('../Modules/RefundRequests')
 const User = require('../Modules/Users')
 const Corporate = require('../Modules/CorporateTrainee')
 const nodemailer = require('nodemailer')
+const Instructor = require('../Modules/Instructor')
 
 let transporter =nodemailer.createTransport({
     service: 'gmail',
@@ -179,7 +180,7 @@ try{
         const c = await Course.findById(a.Course.course)
      
        await Corporate.findOneAndUpdate({user:corporate,accessRequests:{$elemMatch:{course:a.Course.course}}},
-        {$set:{'accessRequests.$.state':"accepted"}})
+        {$pull:{accessRequests:{course:a.Course.course}}})
        
      if(c==null){
          res.status(404).json({error:"no such course"})
@@ -232,7 +233,7 @@ try{
     }
 else{
     await Corporate.findOneAndUpdate({user:corporate,accessRequests:{$elemMatch:{course:a.Course.course}}},
-        {$set:{'accessRequests.$.state':"rejected"}})
+        {$pull:{accessRequests:{course:a.Course.course}}})
     await Course.findOneAndUpdate({title:course},{$inc:{enrolledStudents:-1}})
     let mailOPtions={
         from: process.env.EMAIL_USERNAME,
@@ -293,26 +294,32 @@ if(status=="rejected"){
     
 }
 else{
-    const r = await Refund.findByIdAndUpdate(refund,{$set:{state:status,Admin:admin}},{returnOriginal:false})
+    const c = await Course.findOne({title:course})
+    const r = await Refund.findByIdAndUpdate(refund,{$set:{state:status,Admin:admin}},{returnOriginal:false}).populate("Course")
     const i =await individual.findOne({user:r.Trainee})
     const a =await Refund.find({}).populate("Admin").populate("Trainee").populate("Course").sort({createdAt:-1})
     console.log(i)
    var prog = 0 
    var price = 0
    i.courseInfo.map(c=>{
-       if(c.course.equals(r.Course)){
+       if(c.course.equals(r.Course._id)){
            if(c.percentage.total!=0){
            prog = Math.round((c.percentage.progress/c.percentage.total)*10)/10 }
            price = c.pricePayed
            console.log(c.pricePayed)
        }
    })
-   await individual.findOneAndUpdate({user:r.Trainee},{$pull:{courseInfo:{course:r.Course}}})
+   await individual.findOneAndUpdate({user:r.Trainee},{$pull:{courseInfo:{course:r.Course._id}}})
+   await individual.findOneAndUpdate({user:r.Trainee},{$pull:{videoWatched:{course:r.Course.title}}})
+   await individual.findOneAndUpdate({user:r.Trainee},{$pull:{exercises:{course:r.Course._id}}})
    console.log(price,prog)
    const money = parseFloat(price)*((100-prog)/100)
    var wal = i.wallet||0
    wal+=money
-  
+
+   var instMoney = money*0.75
+   await Instructor.findOneAndUpdate({user:c.instructor_id},{$inc:{amountOwed:instMoney}})
+   await refunds(c.instructor_id,course,instMoney)
     await individual.findOneAndUpdate({user:r.Trainee},{$set:{wallet:wal}})
     
     const u = await User.findById(r.Trainee)
@@ -404,12 +411,14 @@ const PromoteCourse = async(req,res)=>{
 
 const getMyProfile = async (req,res)=>{   //Editted by RANA!! NEW!!
     const {id} = req.params;  
+    console.log("hh")
     try {
          if(!mongoose.Types.ObjectId.isValid(id)){
              return res.status(404).json({error})
     }
         var adId = mongoose.Types.ObjectId(id)
          const admin = await User.findById(adId);
+         console.log("hh")
          res.status(200).json(admin);
 
     }
@@ -417,6 +426,132 @@ const getMyProfile = async (req,res)=>{   //Editted by RANA!! NEW!!
         res.status(404).json(error);
 
     }
+}
+
+
+const refunds = async (id,course,refunds) =>{
+   
+
+    try {
+       if(!mongoose.Types.ObjectId.isValid(id)){
+           return res.status(404).json({error})
+  }
+  var ind = mongoose.Types.ObjectId(id)
+  var date = new Date()
+  var month = date.getMonth()+1
+  var year = date.getFullYear()
+
+  var wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year}}})
+  if(wallet==null){
+      const years = {
+          year:year,
+          months:[{
+              month:month,
+              amounts:[{
+                  course:course,
+                  totalRefunds:refunds,
+                  totalRefundStudents:1
+
+              }],
+             
+          }]
+      }
+      wallet=await Instructor.findOneAndUpdate({user:ind},{$push:{wallet:years}},{returnOriginal:false})
+     
+  }
+  else {
+      wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year}}
+       ,wallet:{$elemMatch:{months:{$elemMatch:{month:month}}}}})
+
+       if(wallet==null){
+           
+           const months = {
+                   month:month,
+                   amounts:[{
+                       course:course,
+                       totalRefunds:refunds,
+                       totalRefundStudents:1
+                   }],
+                   
+               
+           }
+           wallet=await Instructor.findOneAndUpdate({user:ind,wallet:{$elemMatch:{year:year}}}
+               ,{$push:{"wallet.$.months":months}},{returnOriginal:false})
+
+       }
+       else {
+          
+           wallet = await Instructor.findOne({user:ind, wallet:{$elemMatch:{year:year}},
+           wallet:{$elemMatch:{months:{$elemMatch:{month:month,amounts:{$elemMatch:{course:course}}}}}}})
+
+           if(wallet==null){
+               const courses = {
+                       course:course,
+                       totalRefunds:refunds,
+                       totalRefundStudents:1
+                
+                  
+               
+           }
+           wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year,months:{$elemMatch:{month,month}}}}})
+           var sub =wallet.wallet
+           sub.forEach(w=>{
+              
+              if (w.year==year){
+             
+                  w.months.forEach(m=>{
+                      if(m.month==month){
+                          m.amounts.push(courses)
+                      }
+                  })
+                  
+              }
+           })
+        
+           
+               wallet = await Instructor.findOneAndUpdate({user:ind},
+                   {$set:{wallet:sub}}
+                   ,{returnOriginal:false})
+           }
+           else{
+               
+    
+       wallet = await Instructor.findOne({user:ind,wallet:{$elemMatch:{year:year,months:{$elemMatch:{month,month}}}}})
+       var temp =wallet.wallet
+     
+       temp.forEach(w=>{
+          
+          if (w.year==year){
+              w.months.forEach(m=>{
+                  if(m.month==month){
+                      m.amounts.forEach(a=>{
+                         if( a.course==course){
+                            a.totalRefunds+=refunds,
+                            a.totalRefundStudents+=1
+                            
+                             
+                         }   
+                      })
+                  }
+              })
+              
+          }
+       })
+    
+       
+           wallet = await Instructor.findOneAndUpdate({user:ind},
+               {$set:{wallet:temp}}
+               ,{returnOriginal:false})
+           }
+
+
+       }
+  }
+  
+}
+  catch(e){
+      
+  }
 }
 
 module.exports = {getreports ,addFollowUp , getfollow,solveR,OpenR ,getreport ,solveAccess,solveRefund,

@@ -111,8 +111,7 @@ function AddCorporate() {
 	 * EVENT HANDLERS
 	 ***************************/
 	const handleChange = evt => {
-		//console.log(evt);
-		if(evt.target.name=="Password") setErrorMessage("")
+		
 		setFormData({
 			...formData,
 			[evt.target.name]: evt.target.value,

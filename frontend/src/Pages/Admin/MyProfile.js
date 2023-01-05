@@ -139,7 +139,7 @@ function MyProfile (){
                 let cancel
                  axios({
                      method:"GET",
-                     url : `Admin/getMyProfile/${auth.user.id}`,
+                     url : `/Admin/getMyProfile/${auth.user.id}`,
                      cancelToken: new axios.CancelToken (c => cancel = c)
                  }).then (res => {
                 
@@ -391,13 +391,13 @@ function MyProfile (){
     <Typography sx={{ fontSize: "2rem"}} color="000" >
      {inst.fName + " " + inst.lName}
       </Typography>
-      <Typography sx={{ fontSize: "1.2rem"}} color="000" display="flex" alignItems={"end"}>
+      <Typography sx={{ fontSize: "1.1rem"}} color="000" display="flex" alignItems={"end"}>
       <BadgeIcon sx={{fontSize:"2rem", marginRight:"0.5rem", color:"#BBD2B1"}}/> { inst.username}
       </Typography>
-      <Typography sx={{ fontSize: "1.2rem"}} color="000">
+      <Typography sx={{ fontSize: "1.1rem"}} color="000">
       <EmailRoundedIcon sx={{fontSize:"2rem", marginRight:"0.5rem", color:"#BBD2B1"}}/>  {inst.email}
       <IconButton  aria-label="edit" onClick={handleOpen}>
-      <CreateIcon sx={{fontSize:"1.2rem", marginLeft:"1rem", color:"000"}}/>
+      <CreateIcon sx={{fontSize:"1.1rem", marginLeft:"1rem", color:"000"}}/>
       
       </IconButton>
       <BootstrapDialog

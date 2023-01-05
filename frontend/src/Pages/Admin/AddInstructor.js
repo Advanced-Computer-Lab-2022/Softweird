@@ -66,8 +66,6 @@ const{setOpenToast}=useContext(Toast)
 	 * EVENT HANDLERS
 	 ***************************/
 	const handleChange = evt => {
-		//console.log(evt);
-		if(evt.target.name=="Password") setErrorMessage("")
 		setFormData({
 			...formData,
 			[evt.target.name]: evt.target.value,
@@ -75,6 +73,8 @@ const{setOpenToast}=useContext(Toast)
 			errorMsg: '',
 		});
 	};
+
+	
 	const[eye,seteye]=useState(true);
 	const[paswo,setpassword]=useState("password");
 	const[type,settype]=useState(false);

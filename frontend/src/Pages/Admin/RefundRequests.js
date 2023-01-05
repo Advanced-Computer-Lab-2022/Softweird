@@ -25,6 +25,8 @@ import OneRefund from '../../Components/Admin/OneRefund'
 import ToastMess from '../../Components/OneComponent/ToastMess';
 import { Toast } from '../../Context/Toast';
 import Switch from '@mui/material/Switch';
+import NoReports from '../../Components/OneComponent/NoReports'
+import Loading from '../../Components/OneComponent/Loading'
 
 const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -137,7 +139,7 @@ setLoading(true)
       let cancel
       axios({
      method:"GET",
-     url : "Admin/getRefunds",
+     url : "/Admin/getRefunds",
       cancelToken: new axios.CancelToken (c => cancel = c)
   }).then (res => {
      setRef(res.data.a)
@@ -197,51 +199,52 @@ return () => cancel ()
 
                     </Stack>
         </AppBar>
+       
 {!loading && ref.length!=0 && 
       
        <>
        <TabPanel value={value} index={0} sx={{backgroundColor:"white"}} >
        <Stack gap={4} sx={{mt:"4rem"}}>
-         {ref.map(r=>{
+         {ref.length!=0 ? ref.map(r=>{
            return   <OneRefund refu={r} indiv={ind.find(i=>i.user==r.Trainee._id) } checked2={checked2} setMessage={setMessage} setRef={setRef}/> 
          
           
           
-         })} 
+         }):<NoReports message={"There are no refund requests"}/>} 
 
           </Stack>
           </TabPanel>
           <TabPanel value={value} index={1} sx={{backgroundColor:"white"}} >
        <Stack gap={4} sx={{mt:"4rem"}}>
-         {ref.map(r=>{
+         {ref.some(ref=>ref.state=="pending") ?ref.map(r=>{
            return  r.state=="pending" &&
            <OneRefund refu={r} indiv={ind.find(i=>i.user==r.Trainee._id)} checked2={checked2} setMessage={setMessage} setRef={setRef}/>
           
           
-         })}
+         }):<NoReports message={"There are no pending refund requests"}/>}
         
           </Stack>
           </TabPanel>
 
           <TabPanel value={value} index={2} sx={{backgroundColor:"white"}}>
           <Stack gap={4} sx={{mt:"4rem"}}>
-          {ref.map(r=>{
+          {ref.some(re=>re.state=="accepted")?ref.map(r=>{
            return  r.state=="accepted" &&
            <OneRefund refu={r} indiv={ind.find(i=>i.user==r.Trainee._id)}  checked2={checked2} setMessage={setMessage} setRef={setRef}/>
           
           
-         })}
+         }):<NoReports message={"There are no accepted refund requests"}/>}
          </Stack>
           </TabPanel>
 
           <TabPanel value={value} index={3} sx={{backgroundColor:"white"}}>
           <Stack gap={4} sx={{mt:"4rem"}}>
-          {ref.map(r=>{
+          {ref.some(re=>re.state=="rejected") ?ref.map(r=>{
            return  r.state=="rejected" &&
            <OneRefund refu={r} indiv={ind.find(i=>i.user==r.Trainee._id)}  checked2={checked2} setMessage={setMessage} setRef={setRef}/>
           
           
-         })}
+         }): <NoReports message={"There are no rejected refund requests"}/>}
          
          </Stack>
          </TabPanel>

@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
-import { Divider } from "@mui/material";
+import { Divider,Card, CardContent ,CardMedia} from "@mui/material";
 //import Icon from '@material-ui/core/Icon';
 import cs from '../../Images/Computerscience1.jpg'
 import math from '../../Images/Mathematics1.jpg'
@@ -36,23 +36,18 @@ function Subjectsss (){
       return (<>
         <Typography sx={{ fontSize: 30,fontWeight:"bold", marginBottom:'2%',marginTop:'0%'}} color="000">
            Subjects </Typography>
-        <ImageList sx={{ width: 1076, height: 600 ,gridTemplateColumns:"repeat(4, 1fr)!important",gap:"90px !important "}}>
+        <ImageList sx={{ width: 1076, height: 643 ,gridTemplateColumns:"repeat(4, 1fr)!important",gap:"90px !important "}}>
           {MenuItem.map((item) => (
-            <ImageListItem key={item.img} sx={{"&:hover":{
-                cursor: "pointer",
-            
-            } }}
-             onClick={() => window.location.href=`/Search?search=${item.label}`} >
-              <img
-                src={item.icon}
-                alt={item.label}
-                loading="lazy"
-              />
-              <ImageListItemBar
-                title={item.label}
-                position="below"
-              />
-            </ImageListItem>
+            <Card  key={item.img} onClick={() => window.location.href=`/Search?search=${item.label}`} sx={{height:"17rem","&:hover":{
+              cursor: "pointer",
+          
+          } }}>
+           <CardMedia component={"img"} image={item.icon}   alt={item.label} sx={{width:"100%",height:"12rem"}}/>
+              
+            <CardContent sx={{pt:"1.5rem"}} >
+              <Typography sx={{textAlign:"center"}}color="text.secondary">{item.label}</Typography>
+            </CardContent>
+            </Card>
           ))}
         </ImageList></>
       );

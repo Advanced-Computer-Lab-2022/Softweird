@@ -41,6 +41,9 @@ import { Toast } from '../../Context/Toast';
 import { useNavigate, useLocation,Navigate } from 'react-router-dom';
 import OneCourseResult from '../../Components/OneComponent/OneCourseResult';
 import { useAuth } from '../../Components/auth';
+import EditIcon from '@mui/icons-material/Edit';
+import DialogSummary from '../../Components/Instructor/DialogSummary'
+import DialogPrice from '../../Components/Instructor/DialogPrice'
 
 function OneOfMyCourses () { 
   const auth = useAuth() 
@@ -64,6 +67,9 @@ function OneOfMyCourses () {
     const [reload,setReload] = useState(true)
     const [message ,setMessage] = useState('')
     const navigate= useNavigate()
+    const [openSumm,setOpenSumm]=useState(false)
+    const [openPrice,setOpenPrice]=useState(false)
+   
 
     useEffect(() =>{
       setLoading(true)
@@ -115,7 +121,8 @@ function OneOfMyCourses () {
             {!loading && courses &&
         <InstructorOneCourse.Provider value={{openVideo,setOpenVideo,openAdd,setOpenAdd,openDisc,setOpenDisc,
         openPublish , setOpenPublish,openDelete,setOpenDelete,courses,setCourse,subtitleSelected,setSubtitleSelected,
-        openExam,setOpenExam,setReload,setLoading,openReview,setOpenReview,exam,setExam,message ,setMessage}}>
+        openExam,setOpenExam,setReload,setLoading,openReview,setOpenReview,exam,setExam,message ,setMessage,
+        openSumm,setOpenSumm,openPrice,setOpenPrice}}>
         <Box sx={{position:"relative"}}>
         <div className="wire"></div>
         <Card className="card-course" sx={{position:"relative",left:"0",right:"0",p:"2rem",mb:"3rem"}}>
@@ -127,10 +134,22 @@ function OneOfMyCourses () {
         <Typography variant="h6" color="text.secondary" component="div" gutterBottom>
         {courses.subject}
         </Typography>
-        
+        <Stack direction="row" alignItems="center"
+    gap= "0.5rem">
+      {!courses.Finished && !courses.Deleted &&    <Tooltip title="edit summary">
+         <IconButton color="primary" component="label" 
+          onClick={()=>setOpenSumm(true)}
+         >
+          <input hidden  />
+          <EditIcon sx={{color:"black"}} />
+        </IconButton>
+        </Tooltip>}
         <Typography variant="P" sx={{fontSize:"0.8rem"}}>
        {courses.summary}
         </Typography>
+     
+       
+        </Stack>
         <Stack direction = "row" gap={10}>
     
         <Stack direction="row" gap={0.5} paddingTop={"2rem"}>
@@ -160,7 +179,17 @@ function OneOfMyCourses () {
         {courses.price!="Free" &&   <>
         <Stack direction="row" paddingTop={"2rem"} marginBottom={"2rem"} alignItems={"center"}>
         <Stack direction="row" gap={"8px"}  paddingRight={"10%"} alignItems={"center"} >
+          <Stack direction="row" gap={"0.5rem"} alignItems="center">
+       {!courses.Finished && !courses.Deleted &&   <Tooltip title="edit Price">
+         <IconButton color="primary" component="label" 
+           onClick={()=>{setOpenPrice(true)}}
+         >
+          <input hidden  />
+          <EditIcon sx={{color:"black"}} />
+        </IconButton>
+        </Tooltip>}
        <Typography sx={{fontSize:"0.87rem" }} variant='h6' >Price of Course: </Typography>
+       </Stack>
     
     
       <Stack direction="row" alignItems={"center"} gap={2}>
@@ -210,7 +239,18 @@ function OneOfMyCourses () {
      
       <Stack direction="row" paddingTop={"2rem"} marginBottom={"2rem"} alignItems={"center"}>
         <Stack direction="row" gap={"8px"}  paddingRight={"10%"} alignItems={"center"} >
+        <Stack direction="row" gap={"0.5rem"} alignItems="center">
+       {!courses.Finished && !courses.Deleted &&    <Tooltip title="edit price">
+         <IconButton color="primary" component="label" 
+          onClick={()=>{setOpenPrice(true)}}
+         >
+          <input hidden  />
+          <EditIcon sx={{color:"black"}} />
+        </IconButton>
+        </Tooltip>}
     <Typography sx={{fontSize:"0.87rem" }} variant='h6' >Price of Course: </Typography>
+    </Stack>
+
    <Typography  sx={{fontSize:"0.87rem",fontWeight:"bolder",position:"relative"}} >Free
    </Typography>
    </Stack>
@@ -250,10 +290,23 @@ function OneOfMyCourses () {
         Publish Course
       </Button>
 </Stack>}
+{courses.Finished && 
+     <Stack direction={"row"} paddingTop={"8%"} gap={10} justifyContent={"center"}>
+     <Button variant="outlined" startIcon={<DeleteIcon sx= {{color:"#bbd2b1"}} />}
+     sx={{color:"#000" , border:"1px solid rgba(197, 13, 13, 0.8)" ,
+     '&:hover':{
+      border:"1px solid rgba(197, 13, 13)" 
+     }}} onClick={()=>{setOpenDelete(true)}}>
+        Close Course
+      </Button>
+      </Stack>
+     }
 <DialogDelete />
-<DialogPublish course={{title:courses.title}} />
+<DialogPublish  />
 <DialogExam />
 <DialogReviewExam />
+<DialogSummary />
+<DialogPrice />
   
 </InstructorOneCourse.Provider>}
 {loading && <> <Loading /> </>}

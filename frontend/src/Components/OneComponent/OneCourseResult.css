@@ -29,7 +29,7 @@
       ),
       var(--paper-color);
     width: 5%;
-    height: 15%;
+    height: 3rem;
     font-family: 'Kalam', cursive;
     font-size: 1.1rem;
     display: flex;

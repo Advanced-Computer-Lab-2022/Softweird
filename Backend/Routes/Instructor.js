@@ -2,7 +2,8 @@ const express = require ('express')
 const router = express.Router()
 const Course =  require ('../Modules/Course')
 const {  getInstructorCourses,addOneCourse,getMyProfile,UpdateBiography, deleteCourse,
-addVideo, deleteVideo, deleteSubtitle, addSubtitle,getOneCourse,FinishCourse,PromoteCourse,InstructorCourses,makeExam,RemovePromote,UpdateVerify} = require('../Controller/Instructor')
+addVideo, deleteVideo, deleteSubtitle, addSubtitle,getOneCourse,FinishCourse,PromoteCourse,
+InstructorCourses,makeExam,RemovePromote,UpdateVerify,editSummary,editPrice,deleteCourse2,deleteExam} = require('../Controller/Instructor')
 const {UpdatePass, ForgotPassword,UpdateEmail} = require('../Controller/ProfileInfo')
 
 
@@ -10,6 +11,11 @@ const {UpdatePass, ForgotPassword,UpdateEmail} = require('../Controller/ProfileI
 
 
 // get all courses 
+router.patch('/editSummary',editSummary)
+router.patch('/editPrice',editPrice)
+router.patch('/deleteExam',deleteExam)
+
+
 router.patch('/updateVerify/:id',UpdateVerify)
 router.get('/instCourses/:id',InstructorCourses)
 router.get('/myCourses',getInstructorCourses)
@@ -29,6 +35,7 @@ router.patch('/promoteCourse',PromoteCourse)
 router.patch('/removePromote',RemovePromote)
 router.post('/makeExam/:id',makeExam)
 router.patch('/deleteCourse', deleteCourse)
+router.patch('/deleteCourse2', deleteCourse2)
 
 //router.patch ('/setPromotion',setPromotion)
 

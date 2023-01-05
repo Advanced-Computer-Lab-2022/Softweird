@@ -29,6 +29,15 @@ import {useContext} from 'react'
 import { useAuth } from "../auth";
 import axios from 'axios'
 import { useNavigate } from "react-router-dom";
+import Mathematics from '../../Images/Mathematics.jpeg'
+import DataScience from '../../Images/DataScience.png'
+import ComputerScience from '../../Images/Computer Science.jpg'
+import CloudComputing from '../../Images/Cloud Computing.jpeg'
+import ArtificialIntelligence from '../../Images/Artificial Intelligence.jpg'
+import CyberSecurity from '../../Images/Cyber Security.jpeg'
+import Sciences from '../../Images/Sciences.jpeg'
+import Business from '../../Images/Business.jpg'
+import OneCourse from '../../Pages/OneCourse';
 export default function CheckoutForm({course,setPaying,setOpenPay}) {
   const stripe = useStripe();
   const elements = useElements();
@@ -139,7 +148,14 @@ console.log(course)
         component="img"
         alt="green iguana"
         sx={{height:"50%"}}
-        image={Coding}
+        image={(course.subject=="Mathematics"&& Mathematics)||
+        (course.subject=="Computer Science"&& ComputerScience)||
+        (course.subject=="Artificial Intelligence"&& ArtificialIntelligence)||
+        (course.subject=="Sciences"&& Sciences)||
+        (course.subject=="Cyber Security"&& CyberSecurity)||
+        (course.subject=="Cloud Computing"&& CloudComputing)||
+        (course.subject=="Business"&& Business) ||
+        (course.subject=="Data Science"&& DataScience)}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div" sx={{paddingLeft:"2%"}}>

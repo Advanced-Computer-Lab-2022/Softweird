@@ -62,8 +62,7 @@ function OneCourse (){
     const [openInst,setOpenInst]=useState(false)
 
     function handleOpen(){
-      console.log("dd")
-      setOpenInst(true);
+      setOpenInst(true)
     }
 
     function handleRemove() {
@@ -121,6 +120,8 @@ const handleAccess = () =>{
             setCourse(res.data.course)
             setInstructor(res.data.instructor[0])
             setMyCourse(res.data.myCourse)
+            if(res.data.course.Deleted==true)
+            navigate('/Courses')
              }
 
          }).catch(e=>{
@@ -135,7 +136,7 @@ const handleAccess = () =>{
  
     return (
         
-        <OneCourseResult.Provider value={{open,setOpen,course,openDisc, setOpenDisc ,setMessage,setCourse}}>
+        <OneCourseResult.Provider value={{open,setOpen,course,openDisc, setOpenDisc ,setMessage,setCourse,openInst,setOpenInst}}>
         {!loading && course&& <Box sx={{position:"relative"}}>
         <div className="wire"></div>
         <Card className="card-course " sx={{position:"relative",left:"0",right:"0",p:"2rem",mb:"6rem"}}>
@@ -532,7 +533,8 @@ const handleAccess = () =>{
       <Stack gap={7} direction={"row"} maxWidth={"60vw"} alignItems={"center"} mb={"6rem"}>
           <Stack flex ={1} gap={2} alignItems={"center"} >
           <Avatar src="/static/images/avatar/1.jpg" />
-          <Typography onClick={handleOpen} sx={{textDecoration:"underline",'&:hover':{cursor:"pointer",color:"#c50d0d"}}}>{instructor.user.fName} {instructor.user.lName}</Typography>
+        <Typography onClick={handleOpen}  sx={{textDecoration:"underline",'&:hover':{cursor:"pointer",color:"#c50d0d"}}}>{instructor.user.fName} {instructor.user.lName}
+         </Typography>
           <Stack direction="row" gap={0.5} paddingTop={"1rem"}>
             <Typography svariant="p" x={{fontSize:"0.87rem"}} >{instructor.rating.rate.$numberDecimal}</Typography>
              <Rating 
@@ -564,7 +566,7 @@ const handleAccess = () =>{
      <ToastMess message={message}/>
      <DialogDisc />
 
-     <ViewInstr openInst={openInst} setOpenInst={setOpenInst} instId={course.instructor_id} />
+     <ViewInstr  instId={course.instructor_id} />
      </OneCourseResult.Provider>
     )
 }

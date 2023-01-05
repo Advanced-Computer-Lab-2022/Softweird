@@ -55,15 +55,23 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-function DialogPublish ({course}){
+function DialogPublish (){
 
-const title = course.title
-const {openPublish,setOpenPublish,setReload,setCourse,setMessage,message} = useContext(InstructorOneCourse)
+
+const {openPublish,setOpenPublish,setReload,setCourse,setMessage,message,courses} = useContext(InstructorOneCourse)
+console.log(courses)
+const title = courses.title
+
 const {openToast,setOpenToast}=useContext(Toast)
+
+var pub = courses.subtitles.some(s=>((s.video && s.video.length==0) || !s.video
+ || (s.exercise && s.exercise.length==0) || !s.exercise))
+console.log(pub)
 const handleClose = () => {
   setOpenPublish(false)
 };
 const handlePublish =() => {
+
   let cancel
   setReload(true)
   setOpenPublish(false)
@@ -85,6 +93,8 @@ const handlePublish =() => {
 }
 
 
+
+
 return (
   <>
     <BootstrapDialog
@@ -92,7 +102,8 @@ return (
     aria-labelledby="customized-dialog-title"
     open={openPublish}
   >
-    <BootstrapDialogTitle id="customized-dialog-title" onClose={()=>{setOpenPublish(false)}}>
+
+    {!pub ? <><BootstrapDialogTitle id="customized-dialog-title" onClose={()=>{setOpenPublish(false)}}>
       Publish Course
     </BootstrapDialogTitle>
     <DialogContent dividers sx={{width:"30rem"}}>
@@ -109,6 +120,24 @@ return (
         Close
       </Button>
     </DialogActions>
+    </>:
+    <>
+    <BootstrapDialogTitle id="customized-dialog-title" onClose={()=>{setOpenPublish(false)}}>
+      Publish Course
+    </BootstrapDialogTitle>
+    <DialogContent dividers sx={{width:"30rem"}}>
+    <DialogContentText>
+            Sorry, You can't publish your course without having atleast one video and exam per subtitle
+   </DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      
+      <Button autoFocus onClick={handleClose} sx={{color:"#c50d0d"}}>
+        Ok
+      </Button>
+    </DialogActions>
+    </>
+    }
   </BootstrapDialog>
   <ToastMess message={message} />
   </>

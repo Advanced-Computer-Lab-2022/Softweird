@@ -115,11 +115,11 @@ function SubtitleContent(){
          
        }
      })
-     console.log(successExam)
      if (success.includes(s.title)){
        c+=1;}
+      
      sub.push(c)
-     console.log(sub)
+    
    })
    setSubTot(sub)
 

@@ -25,6 +25,7 @@ import OneAccess from '../../Components/Admin/OneAccess'
 import ToastMess from '../../Components/OneComponent/ToastMess';
 import { Toast } from '../../Context/Toast';
 import Switch from '@mui/material/Switch';
+import NoReports from '../../Components/OneComponent/NoReports';
 
 const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
   ({ theme }) => ({
@@ -201,18 +202,18 @@ return () => cancel ()
        <>
        <TabPanel value={value} index={0} sx={{backgroundColor:"white"}} >
        <Stack gap={4} sx={{mt:"4rem"}}>
-         {acc.map(a=>{
+         {acc.length!=0 ? acc.map(a=>{
            return  <OneAccess acce={a} indiv={ind.find(i=>i.user==a.Trainee._id) } checked2={checked2} setMessage={setMessage}  setAcc={setAcc}/> 
          
           
           
-         })} 
+         }):<NoReports message={"There are no Access Requests"}/>} 
 
           </Stack>
           </TabPanel>
           <TabPanel value={value} index={1} sx={{backgroundColor:"white"}} >
        <Stack gap={4} sx={{mt:"4rem"}}>
-         {acc.map(a=>{
+         {  acc.map(a=>{
            return  a.state=="pending" &&
            <OneAccess acce={a} indiv={ind.find(i=>i.user==a.Trainee._id)} checked2={checked2} setMessage={setMessage} setAcc={setAcc}/>
           

@@ -116,6 +116,7 @@ function handleExam (event,params) {
     }
   
   }
+  
     
       return ( 
           <OneCourseResult.Provider value={{open,setOpen}}>
@@ -154,7 +155,7 @@ function handleExam (event,params) {
           
           <Stack key={video.text} direction="row" justifyContent={"space-between"} marginLeft={"1rem"} position="relative">
           <Typography sx={{"&:hover":{cursor:"pointer"}}}>
-         {!courses.Finished && 
+         {!courses.Finished && !courses.Deleted && 
          <Tooltip title="edit video">
          <IconButton color="primary" component="label" 
           sx={{position:"relative",left:"-2rem"}}
@@ -178,7 +179,7 @@ function handleExam (event,params) {
           <Typography  id={video.text}>
           {video.length<60?video.length+ " min" :
                 Math.round(video.length*10)/10+ " hrs"} </Typography>
-            {!courses.Finished && 
+            {!courses.Finished && !courses.Deleted && 
             <Tooltip id={video.text} title="delete Video">
             <IconButton id={video.text}color="primary" aria-label="upload picture" component="label" 
           sx={{position:"absolute" , right:"-4rem" ,top:"-0.5rem" }} onClick={event=>handleDeleteVideo(event,subtitle.title,video.text)}>
@@ -196,7 +197,7 @@ function handleExam (event,params) {
            <Stack direction="row" justifyContent={"space-between"} marginLeft={"1rem"} position="relative">
           
            <Typography position="relative" sx={{"&:hover":{cursor:"pointer"}}}>
-          {!courses.Finished && 
+          {!courses.Finished && !courses.Deleted && 
           <IconButton color="primary" aria-label="upload picture" component="label" 
            sx={{position:"relative",left:"-2rem",right:"-4rem"}}
           >
@@ -212,7 +213,7 @@ function handleExam (event,params) {
             
            </Typography>
            
-             {!courses.Finished && 
+             {!courses.Finished && !courses.Deleted && 
              <IconButton color="primary" aria-label="upload picture" component="label" 
            sx={{position:"relative" ,right:"-9%",top:"-0.5rem" }}
             // onClick={event=>handleDeleteVideo(event,subtitle.title)}
@@ -226,7 +227,7 @@ function handleExam (event,params) {
 
            </Stack>
           <Box sx={{ height: 100, transform: 'translateZ(0px)', flexGrow: 1 }}>
-          {!courses.Finished && 
+          {!courses.Finished && !courses.Deleted && 
           <SpeedDial
         ariaLabel="SpeedDial openIcon example"
         sx={{ position: 'absolute', bottom: 3, right: 40 }}
@@ -262,7 +263,7 @@ function handleExam (event,params) {
         </AccordionDetails>
       
       </Accordion> 
-      {!courses.Finished && 
+      {!courses.Finished && !courses.Deleted && 
           <Tooltip title="Delete subtitle" flex={0.5} sx={{mr:"1rem"}}>
           <IconButton color="primary" component="label" 
            sx={{position:"absolute",right:"0rem"}} onClick={event => handleDeleteSubtitle(event,subtitle.title)}
@@ -275,7 +276,7 @@ function handleExam (event,params) {
       </Stack>       
     })}
     </Box>
-    {!courses.Finished && 
+    {!courses.Finished && !courses.Deleted && 
       <Box >
         <Tooltip title="Add Subtitle" sx={{position: 'absolute', bottom: "-6.5rem", right: "1rem" }}>
         <IconButton onClick={handleToggle}>

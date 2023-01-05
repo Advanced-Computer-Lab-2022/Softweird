@@ -52,6 +52,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Loading from '../../Components/OneComponent/Loading';
 import { useAuth } from '../../Components/auth';
 import { useInView } from "react-intersection-observer";
+import Wallet from '../../Components/Wallet'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -98,6 +99,7 @@ const ref1 = useRef(null);
 const ref2 = useRef(null);
 const ref3 = useRef(null);
 const ref4 = useRef(null);
+const ref5 = useRef(null);
 const [message,setMessage] =useState('')
 const {setOpenToast} = useContext(Toast)
 const [email,setEmail] =useState("")
@@ -252,63 +254,6 @@ const[empty, setEmpty] = useState(false);
        };
 
 
-    //    const pdfGenerate=()=>{
-    //       var doc=new jsPDF('landscape', 'px', 'a4','false');
-    //       var width = doc.internal.pageSize.getWidth();
-    //       var height = doc.internal.pageSize.getHeight();
-    //       doc.addImage(color,'PNG',0,0,width,height)
-    //       doc.addFileToVFS("RockSalt-Regular-normal.ttf", myFont);
-    //       doc.addFont("RockSalt-Regular-normal.ttf", "RockSalt-Regular", "normal");
-    //       doc.setFont("RockSalt-Regular");
-    //       doc.setFont('RockSalt-Regular', 'normal');
-          
-         
-    //       doc.text(280,250, "Mariam" + " "+ "Tamer")
-    //       doc.text(280,327,"Course Name")
-    //       const pdfOut = doc.output("datauristring");
-    //       doc.save('a.pdf')
-          
-    //       let cancel
-    //           axios({
-    //               method:"POST",
-    //               url : "Individual/sendMail",
-    //               data : {pdf:pdfOut},
-    //               headers : {'Content-Type' : 'application/json'},
-    //               cancelToken: new axios.CancelToken (c => cancel = c)
-    //           }).then (res => {
-             
-                
-    //           }).catch(e=>{
-    //               console.log(e)
-    //                if(axios.isCancel(e)) return 
-                   
-              
-    //           })
-        
-    //           return () => cancel ()
-         
-    //     }
-
-    //     const downloadCert =()=>{
-    //       var doc=new jsPDF('landscape', 'px', 'a4','false');
-    //       var width = doc.internal.pageSize.getWidth();
-    //       var height = doc.internal.pageSize.getHeight();
-    //      doc.addImage(paper,'JPG',0,0,width,height)
-          
-    //      doc.setFont("courier","bolditalic" );
-    //      doc.setFontSize(35);
-    //       doc.text(250,33,"Course Name")
-
-    //       doc.setFont("times", "italic");
-
-    //       doc.setFontSize(22);
-    //       doc.text(240,76, "Subtitles Name" + " (Video Title)")
-    //       doc.setFont("times", "roman");
-
-    //       doc.setFontSize(18);
-    //       doc.text(30,122,"This is jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
-    //       doc.save('notes.pdf')
-    //     }
 
   const handleConfirm = evt => {
       console.log(pass)
@@ -348,7 +293,7 @@ const[empty, setEmpty] = useState(false);
               let cancel
               axios({
                   method:"PATCH",
-                  url : `Instructor/updateMyPass/${auth.user.id}`,
+                  url : `/Instructor/updateMyPass/${auth.user.id}`,
                   data : {password:data},
                   headers : {'Content-Type' : 'application/json'},
                   cancelToken: new axios.CancelToken (c => cancel = c)
@@ -391,7 +336,7 @@ const[empty, setEmpty] = useState(false);
             let cancel
             axios({
                 method:"PATCH",
-                url : `Instructor/updateMyBiography/${auth.user.id}`,
+                url : `/Instructor/updateMyBiography/${auth.user.id}`,
                 data : {biography:data},
                 headers : {'Content-Type' : 'application/json'},
                 cancelToken: new axios.CancelToken (c => cancel = c)
@@ -507,6 +452,8 @@ const[empty, setEmpty] = useState(false);
        
       
     <StyledTab  label="Progress" onClick={() => scrollDown(ref3)} /> 
+
+    <StyledTab  label="Wallet" onClick={() => scrollDown(ref5)} /> 
     
    
   <StyledTab  label="Card Details" onClick={() => scrollDown(ref4)}/>
@@ -677,6 +624,12 @@ const[empty, setEmpty] = useState(false);
 
 </div>
 
+<div ref={ref5}>
+<Divider sx={{ fontSize: "1.5rem", paddingBottom:"2.4rem"}} >Wallet Details</Divider>
+<div>
+     <Wallet  />
+     </div>
+     </div>
      <div ref={ref4}>
      <CardDetails  />
      </div>

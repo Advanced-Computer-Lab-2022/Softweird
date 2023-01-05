@@ -55,7 +55,8 @@ import adminimg3 from '../Images/adminimg3.jpg'
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import AdminReports from "../Components/OneComponent/AdminReports";
-
+import './Welcome.css'
+import logoH from '../Images/LogoRed.png'
 
 function WelcomePage (){
     const{coursetitle} = useParams(); 
@@ -215,11 +216,21 @@ function WelcomePage (){
     </CardContent>
     </Card>
         </Stack>
+   <Box sx={{position:"relative"}}>
+     <Box>
+     <Card sx={{mt:"2rem",backgroundColor:"#bbd2b1"}}>
+       <CardContent sx={{textAlign: "center",
+    fontSize:" 1.8rem",
+    fontSeight: "bold"}}>
+         Your Life in <img src={logoH} style={{paddingLeft: "0.6rem",
+    width: "11%"}}/></CardContent>
+     </Card>
+     </Box>
    
 {((auth.user && (auth.user.type=="corporate"||auth.user.type=="individual"))|| !auth.user) && 
-        <Stack direction="row" justifyContent={"center"}  gap={"5rem"} marginBottom={"6rem"} marginTop={"2rem"}>
-       
-        <Card sx={{position:"relative",width:"20rem",height:"20rem"}}>
+        <Stack direction="row" justifyContent={"center"}  gap={"5rem"} marginBottom={"6rem"} marginTop={"5rem"}>
+       <div className="wireEasy"></div>
+        <Card sx={{position:"relative",width:"20rem",height:"20rem"}} className={"easy"}>
       <CardMedia
        component="img"
        
@@ -227,8 +238,8 @@ function WelcomePage (){
         title="green iguana"
       />
       </Card>
-         
-      <Card sx={{ position:"relative",width:"20rem",height:"20rem",top:"6rem"}}>
+      <div className="wireEasy1"></div>
+      <Card sx={{ position:"relative",width:"20rem",height:"20rem",top:"6rem"}} className={"easy"}>
       <CardMedia
        component="img"
        sx={{    position: "relative",
@@ -237,8 +248,8 @@ function WelcomePage (){
         title="green iguana"
       />
       </Card>
-
-      <Card sx={{position:"relative",width:"20rem",height:"20rem"}}>
+      <div className="wireEasy2"></div>
+      <Card sx={{position:"relative",width:"20rem",height:"20rem"}} className={"easy"}>
       <CardMedia
        component="img"
        
@@ -250,9 +261,9 @@ function WelcomePage (){
        </Stack>}
 
        {auth.user && auth.user.type=="instructor" && 
-        <Stack direction="row" justifyContent={"center"}  gap={"5rem"} marginBottom={"6rem"} marginTop={"2rem"}>
-       
-        <Card sx={{position:"relative",width:"20rem",height:"20rem"}}>
+        <Stack direction="row" justifyContent={"center"}  gap={"5rem"} marginBottom={"6rem"} marginTop={"5rem"}>
+       <div className="wireEasy"></div>
+        <Card sx={{position:"relative",width:"20rem",height:"20rem",pt:"3rem"}} className={"easy"}>
       <CardMedia
        component="img"
        sx={{position:"relative",top:"4rem"}}
@@ -260,8 +271,8 @@ function WelcomePage (){
         title="green iguana"
       />
       </Card>
-         
-      <Card sx={{ position:"relative",width:"20rem",height:"20rem",top:"6rem"}}>
+      <div className="wireEasy1"></div>
+      <Card sx={{ position:"relative",width:"20rem",height:"20rem",top:"6rem",pt:"3rem"}} className={"easy"}>
       <CardMedia
        component="img"
        
@@ -269,8 +280,8 @@ function WelcomePage (){
         title="green iguana"
       />
       </Card>
-
-      <Card sx={{position:"relative",width:"20rem",height:"20rem"}}>
+      <div className="wireEasy2"></div>
+      <Card sx={{position:"relative",width:"20rem",height:"20rem",pt:"3rem"}} className={"easy"}>
       <CardMedia
        component="img"
        
@@ -282,9 +293,9 @@ function WelcomePage (){
        </Stack>}
 
        {auth.user && auth.user.type=="admin" &&
-        <Stack direction="row" justifyContent={"center"}  gap={"5rem"} marginBottom={"6rem"} marginTop={"2rem"}>
-       
-        <Card sx={{position:"relative",width:"20rem",height:"20rem"}}>
+        <Stack direction="row" justifyContent={"center"}  gap={"5rem"} marginBottom={"6rem"} marginTop={"5rem"}>
+       <div className="wireEasy"></div>
+        <Card sx={{position:"relative",width:"20rem",height:"20rem"}} className={"easy"}>
       <CardMedia
        component="img"
        
@@ -292,8 +303,8 @@ function WelcomePage (){
         title="green iguana"
       />
       </Card>
-         
-      <Card sx={{ position:"relative",width:"20rem",height:"20rem",top:"6rem"}}>
+      <div className="wireEasy1"></div>
+      <Card sx={{ position:"relative",width:"20rem",height:"20rem",top:"6rem"}} className={"easy"}>
       <CardMedia
        component="img"
        
@@ -301,8 +312,8 @@ function WelcomePage (){
         title="green iguana"
       />
       </Card>
-
-      <Card sx={{position:"relative",width:"20rem",height:"20rem"}}>
+      <div className="wireEasy2"></div>
+      <Card sx={{position:"relative",width:"20rem",height:"20rem"}} className={"easy"}>
       <CardMedia
        component="img"
        
@@ -312,9 +323,10 @@ function WelcomePage (){
       </Card>
          
        </Stack>}
+       </Box>
 
         <Stack >
-        <Card  sx={{position:"relative",left:"0",right:"0",p:"2rem",mt:"6rem"}}>
+        <Card  sx={{position:"relative",left:"0",right:"0",p:"2rem",mt:"6rem",backgroundColor:"#fbfbfb"}}>
       <CardContent>
         
       {loading && <>  <Typography >

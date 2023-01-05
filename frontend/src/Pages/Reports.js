@@ -30,6 +30,8 @@ import Paper from '@mui/material/Paper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { ClickAwayListener } from '@mui/material';
 import ReportProblem from '../Components/ReportAProblem'
+import NoReports from '../Components/OneComponent/NoReports'
+
 
 
 const StyledTab = styled((props) => <Tab disableRipple {...props} />)(
@@ -188,35 +190,37 @@ return () => cancel ()
        <>
        <TabPanel value={value} index={0} sx={{backgroundColor:"white"}} >
        <Stack gap={4} sx={{mt:"4rem"}}>
-         {Arr.map(r=>{
+         {Arr.length!=0 ? Arr.map(r=>{
            return  <OneReport report={r}/>
           
           
-         })}
+         }):<NoReports message={"Yo have no reported reports"} />}
           </Stack>
           </TabPanel>
 
           <TabPanel value={value} index={1} sx={{backgroundColor:"white"}}>
           <Stack gap={4} sx={{mt:"4rem"}}>
-          {Arr.map(r=>{
+          {Arr.some(r=>r.solved=="noStatus") ? Arr.map(r=>{
           return r.solved=="noStatus" && <OneReport report={r}/>
-         })}
+         }): <NoReports message={"Yo have no No-Status reports"} />
+        }
+         
          </Stack>
           </TabPanel>
 
           <TabPanel value={value} index={2} sx={{backgroundColor:"white"}}>
           <Stack gap={4} sx={{mt:"4rem"}}>
-          {Arr.map(r=>{
+          {Arr.some(r=>r.solved=="pending") ? Arr.map(r=>{
           return r.solved=="pending" && <OneReport report={r}/>
-         })}
+         }):<NoReports message={"Yo have no pending reports"} />}
          </Stack>
           </TabPanel>
 
           <TabPanel value={value} index={3} sx={{backgroundColor:"white"}}>
           <Stack gap={4} sx={{mt:"4rem"}}>
-          {Arr.map(r=>{
+          {Arr.some(r=>r.solved=="resolved") ? Arr.map(r=>{
            return r.solved=="resolved" && <OneReport report={r}/>
-         })}
+         }):<NoReports message={"Yo have no resolved reports"} />}
          </Stack>
          </TabPanel>
          <ReportProblem openRep={openRep} setOpenRep={setOpenRep} Arr={Arr} setArr={setArr}/>

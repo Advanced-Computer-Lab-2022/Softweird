@@ -39,7 +39,7 @@ const userSchema = new Schema (
             enum : ['instructor','corporate','individual','admin']
         }
 
-    }
+    },{timestamps : true}
     
 )
 module.exports = mongoose.model('Users' ,userSchema )

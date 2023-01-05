@@ -3,16 +3,16 @@ const router = express.Router()
 const Course =  require ('../Modules/Course')
 const {RateCourse, AllCourses, RateInstructor, MyCourse , VideoWatched,RegisterCourse,Notes,
     solve ,modelAns ,getQusetions,payForCourse,paymentIntent,MyCourses,reviewPost,DeletereviewPost,
-    reviewPostInst ,DeletereviewPostInst,RefundRequests,getMyProfile,sendCert} = require('../Controller/IndividualTrainee')
+    reviewPostInst ,DeletereviewPostInst,RefundRequests,getMyProfile,sendCert,money,refunds} = require('../Controller/IndividualTrainee')
 const {UpdatePass, ForgotPassword,UpdateEmail} = require('../Controller/ProfileInfo')
-
+router.patch('/money',money)
+router.patch('/refunds',refunds)
 router.patch('/course/rate/:id', RateCourse)
 router.patch('/instructor/rate/:id',RateInstructor)
 router.get('/allCourses/:id',AllCourses)
 router.get('/myCourse/:id',MyCourse) 
 router.get('/myCourses/:id',MyCourses)
 router.post('/sendCert',sendCert)
-
 router.patch('/updateMyPass/:id',UpdatePass)
 router.post('/forgetMyPass',ForgotPassword)
 router.patch('/updateMyEmail/:id',UpdateEmail)
