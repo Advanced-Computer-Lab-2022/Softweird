@@ -1,24 +1,13 @@
-# Easy Learning  (Easy-L)
+# Easy Learning 
+<p align="center">
+  <img width="200" src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/b470c1b9aa1625d4176102a3440f6f7c3aaca423/Logo.png"/>
+</p>
+
+An implementation of full stack web application using the MERN stack. The application is a platform for users to manage an online learning platform. The application is built using the MERN stack.
+  
+## Motivation :star2:
 
 This is a main project of **CSEN 704 Advanced Computer Lab** course. The prime goal of the project is to create a complete Online Learning System. An Online Learning System is a web application through which individuals can attend pre-recorded courses online. Existing web applications include but are not limited to Coursera, Udemy, LinkedIn Learning, Great Learning and Udacity.
-
-## Table of Contents
-- [Purpose](#purpose)
-- [Tools and Frameworks](#tools-and-frameworks)
-- [Coding Style](#coding-style)
-- [Installation](#installation)
-- [Samples](#samples)
-- [Features](#features)
-- [API References](#api-references)
-  * [General](#general)
-  * [Admin](#admin)
-  * [Instructor](#instructor)
-  * [Trainees](#trainees)
-    * [Individual Trainee](#individual-trainee)
-    * [Corporate Trainee](#corporate-trainee)
-- [Meet Our Team](#meet-our-team)
-  
-
 
 ## Purpose
 
@@ -1558,6 +1547,9 @@ OR
 ```
 
 ## Meet Our Team
-![team](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/4.png)
+<p align="center">
+  <img  src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/4.png"/>
+</p>
+
 
 
