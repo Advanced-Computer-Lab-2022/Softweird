@@ -36,6 +36,19 @@ In order to run our project, you should have the following installed in your mac
  - [React JS](https://react-cn.github.io/react/downloads.html) or you can use `NPM`
  - And you can choose any text editor.
  - [MongoDB](https://docs.mongodb.com/manual/installation/) either locally or on a cloud. You have to create `.env` with the dbconnectionString.
+ - Code:
+ ```
+> git clone https://github.com/Advanced-Computer-Lab-2022/Softweird/
+> cd Backend && npm i && npm run start-server
+> cd frontend && npm i && npm start
+ ```
+
+## Running Test 
+The testing is done using `jest`. To run the tests, run the following command
+```
+npm run test
+```
+# ..............Tests.............
 
 ## Screenshots Samples :camera_flash:
 ### Login
@@ -46,10 +59,65 @@ In order to run our project, you should have the following installed in your mac
 ![apply](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/8.png)
 ![pay](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/7.png)
 
+## License
+The software is open source under the [GPL.3](https://choosealicense.com/licenses/gpl-3.0/) License and [Apache](https://www.apache.org/licenses/LICENSE-2.0) for using stripe.
 
 ## Features :iphone:
 
-Mainly this website provides an easy way to apply and attend pre-recorded courses online. Also, allows admins to perform CRUD operations on courses in a flexible way. Moreover, our website allows user to pay in order to reserve in a course and after the completion of any course, users receive a certificate of completion.
+Mainly this website provides an easy way to apply and attend pre-recorded courses online. The website servers 4 types of user: **Admin**, **Instructor**, **Corporate Trainee** and **Individual Trainee**
+
+### As a Guest, I can 
+- Sign up as an Individual trainee
+- Search and Filter courses
+
+### As an Admin, I can
+- Add Instructors and Corporate Trainees to the system
+- View Reported problems and Resolve them
+- View Access Requests from Corporate Trainees and Grant access/rejection
+- View Refund Requests from Individual Trainees and Grant access/rejection
+- Update my Profile : email and password
+
+### As an Instructor, I can
+- Create, Update, View, and Delete a draft Course
+- Publish draft Course so Trainees could enroll in
+- Close a published course to prevent more trainees from enrolling in it
+- Add a promotion on a course for a specific amount of time
+- Delete a promotion on a specific course
+- View my monthly pay - with details - and Update my profile
+- Create, Update, Delete, and View Courses
+- Create exams and add videos in a Course
+- View my review and ratings
+
+### As a Corporate Trainee
+- Search and Filter Courses
+- Pay for a Course
+- Report problems
+- Watch videos and solve exercises of one of my Courses
+- See my progress
+- Recieve a certificate by mail after completion of a course
+- Rate a Course and it's Instructor
+- View my Courses
+- Update and View my Profile
+- Send Access Requests for specific Course
+
+### As an Individual Trainee, I can
+- Search and Filter Courses
+- Pay for a Course
+- Report problems
+- Watch videos and solve exercises of one of my Courses
+- See my progress
+- Recieve a certificate by mail after completion of a course
+- Request Refund
+- Rate a Course and it's Instructor
+- View my Courses
+- Update and View my Profile
+
+## How to use
+- To run Backend ```> cd Backend && npm run start-server```
+- To run Frontend ```> cd frontend && npm start```
+- *Note:* You need to specify the ports on which the backend and frontend will run on.
+- You also need to specify other environment variables inside of your `.env` file such as:
+# ENvi Var................................
 
 
 ## API References (Code Examples) :mailbox_with_mail:
@@ -1546,13 +1614,18 @@ OR
     }
 }
 ```
-
-## License
-The software is open source under the [GPL.3](https://choosealicense.com/licenses/gpl-3.0/) License.
+## Credits
+- [Mongoose docs](https://mongoosejs.com/docs/)
+- [Express docs](https://expressjs.com/en/4x/api.html)
+- [ReactJs docs](https://reactjs.org/docs/getting-started.html)
+- [NodeJs docs](https://nodejs.org/en/docs/)
+- [MUI](https://mui.com/)
+- [React Bootstrap](https://react-bootstrap.github.io/)
+- [JsPDF](https://www.npmjs.com/package/jspdf)
 
 ## Meet Our Team
 <p align="center">
-  <img  src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/4.png"/>
+  <img width="500" src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/4.png"/>
 </p>
 
 
