@@ -1547,6 +1547,9 @@ OR
 }
 ```
 
+## License
+The software is open source under the [GPL.3](https://choosealicense.com/licenses/gpl-3.0/) License.
+
 ## Meet Our Team
 <p align="center">
   <img  src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/4.png"/>
