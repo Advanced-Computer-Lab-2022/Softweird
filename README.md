@@ -1625,7 +1625,7 @@ OR
 
 ## Meet Our Team
 <p align="center">
-  <img width="500" src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/4.png"/>
+  <img width="500" height= "500" src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/4.png"/>
 </p>
 
 
