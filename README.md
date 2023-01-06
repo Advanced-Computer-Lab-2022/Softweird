@@ -66,6 +66,10 @@ npm run test
 
 
 ### Home Page
+<p align="center">
+  <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/home.gif"/><br>
+</p>
+
 
 ### All courses
 <p align="center">
@@ -77,7 +81,6 @@ npm run test
 <p align="center" >
    <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/home1.gif"/><br>
    <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/home2.gif"/><br>
-   <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/d5844a86c4cde20a5a07c184b2e705f5d9043072/coursee.gif"/><br>
    <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/course1.gif"/><br>
    <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/course2.gif"/><br>
    <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/course3.gif"/><br>
