@@ -43,12 +43,14 @@ In order to run our project, you should have the following installed in your mac
 > cd frontend && npm i && npm start
  ```
 ## Build Status :disappointed_relieved:
-- If a corporate trainee requested an access for a course and then an instructor closed this course, the admin’s requests page will crash. 
-- There are many static pics (or buttons) on the system that needs to have their functionalities created. 
-- Editing courses after creation is not implemented but the button is present. 
-- Reporting a specific course is not entirely implemented (the backend is present but no button for it frontend)
+- If trainees search for all courses in the system in any other page than the home page, courses unpublished and closed will appear.
+- Courses in the most viewed courses on the home page also has unpublished and closed courses.
+- There are many static pics (or buttons) on the system that needs to have their functionalities created (sign in with google and facebook / graph / credit card details)
+- Editing courses' video titles and subtitle titles after creation is not implemented but the button is present. 
+- Reporting a specific course a trainee has a problem with is not entirely implemented (the backend is present but no button for it frontend)
 - If a trainee finishes an exam lastly to reach a progress equal to 100, his status doesn’t change to certified (and no certificate is sent).
-- 
+- Paying for a course using credit card has many options but only one is implemented.
+
 ## Running Test :monocle_face:
 The testing is done using `jest`. To run the tests, run the following command
 ```
