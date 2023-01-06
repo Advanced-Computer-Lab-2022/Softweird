@@ -38,9 +38,17 @@ In order to run our project, you should have the following installed in your mac
  - [MongoDB](https://docs.mongodb.com/manual/installation/) either locally or on a cloud. You have to create `.env` with the dbconnectionString.
  - Code:
  ```
-> git clone https://github.com/Advanced-Computer-Lab-2022/Softweird/
-> cd Backend && npm i && npm run start-server
-> cd frontend && npm i && npm start
+git clone https://github.com/Advanced-Computer-Lab-2022/Softweird/
+```
+```
+cd Backend 
+npm i 
+npm run start-server
+```
+```
+cd frontend 
+npm i 
+npm start
  ```
 ## Build Status :disappointed_relieved:
 - If trainees search for all courses in the system in any other page than the home page, courses unpublished and closed will appear.
@@ -61,32 +69,34 @@ https://github.com/Advanced-Computer-Lab-2022/Softweird/tree/main/Backend/tests
 ```
 
 ## Screenshots Samples :camera_flash:
-### Login
-<p align="center">
-  <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/Login.png"/>
-</p>
 
+<details>
+<summary>Login</summary>
+<br>
+<img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/Login.png"/>
+</details>
 
-### Home Page
-<p align="center">
-  <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/home.gif"/><br>
-</p>
+<details>
+<summary>Home Page</summary>
+<br>
+<img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/home.gif"/><br>
+</details>
 
+<details>
+<summary>All Courses</summary>
+<br>
+ <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/d5844a86c4cde20a5a07c184b2e705f5d9043072/all%20courses.gif"/>
+</details>
 
-### All courses
-<p align="center">
-  <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/d5844a86c4cde20a5a07c184b2e705f5d9043072/all%20courses.gif"/>
-</p>
-
-
-### Applying for a Course
-<p align="center" >
-   <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/home1.gif"/><br>
+<details>
+<summary>Applying for a course</summary>
+<br>
+<img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/home1.gif"/><br>
    <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/home2.gif"/><br>
    <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/course1.gif"/><br>
    <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/course2.gif"/><br>
    <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/course3.gif"/><br>
-</p>
+</details>
 
 ## License :scroll:
 The software is open source under the [GPL.3](https://choosealicense.com/licenses/gpl-3.0/) License and [Apache](https://www.apache.org/licenses/LICENSE-2.0) for using stripe.
@@ -142,8 +152,16 @@ Mainly this website provides an easy way to apply and attend pre-recorded course
 - Update and View my Profile
 
 ## How to use :mag_right:
-- To run Backend ```> cd Backend && npm run start-server```
-- To run Frontend ```> cd frontend && npm start```
+- To run Backend 
+```
+ cd Backend 
+ npm run start-server
+```
+- To run Frontend 
+ ``` 
+ cd frontend 
+ npm start
+ ```
 - *Note:* You need to specify the ports on which the backend and frontend will run on.
 - You also need to specify other environment variables inside of your `.env` file such as:
 `MONGO_URI`      `EMAIL_USERNAME`      `EMAIL_PASSWORD`        `STRIPE_KEY`         `ACCESS_SECRET_TOKEN`
