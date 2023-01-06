@@ -1,0 +1,41 @@
+.error::before {
+    content: "";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:1rem;
+    left:2rem;
+    width:1rem;
+    height:1rem;
+}
+.error::after {
+    content: "";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:1rem;
+    right:2rem;
+    width:1rem;
+    height:1rem;
+}
+.wiree::before {
+    content: "";
+    
+    position:absolute;
+    background-color:grey;
+    top:-10rem;
+    left:2.45rem;
+    width:0.2rem;
+    height:11.65rem;
+    z-index: 1;
+}
+.wiree::after {
+    content: "";
+    position:absolute;
+    background-color:grey;
+    top:-10rem;
+    right:2.45rem;
+    width:0.2rem;
+    height:11.65rem;
+    z-index: 1;
+}

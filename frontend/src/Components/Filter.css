@@ -1,0 +1,25 @@
+
+.form-check-input:checked{
+  background-color: #bbd2b1!important;
+  
+
+}
+.form-check-input:focus{
+  box-shadow: none !important;
+}
+
+.filters::-webkit-scrollbar-thumb,
+.filters::-webkit-scrollbar-track {
+  border-radius: 92px;
+}
+
+.filters::-webkit-scrollbar-thumb {
+  background: #EC6A37;
+}
+
+.filters::-webkit-scrollbar-track {
+  background: var(--thumb);
+}
+.filters::-webkit-scrollbar {
+  width:6px;
+}

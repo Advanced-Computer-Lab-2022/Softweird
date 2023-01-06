@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;1,600&display=swap');
+
+.card-course::before {
+    content: "";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:1rem;
+    left:2rem;
+    width:1rem;
+    height:1rem;
+}
+.card-course::after {
+    content: "";
+    border-radius: 100%;
+    position:absolute;
+    background-color:#bbd2b1;
+    top:1rem;
+    right:2rem;
+    width:1rem;
+    height:1rem;
+}
+.wire::before {
+    content: "";
+    
+    position:absolute;
+    background-color:grey;
+    top:-10rem;
+    left:2.45rem;
+    width:0.2rem;
+    height:11.65rem;
+    z-index: 1;
+}
+.wire::after {
+    content: "";
+   
+    position:absolute;
+    background-color:grey;
+    top:-10rem;
+    right:2.45rem;
+    width:0.2rem;
+    height:11.65rem;
+    z-index: 1;
+}
+
+.home::before{
+    content: "";
+    position: absolute;
+    background-color: #bbd2b1;
+    width: 2.2rem;
+    height: 0.3rem;
+    top: 20%;
+    z-index: 4;
+    left:49%
+
+
+}
+
+.home::after{
+    content: "";
+    position: absolute;
+    background-color: #bbd2b1;
+    width: 2.2rem;
+    height: 0.3rem;
+    top: 40%;
+    z-index: 4;
+    left:49%
+
+
+}
+  
+.home2::before{
+    content: "";
+    position: absolute;
+    background-color: #bbd2b1;
+    width: 2.2rem;
+    height: 0.3rem;
+    top: 60%;
+    z-index: 4;
+    left:49%
+
+}
+
+.home2::after{
+    content: "";
+    position: absolute;
+    background-color: #bbd2b1;
+    width: 2.2rem;
+    height: 0.3rem;
+    top: 80%;
+    z-index: 4;
+    left:49%
+
+
+}

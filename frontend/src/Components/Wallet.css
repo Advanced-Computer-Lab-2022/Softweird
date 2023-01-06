@@ -1,0 +1,45 @@
+.dot::before{
+    width: 0.8rem;
+    content: '';
+    border-radius: 50px;
+    background-color: #bbd2b1;
+    height: 0.8rem;
+    position: absolute;
+    z-index: 1;
+    left: 2%;
+    top: 2%;
+
+}
+
+.wire3::before{
+    content: "";
+    background-color: darkgray;
+    width: 0.2rem;
+    height: 7.4rem;
+    position: absolute;
+    top: -104px;
+    left: 24px;
+}
+
+.dot::after{
+    width: 0.8rem;
+    content: '';
+    border-radius: 50px;
+    background-color: #bbd2b1;
+    height: 0.8rem;
+    position: absolute;
+    z-index: 1;
+    right: 2%;
+    top: 2%;
+
+}
+
+.wire3::after{
+    content: "";
+    background-color: darkgray;
+    width: 0.2rem;
+    height: 7.4rem;
+    position: absolute;
+    top: -104px;
+    right: 24px;
+}
