@@ -56,6 +56,9 @@ The testing is done using `jest`. To run the tests, run the following command
 ```
 npm run test
 ```
+```
+https://github.com/Advanced-Computer-Lab-2022/Softweird/tree/main/Backend/tests
+```
 
 ## Screenshots Samples :camera_flash:
 ### Login
