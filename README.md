@@ -42,7 +42,13 @@ In order to run our project, you should have the following installed in your mac
 > cd Backend && npm i && npm run start-server
 > cd frontend && npm i && npm start
  ```
-
+## Build Status :disappointed_relieved:
+- If a corporate trainee requested an access for a course and then an instructor closed this course, the admin’s requests page will crash. 
+- There are many static pics (or buttons) on the system that needs to have their functionalities created. 
+- Editing courses after creation is not implemented but the button is present. 
+- Reporting a specific course is not entirely implemented (the backend is present but no button for it frontend)
+- If a trainee finishes an exam lastly to reach a progress equal to 100, his status doesn’t change to certified (and no certificate is sent).
+- 
 ## Running Test :monocle_face:
 The testing is done using `jest`. To run the tests, run the following command
 ```
