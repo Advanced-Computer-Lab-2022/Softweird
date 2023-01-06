@@ -145,7 +145,7 @@ Mainly this website provides an easy way to apply and attend pre-recorded course
 - You also need to specify other environment variables inside of your `.env` file such as:
 `MONGO_URI`      `EMAIL_USERNAME`      `EMAIL_PASSWORD`        `STRIPE_KEY`         `ACCESS_SECRET_TOKEN`
 
-## Code Examples
+## Code Examples 🪄
 - *Searching for Courses*
 ```
 const search = async (req , res) => {
