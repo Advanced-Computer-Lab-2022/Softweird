@@ -43,7 +43,7 @@ In order to run our project, you should have the following installed in your mac
 > cd frontend && npm i && npm start
  ```
 
-## Running Test 
+## Running Test :monocle_face:
 The testing is done using `jest`. To run the tests, run the following command
 ```
 npm run test
@@ -59,7 +59,7 @@ npm run test
 ![apply](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/8.png)
 ![pay](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/7.png)
 
-## License
+## License :scroll:
 The software is open source under the [GPL.3](https://choosealicense.com/licenses/gpl-3.0/) License and [Apache](https://www.apache.org/licenses/LICENSE-2.0) for using stripe.
 
 ## Features :iphone:
@@ -112,7 +112,7 @@ Mainly this website provides an easy way to apply and attend pre-recorded course
 - View my Courses
 - Update and View my Profile
 
-## How to use
+## How to use :mag_right:
 - To run Backend ```> cd Backend && npm run start-server```
 - To run Frontend ```> cd frontend && npm start```
 - *Note:* You need to specify the ports on which the backend and frontend will run on.
@@ -1071,7 +1071,7 @@ OR
 }
 ```
 
-### Trainees
+### Trainees 
 1. ***Rate Course***
 - Route `/course/rate/:id`
 - Paramters `id`  (~user id)
@@ -1614,7 +1614,7 @@ OR
     }
 }
 ```
-## Credits
+## Credits :star_struck:
 - [Mongoose docs](https://mongoosejs.com/docs/)
 - [Express docs](https://expressjs.com/en/4x/api.html)
 - [ReactJs docs](https://reactjs.org/docs/getting-started.html)
@@ -1622,6 +1622,13 @@ OR
 - [MUI](https://mui.com/)
 - [React Bootstrap](https://react-bootstrap.github.io/)
 - [JsPDF](https://www.npmjs.com/package/jspdf)
+
+## Contribution :smile:
+Contributions are always welcome!
+But, Please adhere to this project's code of conduct.
+
+## Feedback 😊
+If you have any feedback, you can send us at [easylearningnotify@gmail.com](mailto:easylearningnotify@gmail.com)
 
 ## Meet Our Team
 <p align="center">
