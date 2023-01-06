@@ -117,7 +117,7 @@ Mainly this website provides an easy way to apply and attend pre-recorded course
 - To run Frontend ```> cd frontend && npm start```
 - *Note:* You need to specify the ports on which the backend and frontend will run on.
 - You also need to specify other environment variables inside of your `.env` file such as:
-# ENvi Var................................
+`MONGO_URI`      `EMAIL_USERNAME`      `EMAIL_PASSWORD`        `STRIPE_KEY`         `ACCESS_SECRET_TOKEN`
 
 
 ## API References (Code Examples) :mailbox_with_mail:
