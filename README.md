@@ -56,7 +56,6 @@ The testing is done using `jest`. To run the tests, run the following command
 ```
 npm run test
 ```
-# ..............Tests.............
 
 ## Screenshots Samples :camera_flash:
 ### Login
