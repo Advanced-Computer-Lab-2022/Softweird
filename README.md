@@ -119,8 +119,227 @@ Mainly this website provides an easy way to apply and attend pre-recorded course
 - You also need to specify other environment variables inside of your `.env` file such as:
 `MONGO_URI`      `EMAIL_USERNAME`      `EMAIL_PASSWORD`        `STRIPE_KEY`         `ACCESS_SECRET_TOKEN`
 
+## Code Examples
+- *Searching for Courses*
+```
+const search = async (req , res) => {
+    const {input } = req.query
+    try {
+        if (input==='' ){
+            
+                return res.status(200).send([])
+            }
+        
+        else{
+                const course = await Course.find({$or:[{title :  { $regex: input,$options: 'i' }},
+                {subject :  { $regex: input ,$options: 'i'}},
+                {instructor: { $regex: input ,$options: 'i'} }]}).sort({rating :'desc'})
+                const arr = course.slice(0,10)
+                return res.status(200).send(arr)
+        }
+        
+    }
+        
+        catch (error){
+            res.status(404).send(error)
+        }
 
-## API References (Code Examples) :mailbox_with_mail:
+}
+```
+- *Registering in a Course*
+```
+const RegisterCourse = async (req,res) =>{
+     const {courseTitle} = req.body;
+     const {id} = req.params;
+   
+     if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(404).json({error:"error"})
+}
+try{
+       var userID = mongoose.Types.ObjectId(id)
+
+     const c = await Course.findOne({title:courseTitle})
+     if(c==null){
+         res.status(404).json({error:"no such course"})
+     }
+     var count=0
+     var subtitle=0
+     var exercise = 0
+     var sub =[]
+     var totExercise = 0 
+      c.subtitles.forEach(s=>{
+          subtitle=0
+          exercise = 0 
+          count+=s.totalHours;
+          
+         s.video.forEach(v=>{
+             
+             subtitle+=1
+            
+         })
+         if(s.exercise.length!=0){ exercise+=1,totExercise+=1}
+ 
+         sub.push({exercises:exercise,videos:subtitle})
+     })
+       var exPerc = count*0.05
+       count+=exPerc*totExercise
+     const courses = {course:c._id,percentage:{progress:0,total:count,exer:exPerc},subtitlesTotal:sub, registeredAt:new Date()};
+     const ind = await corporate.findOneAndUpdate({user:userID},{$push:{courseInfo:courses}});
+     await Course.findOneAndUpdate({title:courseTitle},{$inc:{enrolledStudents:1}})
+     res.status(200).json(ind);
+    }
+    catch(error){res.status(404).json(error)};
+ }
+```
+- *Request Access for a Course*
+```
+const AccessRequests = async (req,res) =>{
+    
+    const {courseId} = req.body
+    const {id} = req.params
+    if(!mongoose.Types.ObjectId.isValid(id)){
+       
+        return res.status(404).json({error:"error"})
+}
+var userID = mongoose.Types.ObjectId(id)
+if(!mongoose.Types.ObjectId.isValid(courseId)){
+    console.log("hhhi")
+    return res.status(404).json({error:"error"})
+}
+var CID = mongoose.Types.ObjectId(courseId)
+
+
+const a = {course:CID , state:"pending"}
+
+try{
+ 
+   await corporate.findOneAndUpdate({user:userID},
+        {$push:{accessRequests:a}},{returnOriginal:false});
+   
+       
+    
+
+const cop=await corporate.findOne({user:userID}).populate("company")
+
+
+const inc = cop.company.courses.some(c=>c.course.equals(CID));
+
+
+
+var l =-1
+if(inc==true){cop.company.courses.forEach(c=>{
+    if(c.course.equals(CID)){
+        l=c.level
+    }
+})}
+
+
+    await accessRequests.create({Trainee:userID 
+        ,Course:{course:CID,company:inc,level:l} ,CompanyName:cop.company.name,Level:cop.level,state:"pending" })
+    const i =  await corporate.findOne({user:userID}).populate("company")
+    res.status(200).json(i)
+
+}
+catch (error) {
+    res.status(404).json(error)
+}
+
+}
+```
+- Frontend of *Downloading a Certificate*
+```
+export default function CertificateSm({course,myCourse,downloadCert}){
+
+  const [date,setDate]=useState()
+    const auth=useAuth()
+    useEffect(()=>{
+    if(myCourse.length!=0){
+     myCourse.courseInfo.map(c=>{
+       if(c.course==course._id){
+      
+         setDate(c.certDate.slice(0,10))
+     
+      
+       }
+     })
+    }
+    
+
+    },[])
+
+
+ 
+
+      return(
+        <></>
+      )
+}
+```
+- Frontend of *Downloading a Note*
+```
+ <>
+        <div className="card" style={{marginBottom:"2rem"}}>
+  <div className="card-header" style={{backgroundColor:"#bbd2b1"}} >
+  <Stack direction="row" 
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          width: 'fit-content',
+          borderRadius: 1,
+
+          color: 'text.secondary',
+          '& svg': {
+            m: 1.5,
+          },
+          '& hr': {
+            mx: 0.5,
+          },
+        }}
+      >
+          <Box sx={{display: 'flex',
+          alignItems: 'flex-start',}}>
+          <IconButton sx={{pb:0,mb:0}}>
+        <FormatBoldIcon />
+        </IconButton >
+        <IconButton sx={{pb:0,mb:0}}>
+        <FormatUnderlinedIcon/>
+        </IconButton>
+        <IconButton sx={{pb:0,mb:0}}>
+        <FormatItalicIcon />
+        </IconButton>
+        <Divider orientation="vertical" variant="middle" flexItem style = {{backgroundColor:"#EC6A37"}}/>
+        </Box>
+       
+        <Stack direction="row">
+        <Tooltip title="Save for Later">
+  <IconButton sx={{paddingRight:0}} onClick={handleSave}>
+    <SaveIcon />
+  </IconButton>
+</Tooltip>
+        <Tooltip title="Download as PDF">
+  <IconButton sx={{paddingLeft:0}} onClick={handleDownload}>
+    <DownloadIcon />
+  </IconButton>
+</Tooltip>
+
+        </Stack>
+      </Stack>
+      
+  </div>
+  <div className="card-body">
+    <TextareaAutosize onChange={handleWriting}
+  defaultValue={newNotes}
+  style={{ width: "100%" , minHeight:"58vh",maxHeight:"80vh",overflow:"auto" ,border:"none"}}
+
+/>
+  </div>
+</div>
+<ToastMess message="notes saved successfully" />
+
+        </>
+```
+
+## API References :mailbox_with_mail:
 Our backend is divided into different routes either general for all users or specific, based on the type of the user. Each route has a set of *APIs* with different functionalities.
 
 ### General
