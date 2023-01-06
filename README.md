@@ -1630,7 +1630,7 @@ But, Please adhere to this project's code of conduct.
 ## Feedback 😊
 If you have any feedback, you can send us at [easylearningnotify@gmail.com](mailto:easylearningnotify@gmail.com)
 
-## Meet Our Team
+## Meet Our Team :v:
 <p align="center">
   <img width="500" height= "500" src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/4.png"/>
 </p>
