@@ -60,21 +60,28 @@ npm run test
 
 ## Screenshots Samples :camera_flash:
 ### Login
-![login](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/Login.png)
+<p align="center">
+  <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/Login.png"/>
+</p>
+
 
 ### Home Page
 
 ### All courses
-![allcourses](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/d5844a86c4cde20a5a07c184b2e705f5d9043072/all%20courses.gif)
+<p align="center">
+  <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/d5844a86c4cde20a5a07c184b2e705f5d9043072/all%20courses.gif"/>
+</p>
+
 
 ### Applying for a Course
-![register-for-course](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/home1.gif)
-![payment](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/home2.gif)
-![coursee](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/d5844a86c4cde20a5a07c184b2e705f5d9043072/coursee.gif)
-![view](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/course1.gif)
-![solve](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/course2.gif)
-![notes](https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/course3.gif)
-
+<p align="center" >
+   <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/home1.gif"/><br>
+   <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/home2.gif"/><br>
+   <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/d5844a86c4cde20a5a07c184b2e705f5d9043072/coursee.gif"/><br>
+   <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/course1.gif"/><br>
+   <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/c2309cc5581135316ae139f79997cafcc9f5ae8d/course2.gif"/><br>
+   <img src="https://github.com/Advanced-Computer-Lab-2022/Softweird/blob/Imagea/course3.gif"/><br>
+</p>
 
 ## License :scroll:
 The software is open source under the [GPL.3](https://choosealicense.com/licenses/gpl-3.0/) License and [Apache](https://www.apache.org/licenses/LICENSE-2.0) for using stripe.
